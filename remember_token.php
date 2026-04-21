@@ -16,7 +16,7 @@ if(isset($_COOKIE['remember_token'])){
 
             $stmt2 = $conn1->prepare("SELECT * FROM employeesystemcredential WHERE Employee_ID = ?");
             $stmt2->bind_param("s", $employee_id);
-            $stmt2->execute();git remote remove origin
+            $stmt2->execute();
             $result2 = $stmt2->get_result();
 
             if($result2->num_rows > 0){

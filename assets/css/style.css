@@ -1,0 +1,392 @@
+
+/* Normal */
+@font-face {
+    font-family: 'MyCustomFont';
+    src: url('../fonts/GoogleSans-VariableFont_GRAD,opsz,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Italic */
+@font-face {
+    font-family: 'MyCustomFont';
+    src: url('../fonts/GoogleSans-Italic-VariableFont_GRAD,opsz,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+*{
+    padding:0;
+    margin:0;
+    font-family: 'MyCustomFont', sans-serif;
+    box-sizing: border-box;    
+}
+
+body{
+    background: #F2F2F2 !important;
+}
+
+.header-content{
+    background:#0F1595;
+    color:white;
+    font-weight: bold;
+}
+
+.header-content i{
+    color:white;
+}
+
+.modal label{
+    font-weight: bold;
+}
+
+.btn_x{
+    color:white !important;
+}
+
+.btn_x i{
+    font-size: 2rem;
+}
+
+.modal-title{
+    border-left:5px solid white;
+    font-weight: bold;
+    padding-left:10px;
+    color:white;
+}
+
+.modal-header{
+    background-color: #0F1595;
+}
+
+.modal{
+    backdrop-filter: blur(0px) saturate(180%);
+    -webkit-backdrop-filter: blur(0px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.49);
+}
+
+.login_section form{
+    background:#0c127d;
+    padding:50px 30px;
+    width: 30rem;
+    border-radius: 20px;
+}
+
+.login_section .inner_section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.login_section label{
+    color:white;
+}
+
+.login_section .input{
+    padding:10px;
+}
+
+.login_section .btn_login{
+    border:1px solid white;
+    color:white;
+    border-radius: 12px;
+    padding:10px;
+    font-weight: bold;
+}
+
+.login_section .btn_login:hover{
+    background:#0F1595;
+    color:white;
+    border: 1px solid white;
+}
+
+
+/* super admin style*/
+.accounts_superadmin_section .btn_add{
+    background-color:#0F1595;
+    color: white;
+    display: flex;
+    gap:5px;
+    font-weight: 900;
+}
+
+.accounts_superadmin_section .btn_add:hover{
+    background-color: #4549ac;
+    color:white;
+}
+
+.accounts_superadmin_section .inner_con{
+    padding:30px 0;
+    overflow:auto;
+}
+
+.assign_account_section .btn_search{
+    background-color: #0F1595;
+    color:white;
+}
+
+.assign_account_section .btn_search:hover{
+    background-color: #4549ac;
+}
+
+.assign_account_section .btn_assign{
+    color:#0F1595;
+    font-weight: bold;
+}
+
+.assign_account_section .btn_assign:hover{
+    border:1px solid #0F1595;
+    color:#0F1595;
+}
+
+.assign_account_section th,
+.assign_account_section td{
+    text-align: center;
+}
+
+.accounts_superadmin_section th{
+    color:white !important;
+    text-align: center !important;
+    background-color:#0F1595 !important;
+}
+
+.accounts_superadmin_section td{
+    text-align: center !important;
+}
+
+.accounts_superadmin_section .btn_delete{
+    color:#C50000;
+    font-weight: bold;
+}
+
+.accounts_superadmin_section .btn_delete:hover{
+    color:#C50000;
+    font-weight: bold;
+    border:1px solid #C50000;
+}
+
+
+
+/**/
+
+/*admin style*/
+.dashboard_admin_section,
+.room_admin_section,
+.floor_admin_section,
+.history_admin_section,
+.reservation_admin_section {
+    padding:50px 0;
+}
+
+.dashboard_admin_section .box{
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border-color, #e3e6f0);
+    border-radius: var(--border-radius, 8px);
+    padding: 20px;
+    height: 100%;
+    transition: transform 0.2s ease;
+}
+
+.dashboard_admin_section .box:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.dashboard_admin_section .left_first_row .box,
+.dashboard_admin_section .right_first_row .box,
+.dashboard_admin_section .second_row_first .box,
+.dashboard_admin_section .left_third_row .box,
+.dashboard_admin_section .right_third_row .box{
+    display: flex;
+    gap:20px;
+    cursor:pointer;
+} 
+
+.dashboard_admin_section .left_first_row  h2{
+    color:#177ee6 !important;
+    font-weight:900 !important;
+}
+
+.dashboard_admin_section .right_third_row h2{
+    color:#f7a539 !important;
+    font-weight:900 !important;
+}
+
+.dashboard_admin_section .left_third_row h2{
+    color:#4c5cb0 !important;
+    font-weight:900 !important;
+}
+
+.dashboard_admin_section .right_first_row h2{
+    color:#e31717 !important;
+    font-weight:900 !important;
+}
+
+.dashboard_admin_section .second_row_first h2{
+    color:#4cb04f !important;
+    font-weight:900 !important;
+}
+
+.dashboard_admin_section .left_first_row img{
+    background:#177ee6;
+    padding: 20px;
+    border-radius: 10px;
+    width:80px;
+    height:80px;
+}
+
+.dashboard_admin_section .right_first_row img{
+    background: #d90d4e;
+    padding: 20px;
+    border-radius: 10px;
+    width:80px;
+    height:80px;
+}
+
+.dashboard_admin_section .second_row_first img{
+    background: #4cb04f;
+    padding: 20px;
+    border-radius: 10px;
+    width:80px;
+    height:80px;
+}
+
+.dashboard_admin_section .left_third_row img{
+    background: #4c5cb0;
+    padding: 20px;
+    border-radius: 10px;
+    width:80px;
+    height:80px;
+}
+
+.dashboard_admin_section .right_third_row img{
+    background: #f7a539;
+    padding: 20px;
+    border-radius: 10px;
+    width:80px;
+    height:80px;
+}
+  
+.dashboard_admin_section .text_header,
+.text_header,
+.floor_admin_section .text_header,
+.history_admin_section .text_header,
+.reservation_admin_section .text_header{
+    border-left:5px solid #0F1595;
+    padding-left:10px;
+    font-weight: bold;
+}
+
+.dashboard_admin_section .inner_con,
+.room_admin_section .inner_con,
+.floor_admin_section .inner_con,
+.history_admin_section .inner_con,
+.reservation_admin_section .inner_con{
+    padding:50px 0;
+}
+
+.floor_admin_section .btn_add,
+.room_admin_section .btn_add,
+.history_admin_section .btn_add,
+.reservation_admin_section .btn_add{
+    display: flex !important;
+    gap:8px !important;
+    background-color: #0F1595 !important;
+    color:white !important;
+    font-weight: 900 !important;
+}
+
+.floor_admin_section .btn_add:hover,
+.room_admin_section .btn_add:hover,
+.history_admin_section .btn_add:hover,
+.reservation_admin_section .btn_add:hover{
+    background-color: #4549ac;
+    color:white;
+}
+
+.floor_admin_section th,
+.room_admin_section th,
+.history_admin_section th,
+.reservation_admin_section th{
+    background-color: #0F1595 !important;
+    color: white !important;
+    text-align: center;
+}
+
+.room_admin_section td,
+.floor_admin_section td,
+.history_admin_section td,
+.reservation_admin_section  td{
+    text-align: center !important;
+}
+
+.floor_add_section  input,
+.floor_update_section  input,
+.floor_add_section  select,
+.room_add_section select,
+.room_add_section input,
+.room_update_section input,
+.room_update_section select,
+.reservation_add_section select,
+.reservation_add_section input{
+    padding:10px;
+}
+
+.floor_add_section textarea,
+.room_add_section textarea,
+.room_update_section textarea{
+    padding:10px;
+    height: 10rem;
+    width: 100%;
+}
+
+.floor_add_section .btn_save,
+.room_add_section .btn_save,
+.reservation_add_section .btn_save
+{
+    background-color:  #0F1595;
+    color: white;
+    font-weight: bold;
+    padding: 0 15px 5px 15px;
+}
+
+.floor_add_section .btn_save i,
+.room_add_section i{
+    transform: translateY(5px);
+}
+
+.floor_add_section .btn_save:hover,
+.room_add_section .btn_save:hover{
+    background-color: #4549ac;
+    color:white;
+}
+
+.floor_update_section .btn_update,
+.room_update_section .btn_update{
+    background-color:  #0F1595;
+    color: white !important;
+    font-weight: bold;
+}
+
+.floor_update_section .btn_update:hover,
+.room_update_section .btn_update:hover{
+    background-color: #4549ac;
+    color:white;
+}
+/**/
+
+@media(max-width:991px){
+    .login_section form{
+        width: 80%;
+    }
+}
+
+@media(max-width:761px){
+    .login_section form{
+        width: 100%;
+    }
+}
+

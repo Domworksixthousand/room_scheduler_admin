@@ -24,7 +24,9 @@ if(isset($_COOKIE['remember_token'])){
 
                 #role destination
             if($role === "1"){
-
+                $_SESSION['superadmin_login'] = $employee_id;
+                header('Location: super_admin');
+                exit();
             }elseif($role === "2"){
                 $_SESSION['admin_login'] = $employee_id;
                 header('Location: admin');

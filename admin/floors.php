@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
     <link rel="stylesheet" href="../assets/css/boostrap.css">
   </head>
-  <body>
+  <body >
 <?php
   include '../config.php'; 
   if(!isset($_SESSION['admin_login'])){
@@ -67,7 +67,7 @@
               <div class="job"><?php echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
               <div class="job">Admin</div>
             </div>
-            <a href="logout.php?location_back=rooms.php"><i class="bx bx-log-out"></i></a>
+            <a href="logout.php?location_back=floors.php"><i class="bx bx-log-out"></i></a>
           </div>
         </li>
       </ul>

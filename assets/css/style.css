@@ -38,6 +38,8 @@ body{
     color:white;
 }
 
+
+
 .modal label{
     font-weight: bold;
 }
@@ -55,6 +57,17 @@ body{
     font-weight: bold;
     padding-left:10px;
     color:white;
+}
+
+.header_title{
+    background:#0c127d;
+    border-radius:10px;
+}
+
+.header_title .page-title{
+    color:white;
+    padding:20px 0;
+
 }
 
 .modal-header{
@@ -168,7 +181,107 @@ body{
     border:1px solid #C50000;
 }
 
+  .dashboard_superadmin_section .box{
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border-color, #e3e6f0);
+    border-radius: var(--border-radius, 8px);
+    padding: 20px;
+    height: 100%;
+    transition: transform 0.2s ease;
+    z-index:0;
+}
 
+.dashboard_superadmin_section .box:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    z-index:0;
+}
+
+.dashboard_superadmin_section .left_first_row  h2{
+    color:#177ee6 !important;
+    font-weight:900 !important;
+}
+
+.dashboard_superadmin_section .right_third_row h2{
+    color:#f7a539 !important;
+    font-weight:900 !important;
+}
+
+.dashboard_superadmin_section .left_third_row h2{
+    color:#4c5cb0 !important;
+    font-weight:900 !important;
+}
+
+.dashboard_superadmin_section .right_first_row h2{
+    color:#e31717 !important;
+    font-weight:900 !important;
+}
+
+.dashboard_superadmin_section .second_row_first h2{
+    color:#4cb04f !important;
+    font-weight:900 !important;
+}
+
+.dashboard_superadmin_section .left_first_row img{
+    background:#177ee6;
+    padding: 20px;
+    border-radius: 10px;
+    width:80px;
+    height:80px;
+}
+
+.dashboard_superadmin_section .right_first_row img{
+    background: #d90d4e;
+    padding: 20px;
+    border-radius: 10px;
+    width:80px;
+    height:80px;
+}
+
+.dashboard_superadmin_section .second_row_first img{
+    background: #4cb04f;
+    padding: 20px;
+    border-radius: 10px;
+    width:80px;
+    height:80px;
+}
+
+.dashboard_superadmin_section .left_third_row img{
+    background: #4c5cb0;
+    padding: 20px;
+    border-radius: 10px;
+    width:80px;
+    height:80px;
+}
+
+.dashboard_superadmin_section .right_third_row img{
+    background: #f7a539;
+    padding: 20px;
+    border-radius: 10px;
+    width:80px;
+    height:80px;
+}
+
+.dashboard_superadmin_section .left_first_row .box,
+.dashboard_superadmin_section .right_first_row .box,
+.dashboard_superadmin_section .second_row_first .box,
+.dashboard_superadmin_section .left_third_row .box,
+.dashboard_superadmin_section .right_third_row .box{
+    display: flex;
+    gap:20px;
+    cursor:pointer;
+} 
+
+
+.chart_superadmin_section{
+    padding:50px 0;
+}
+
+.chart_superadmin_section .inner_graph{
+    background:white;
+    padding:30px;
+    border-radius:18px;
+}
 
 /**/
 
@@ -353,6 +466,93 @@ body{
     padding: 0 15px 5px 15px;
 }
 
+.room_add_section .modal-body{
+    padding:30px;
+}
+
+.room_add_section .inner_body{
+    background: white;
+    padding: 26px;
+    border-radius: 16px;
+}
+
+.room_add_section input,
+.room_add_section textarea,
+.room_add_section select{
+    background: #f0f0f0;
+}
+
+.reservation_add_section .checkbox-wrapper input[type="checkbox"] {
+    display: none;
+}
+
+.reservation_add_section .checkbox-wrapper .terms-label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.reservation_add_section .checkbox-wrapper .terms-label .label-text {
+    margin-left: 10px;
+}
+
+.reservation_add_section .checkbox-wrapper .checkbox-svg {
+    width: 30px;
+    height: 30px;
+}
+
+.reservation_add_section .checkbox-wrapper .checkbox-box {
+    fill: rgba(207, 205, 205, 0.425);
+    stroke: #8c00ff;
+    stroke-dasharray: 800;
+    stroke-dashoffset: 800;
+    transition: stroke-dashoffset 0.6s ease-in;
+}
+
+.reservation_add_section .checkbox-wrapper .checkbox-tick {
+    stroke: #8c00ff;
+    stroke-dasharray: 172;
+    stroke-dashoffset: 172;
+    transition: stroke-dashoffset 0.6s ease-in;
+}
+
+.reservation_add_section .checkbox-wrapper input[type="checkbox"]:checked + .terms-label .checkbox-box,
+.reservation_add_section .checkbox-wrapper input[type="checkbox"]:checked + .terms-label .checkbox-tick {
+    stroke-dashoffset: 0;
+}
+
+.reservation_add_section #wrapper {
+    transition: all 0.3s ease;
+}
+
+.reservation_add_section .custom_time{
+    display: none;
+}
+
+.reservation_add_section input,
+.reservation_add_section select{
+    background: #f0f0f0;
+}
+
+.reservation_add_section .inner_body{
+    background: white;
+    padding: 26px;
+    border-radius: 16px;
+}
+
+.reservation_add_section .modal-body{
+    padding:30px;
+}
+
+.reservation_add_section .btn_save i{
+    transform:translateY(5px);
+}
+
+.reservation_add_section .btn_save:hover{
+    background-color: #161fdb;
+    color: white;
+}
+
 .floor_add_section .btn_save i,
 .room_add_section i{
     transform: translateY(5px);
@@ -360,8 +560,18 @@ body{
 
 .floor_add_section .btn_save:hover,
 .room_add_section .btn_save:hover{
-    background-color: #4549ac;
+    background-color: #161fdb;
     color:white;
+}
+
+.floor_add_section .inner_body{
+    background: white;
+    padding: 26px;
+    border-radius: 16px;
+}
+
+.floor_add_section input{
+    background: #f0f0f0;
 }
 
 .floor_update_section .btn_update,
@@ -375,6 +585,16 @@ body{
 .room_update_section .btn_update:hover{
     background-color: #4549ac;
     color:white;
+}
+
+.graph_admin_section{
+    padding-bottom:100px;
+}
+
+.graph_admin_section .inner_graph{
+    background:white;
+    padding:30px;
+    border-radius:18px;
 }
 /**/
 

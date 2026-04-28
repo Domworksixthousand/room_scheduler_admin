@@ -1,6 +1,11 @@
 
 
-
+<?php
+  include '../config.php'; 
+  if(!isset($_SESSION['superadmin_login'])){
+    echo "<script>location.href='../index.php';</script>";
+  }
+ ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,6 +16,7 @@
     <link rel="shortcut icon" href="../assets/images/fs_logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/boostrap.css">
+    <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
     <link rel="stylesheet" href="../assets/css/sidebar_superadmin.css">
   </head>
   <body>
@@ -37,32 +43,32 @@
             <ul class="menu-list">
                 <li class="menu-item ">
                     <a href="index.php" class="menu-link ">
-                        <span class="material-symbols-rounded "><img src="../assets/images/dashboard_icon.png" alt=""></span>
+                        <span class="material-symbols-rounded"><i class="bx bx-grid-alt "></i></span>
                         <span class="menu-label">Dashboard</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="accounts.php" class="menu-link">
-                    <span class="material-symbols-rounded "><img src="../assets/images/accounts_icon.png" alt=""></span>
-                    <span class="menu-label">Accounts</span>
+                    <a href="accounts.php" class="menu-link ">
+                    <span class="material-symbols-rounded"><i class='bx bx-user-circle  '></i></span>
+                    <span class="menu-label ">Accounts</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="history.php" class="menu-link active">
-                    <span class="material-symbols-rounded "><img src="../assets/images/history_icon.png" alt=""></span>
+                    <span class="material-symbols-rounded "><i class='bx bx-history fs-4'></i></span>
                     <span class="menu-label">History</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="reservations.php" class="menu-link">
-                    <span class="material-symbols-rounded "><img src="../assets/images/reservation_icon.png" alt=""></span>
+                    <span class="material-symbols-rounded "><i class='bx bx-calendar fs-4'></i></span>
                     <span class="menu-label">Reservations</span>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                    <span class="material-symbols-rounded "><img src="../assets/images/signout_icon.png" alt=""></span>
-                    <span class="menu-label">Sign Out</span>
+                <li class="menu-item" >
+                    <a href="logout.php?location_back=history.php" class="menu-link">
+                        <span class="material-symbols-rounded "><i class='bx bx-log-out fs-4'></i></span>
+                        <span class="menu-label">Sign Out</span>
                     </a>
                 </li>
             </ul>
@@ -81,7 +87,11 @@
 </div>
 
 
-<script src="../assets/js/script.js"></script>
-<script src="../assets/js/boostrap.js"></script>
+    <script src="../assets/js/chart.js"></script>
+    <script src="../assets/js/cool_alert.js"></script>
+    <script src="../assets/js/box_icons.js"></script>
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/boostrap.js"></script>
+    <?php include '../admin/chart.php'; ?>  
   </body>
 </html>

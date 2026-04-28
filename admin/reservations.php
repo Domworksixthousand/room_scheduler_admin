@@ -14,12 +14,12 @@
     <link rel="stylesheet" href="../assets/css/boostrap.css">
   </head>
   <body>
-<?php
-  include '../config.php'; 
-  if(!isset($_SESSION['admin_login'])){
-    echo "<script>location.href='../index.php';</script>";
-  }
- ?>
+  <?php
+    include '../config.php'; 
+    if(!isset($_SESSION['admin_login'])){
+      echo "<script>location.href='../index.php';</script>";
+    }
+  ?>
 
 
 
@@ -66,7 +66,7 @@
               <div class="job"><?php echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
               <div class="job">Admin</div>
             </div>
-            <a href="logout.php?location_back=rooms.php"><i class="bx bx-log-out"></i></a>
+            <a href="logout.php?location_back=reservations.php"><i class="bx bx-log-out"></i></a>
           </div>
         </li>
       </ul>
@@ -82,8 +82,8 @@
           <div class="container">
             <h2 class="text_header">Reservations </h2>
             <div class="inner_con">
-               <div class="d-flex gap-2 mb-4">
-                <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Number of Floors">
+              <div class="d-flex gap-2 mb-4">
+                <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Date">
                 <a href="reservation_add.php" class="btn btn_add "> Add <i class="bx bx-plus-circle  fs-5"></i></a>
               </div>  
               <div class="overflow-auto">
@@ -126,3 +126,5 @@
     <?php include '../alert.php'; ?>
 </body>
 </html>
+
+

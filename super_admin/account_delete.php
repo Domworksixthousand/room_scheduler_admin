@@ -1,10 +1,10 @@
 <?php
 include 'accounts.php';
-$id = htmlspecialchars($_GET['data'] ?? '');
+$emp_id = htmlspecialchars($_GET['emp_id'] ?? '');
 
-if ($id) {
-    $get = $conn2->prepare("SELECT * FROM `accounts` WHERE `id` = ?");
-    $get->bind_param("s", $id);
+if ($emp_id) {
+    $get = $conn2->prepare("SELECT * FROM `accounts` WHERE `employee_id` = ?");
+    $get->bind_param("s", $emp_id);
     $get->execute();
     $result_data = $get->get_result();
 
@@ -32,7 +32,7 @@ if ($result_data1->num_rows > 0) {
 ?>
 
 <form action="../functions.php" method="POST" id="assignForm">
-    <input type="hidden" name="id" value="<?php echo $id; ?>">
+    <input type="hidden" name="employee_id" value="<?php echo $employee_id; ?>">
     <input type="hidden" name="delete_account" value="1">
 </form>
 

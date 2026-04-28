@@ -35,10 +35,10 @@ if (isset($_POST['assign_user'])) {
 
 
 if(isset($_POST['delete_account'])){
-    $id =  htmlspecialchars($_POST['id'] ?? '');
+    $employee_id =  htmlspecialchars($_POST['employee_id'] ?? '');
      
-    $delete =  $conn2->prepare("DELETE FROM `accounts` WHERE `id` = ?");
-    $delete->bind_param("s",$id);
+    $delete =  $conn2->prepare("DELETE FROM `accounts` WHERE `employee_id` = ?");
+    $delete->bind_param("s",$employee_id);
     $delete->execute();
 
     $_SESSION['success'] = "Successfully Deleted";
@@ -83,7 +83,9 @@ if(isset($_POST['login'])){
 
         #role destination
         if($role === "1"){
-
+            $_SESSION['superadmin_login'] = $employee_id;
+            header('Location: super_admin');
+            exit();
         }elseif($role === "2"){
             $_SESSION['admin_login'] = $employee_id;
             header('Location: admin');
@@ -134,7 +136,7 @@ if(isset($_POST['sigout_admin'])){
 
     // Redirect
     header("location:index.php");
-    exit;
+    exit();
 }
 
 
@@ -358,13 +360,18 @@ if(isset($_POST['cancel_booking'])){
 
 
 if(isset($_POST['reservation_save'])){
+    
     $start_date = htmlspecialchars($_POST['start_date'] ?? '');
     $end_date = htmlspecialchars($_POST['end_date'] ?? '');
-    $start_time = htmlspecialchars($_POST['start_time'] ?? '');
-    $end_time = htmlspecialchars($_POST['end_time'] ?? '');
+    $start_time_data = date("H:i:s", strtotime($_POST['start_time'] ?? '00:00'));
+    $end_time_data = date("H:i:s", strtotime($_POST['end_time'] ?? '00:00'));
     $fullname = htmlspecialchars($_POST['fullname'] ?? '');
     $meeting_title = htmlspecialchars($_POST['meeting_title'] ?? '');
     $custom_fullname = htmlspecialchars($_POST['custom_fullname'] ?? '');
+    $custom_start = $_POST['custom_start'] ?? [];
+    $custom_end = $_POST['custom_end'] ?? [];
+    $checkbox = $_POST['checkbox'] ?? 'no';
+    $final_name = ($fullname === "Others") ? $custom_fullname : $fullname;
     $room_id = htmlspecialchars($_POST['room_id'] ?? '');
 
 
@@ -377,112 +384,345 @@ if(isset($_POST['reservation_save'])){
         $final_serial = htmlspecialchars($row_serial_number['serial_number'] ?? '');
     }
 
-    $occupied = 'Occupied';
-
+    $_SESSION['room_name_admin'] = $final_serial;
     $_SESSION['start_date_admin'] = $start_date;
     $_SESSION['end_date_admin'] = $end_date;
-    $_SESSION['start_time_admin'] = $start_time;
-    $_SESSION['end_time_admin'] = $end_time;
-    $_SESSION['start_date_admin'] = $start_date;
+    $_SESSION['start_time_admin'] = $start_time_data;
+    $_SESSION['end_time_admin'] = $end_time_data;
     $_SESSION['fullname_admin'] = $fullname;
     $_SESSION['meeting_title_admin'] = $meeting_title;
     $_SESSION['custom_fullname_admin'] = $custom_fullname;
-    $_SESSION['room_name_admin'] = $final_serial;
+    $_SESSION['checkbox_admin'] = $checkbox;
 
-    $booking_id =  "booking" . uniqid() . rand();
-        
-    $check_duplicate = $conn2->prepare("SELECT * FROM booking WHERE `booking_id` = ?");
-    $check_duplicate->bind_param("s",$booking_id);
-    $check_duplicate->execute();
-    $result_check = $check_duplicate->get_result();
-    if($result_check->num_rows>0){
-        $_SESSION['error'] = "Technical Error Please Try Again";
-        header("location:reservation_add.php");
-        exit();
+    $_SESSION['booked_details_admin'] = [];
+    if (!empty($custom_start)) {
+        foreach ($custom_start as $key => $val) {
+            $temp_date = new DateTime($start_date);
+            $temp_date->modify("+$key day");
+            $_SESSION['booked_details_admin'][] = [
+                'date' => $temp_date->format('Y-m-d'),
+                'start' => $val,
+                'end' => $custom_end[$key]
+            ];
+        }
     }
 
+    $occupied = 'Occupied';
+    $errors_found = false;
 
-    if($start_date > $end_date){
-        $_SESSION['error'] = "Start date cannot be later than the end date.";
-        header("location:admin/reservation_add.php");
-        exit();
-    }elseif($start_date === $datetoday && $end_date >= $datetoday && $start_time < $timetoday2 && $end_time < $timetoday2){
-        $_SESSION['error'] = "The selected time has already passed.";
-        header("location:admin/reservation_add.php");
-        exit();
-    }elseif($start_date === $end_date && $start_time >= $end_time){
-        $_SESSION['error'] = "Start Time cannot be later than the end date or equal.";
-        header("location:admin/reservation_add.php");
-        exit();
-    }elseif($start_time === "Select" || $end_time === "Select" ){
-        $_SESSION['error'] = "Please Select Start Time or End Time";
-        header("location:admin/reservation_add.php");
-        exit();
-    }elseif($fullname === "Others" && empty($custom_fullname)){
+    if($fullname === "Others" && empty($custom_fullname)){
         $_SESSION['error'] = "Please Type Your Full Name";
-        header("location:admin/reservation_add.php");
-        exit();
-    }elseif($fullname === "Select"){
+        $errors_found = true;
+    } elseif($fullname === "Select Fullname" || empty($fullname)){
         $_SESSION['error'] = "Please Select Full Name";
-        header("location:admin/reservation_add.php");
-        exit();
-    }else{
-    $new_booking_start = $start_date . ' ' . date("H:i", strtotime($start_time));
-    $new_booking_end   = $end_date . ' ' . date("H:i", strtotime($end_time));
+        $errors_found = true;
+    } elseif($start_date > $end_date){
+        $_SESSION['error'] = "Start date cannot be later than the end date.";
+        $errors_found = true;
+    }
 
-$check_query = $conn2->prepare("
-    SELECT booking.booking_id 
-    FROM `booking` 
-    INNER JOIN rooms ON booking.room_id = rooms.room_id 
-    WHERE rooms.serial_number = ? 
-    AND booking.status = ? 
-    AND (
-        -- Standard Overlap Formula: (StartA < EndB) AND (EndA > StartB)
-        STR_TO_DATE(CONCAT(booking.start_date, ' ', booking.start_time), '%Y-%m-%d %h:%i %p') < STR_TO_DATE(?, '%Y-%m-%d %H:%i')
-        AND 
-        STR_TO_DATE(CONCAT(booking.end_date, ' ', booking.end_time), '%Y-%m-%d %h:%i %p') > STR_TO_DATE(?, '%Y-%m-%d %H:%i')
-    )
-");
-
-
-$check_query->bind_param("ssss", $final_serial, $occupied, $new_booking_end, $new_booking_start);
-$check_query->execute();
-$result = $check_query->get_result();
-
-if($result->num_rows > 0) {
-    // CONFLICT FOUND
-    $_SESSION['error'] = "Conflict Detected: Room is already occupied for this schedule.";
-    header("location:admin/reservation_add.php");
-    exit();
-} else {
-
-    $final_name = ($fullname === "Others") ? $custom_fullname : $fullname;
     
-    $insert = $conn2->prepare("INSERT INTO `booking` (booking_id, start_date, end_date, start_time, end_time, fullname, meeting_title, room_id, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $insert->bind_param("sssssssss", $booking_id, $start_date, $end_date, $start_time, $end_time, $final_name, $meeting_title, $room_id, $occupied);
-    
-    if($insert->execute()) {
-        
-        unset($_SESSION['start_date_admin']);
-        unset($_SESSION['end_date_admin']);
-        unset($_SESSION['start_time_admin']);
-        unset($_SESSION['end_time_admin']);
-        unset($_SESSION['start_date_admin']);
-        unset($_SESSION['end_date_admin']); 
-        unset($_SESSION['fullname_admin']);
-        unset($_SESSION['meeting_title_admin']); 
-        unset($_SESSION['custom_fullname_admin']);
-        unset($_SESSION['room_name_admin']);
-        $_SESSION['success'] = "Booking Successful!";
+    //  kung naka custom ang time 
+////////////////////////////////////////////////////////////////////////////
+    if(!$errors_found && $checkbox === "yes"){
+        $date_val = new DateTime($start_date);
+        foreach ($custom_start as $key => $starttime) {
+            $endtime = $custom_end[$key];
+            $sql_s = date("H:i:s", strtotime($starttime));
+            $sql_e = date("H:i:s", strtotime($endtime));
+            $curr_d = $date_val->format('Y-m-d');
+
+            if ($sql_s >= $sql_e) {
+                $_SESSION['error'] = "Error on " . $date_val->format('M d') . ": Start time cannot be later than end time.";
+                $errors_found = true; 
+                break;
+            }
+
+            if($sql_s <= $timetoday2 && $datetoday === $curr_d){
+                $_SESSION['error'] = "Error on " . $date_val->format('M d') . ": Time Selected Already Passed";
+                $errors_found = true;
+                break;
+            }
+            
+            // Check conflicts sa DB
+            $check = $conn2->prepare("SELECT b.booking_id FROM `booking` b INNER JOIN rooms r ON b.room_id = r.room_id WHERE r.serial_number = ? AND b.status = ? AND b.start_date = ? AND (? < b.end_time AND ? > b.start_time)");
+            $check->bind_param("sssss", $final_serial, $occupied, $curr_d, $sql_s, $sql_e);
+            $check->execute();
+            if($check->get_result()->num_rows > 0){
+                $_SESSION['error'] = "Conflict: Room occupied on $curr_d during selected time.";
+                $errors_found = true;
+                break;
+            }
+            $date_val->modify('+1 day');
+            $check->close();
+        }
+    }
+
+     //  insert ang custom time
+    if(!$errors_found && $checkbox === "yes"){
+        $date_ins = new DateTime($start_date);
+        foreach ($custom_start as $key => $starttime) {
+            $endtime = $custom_end[$key];
+            $sql_s = date("H:i:s", strtotime($starttime));
+            $sql_e = date("H:i:s", strtotime($endtime));
+            $curr_d = $date_ins->format('Y-m-d');
+            $b_id = "booking" . uniqid() . rand(10, 99);
+
+            $check_diplicate = $conn2->prepare("SELECT `booking_id` FROM `booking` WHERE `booking_id` = ?");
+            $check_diplicate->bind_param("s", $b_id);
+            $check_diplicate->execute();
+            
+            $check_diplicate->store_result(); 
+
+            if($check_diplicate->num_rows > 0){
+                $_SESSION['error'] = "Technical Error, Please Try again";
+                header("location:admin/reservation_add.php");
+                exit(); 
+            }
+            $check_diplicate->close();
+
+            $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $insert->bind_param("sssssssss", $b_id, $curr_d, $curr_d, $sql_s, $sql_e, $final_name, $meeting_title, $room_id, $occupied);
+            $insert->execute();
+            
+            $date_ins->modify('+1 day');
+        }
+
+        // CLEAR SESSIONS
+        unset($_SESSION['room_name_admin'], $_SESSION['start_date_admin'], $_SESSION['end_date_admin'], $_SESSION['start_time_admin'], $_SESSION['end_time_admin'], $_SESSION['fullname_admin'], $_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin'],$_SESSION['checkbox_admin'],$_SESSION['booked_details_admin'],$_SESSION['booked_details_admin']);
+        $_SESSION['success'] = "All schedules saved successfully!";
         header("location:admin/reservations.php");
+        exit();
+    } 
+    
+////////////////////////////////////////////////////////////////////////////
+
+
+
+    //check single time
+ //////////////////////////////////////////////////////////////////////////
+ 
+if(!$errors_found && $checkbox === "no" && $start_date === $end_date){
+    $date_val = new DateTime($start_date);
+    $curr_d = $date_val->format('Y-m-d');
+    if($start_time_data >= $end_time_data){
+        $_SESSION['error'] = "Error on " . $date_val->format('M d') . ": Start time cannot be later than end time.";
+        $errors_found = true;
+    }
+
+    if($start_time_data <= $timetoday2 && $datetoday === $curr_d){
+        $_SESSION['error'] = "Error on " . $date_val->format('M d') . ": Time Selected Already Passed";
+        $errors_found = true;
+    }
+    
+
+    // Check conflicts sa DB
+    $check2 = $conn2->prepare("SELECT b.booking_id FROM `booking` b INNER JOIN rooms r ON b.room_id = r.room_id WHERE r.serial_number = ? AND b.status = ? AND b.start_date = ? AND (? < b.end_time AND ? > b.start_time)");
+    $check2->bind_param("sssss", $final_serial, $occupied, $curr_d, $start_time_data, $end_time_data);
+    $check2->execute();
+    $result_check = $check2->get_result();
+    if($result_check->num_rows > 0){
+        $_SESSION['error'] = "Conflict: Room occupied on $curr_d during selected time.";
+        $errors_found = true; 
+      
+    }
+    $result_check->close();
+}
+
+
+//insert ang data hindi custom ang time and date
+if(!$errors_found && $checkbox === "no" && $start_date === $end_date){
+    $date_ins = new DateTime($start_date);
+    $curr_d = $date_ins->format('Y-m-d');
+    $b_id = "booking" . uniqid() . rand(10, 99);
+
+
+    $check_diplicate = $conn2->prepare("SELECT `booking_id` FROM `booking` WHERE `booking_id` = ?");
+    $check_diplicate->bind_param("s", $b_id);
+    $check_diplicate->execute();
+    
+    $check_diplicate->store_result(); 
+
+    if($check_diplicate->num_rows > 0){
+        $_SESSION['error'] = "Technical Error, Please Try again";
+        header("location:admin/reservation_add.php");
+        exit(); 
+    }
+    
+    $check_diplicate->close();
+
+    $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $insert->bind_param("sssssssss", $b_id, $start_date, $end_date, $start_time_data, $end_time_data, $final_name, $meeting_title, $room_id, $occupied);
+    
+    if($insert->execute()){
+        $insert->close();
+        unset($_SESSION['room_name_admin'], $_SESSION['start_date_admin'], $_SESSION['end_date_admin'], $_SESSION['start_time_admin'], $_SESSION['end_time_admin'], $_SESSION['fullname_admin'], $_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin'],$_SESSION['checkbox_admin'],$_SESSION['booked_details_admin']);
+        $_SESSION['success'] = "Schedules saved successfully!";
+        header("location:admin/reservations.php");
+        exit();
+    } else {
+        $_SESSION['error'] = "Database Error: Please try again.";
+        header("location:admin/reservation_add.php");
         exit();
     }
 }
+////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    // check multiple date na single time
+///////////////////////////////////////////////////////////////////////
+if(!$errors_found && $checkbox === "no" && $start_date != $end_date){
+$current_date = new DateTime($start_date);
+$last_date = new DateTime($end_date);
+$datetocheck = $current_date->format('Y-m-d');
+
+while ($current_date <= $last_date) {
+    $date_to_check = $current_date->format('Y-m-d');
+
+    if($start_time_data >= $end_time_data){
+        $_SESSION['error'] = "Start time cannot be later than end time.";
+        $errors_found = true;
+        break;
+    }
+
+    if($start_time_data <= $timetoday2 && $datetoday === $datetocheck){
+        $_SESSION['error'] = "Error on " . $current_date->format('M d') . ": Time Selected Already Passed";
+        $errors_found = true;
+        break;
+    }
+
+    $check = $conn2->prepare("
+        SELECT b.booking_id 
+        FROM `booking` b 
+        INNER JOIN rooms r ON b.room_id = r.room_id 
+        WHERE r.serial_number = ? 
+        AND b.status = ? 
+        AND b.start_date = ? 
+        AND (? < b.end_time AND ? > b.start_time)
+    ");
+    
+    $check->bind_param("sssss", $final_serial, $occupied, $date_to_check, $start_time_data, $end_time_data);
+    $check->execute();
+    
+    if($check->get_result()->num_rows > 0){
+        $formatted_date = $current_date->format('M d, Y');
+        $_SESSION['error'] = "Conflict: Room occupied on $formatted_date during selected time.";
+        $errors_found = true; 
+        break; 
+    }
+
+    
+    $current_date->modify('+1 day');
+    $check->close();
+    
+    }
+}
+
+
+if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
+
+    $current_date = new DateTime($start_date);
+    $last_date = new DateTime($end_date);
+
+    
+    while ($current_date <= $last_date) {
+        
+        $date_to_save = $current_date->format('Y-m-d');
+        $b_id = "booking" . uniqid() . rand(10, 99);
+
+        
+        $check_diplicate = $conn2->prepare("SELECT `booking_id` FROM `booking` WHERE `booking_id` = ?");
+        $check_diplicate->bind_param("s", $b_id);
+        $check_diplicate->execute();
+        
+        $check_diplicate->store_result(); 
+
+        if($check_diplicate->num_rows > 0){
+            $check_diplicate->close();
+            $_SESSION['error'] = "Technical Error, Please Try again";
+            header("location:admin/reservation_add.php");
+            exit(); 
+        }
+        
+        $check_diplicate->close();
+
+
+        $insert = $conn2->prepare("
+            INSERT INTO `booking` 
+            (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+
+        
+        $insert->bind_param("sssssssss", 
+            $b_id, 
+            $date_to_save, 
+            $date_to_save, 
+            $start_time_data, 
+            $end_time_data, 
+            $final_name, 
+            $meeting_title, 
+            $room_id, 
+            $occupied
+        );
+
+        // I-execute ang insert
+        $insert->execute();
+
+
+        $current_date->modify('+1 day');
+    }
+
+   unset($_SESSION['room_name_admin'], $_SESSION['start_date_admin'], $_SESSION['end_date_admin'], $_SESSION['start_time_admin'], $_SESSION['end_time_admin'], $_SESSION['fullname_admin'], $_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin'],$_SESSION['checkbox_admin'],$_SESSION['booked_details_admin']);
+    $_SESSION['success'] = "Booking saved for all selected dates!";
     header("location:admin/reservations.php");
     exit();
 }
-        
+///////////////////////////////////////////////////////////////////////////////////////////
 
+
+    if($errors_found){
+        header("location:admin/reservation_add.php");
+        exit();
+    }
+
+}
+
+
+if(isset($_POST['sigout_superadmin'])){
+     // Invalidate token in DB if session is active
+    if (isset($_SESSION['superadmin_login'])) {
+        $stmt = $conn2->prepare("UPDATE accounts SET remember_token = NULL WHERE employee_id = ?");
+        $stmt->bind_param("i", $admin_id);
+        $stmt->execute();
+    }
+
+    // Clear session
+    $_SESSION = array();
+
+    // Clear session cookie
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+
+    // Clear remember_token cookie
+    setcookie("remember_token", "", time() - 3600, "/", "", false, true); // HttpOnly
+
+
+    unset($_SESSION['superadmin_login']);
+
+    // Destroy session
+    session_destroy();
+
+    // Redirect
+    header("location:index.php");
+    exit();
 }
 
 ?>

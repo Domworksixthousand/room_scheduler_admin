@@ -70,7 +70,7 @@
               <div class="job"><?php echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
               <div class="job">Admin</div>
             </div>
-            <a href="logout.php?location_back=rooms.php"><i class="bx bx-log-out"></i></a>
+            <a href="logout.php?location_back=history.php"><i class="bx bx-log-out"></i></a>
           </div>
         </li>
       </ul>

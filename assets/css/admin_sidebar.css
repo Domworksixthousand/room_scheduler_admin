@@ -236,12 +236,12 @@
 
 .main_content {
   position: relative;
-  background: #e4e9f7;
-  background: cover;
-  height: 100vh;
+  background-color: #e4e9f7; 
+  min-height: 100vh;        
   left: 260px;
   width: calc(100% - 260px);
   transition: all 0.5s ease;
+  overflow-y: auto; 
 }
 
 .sidebar.close ~ .main_content {
@@ -270,11 +270,6 @@
   font-weight: 600;
 }
 
-@media(max-width:761px){
-  .main_content {
-      height: 160vh;
-    }
-}
 
 @media (max-width: 420px) {
   .sidebar.close .nav-links li .sub-menu {

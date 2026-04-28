@@ -24,9 +24,9 @@ include 'floors.php';
             <div class="modal fade" id="modal_system" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog ">
                     <div class="modal-content">
-                    <div class="modal-header border-0">
+                    <div class="modal-header border-0 d-flex justify-content-between">
                         <p class="modal-title fs-5 fw-bold" id="staticBackdropLabel">Update Floors</p>
-                        <button type="button" onclick="location.href='floors.php'"   class="btn btn-close  me-2 "  data-bs-dismiss="modal" aria-label="Close"></button>
+                        <a href="floors.php" class=" btn_x "><i class="bx bx-x"></i></a>
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="floor_id" value="<?php echo htmlspecialchars($floor_id);  ?>" readonly>

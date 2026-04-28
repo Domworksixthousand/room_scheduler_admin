@@ -40,6 +40,7 @@ body {
   border-right: 1px solid #E2E8F0;
   box-shadow: 0 3px 9px  rgba(0, 0, 0, 0.3);
   transition: width 0.4s ease;
+  z-index: 100;
 }
 
 .sidebar.collapsed {
@@ -123,7 +124,7 @@ body {
 
 .sidebar-content .menu-list {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   list-style: none;
   flex-direction: column;
 }
@@ -131,18 +132,19 @@ body {
 .menu-list .menu-link {
   display: flex;
   gap: 12px;
-  margin-bottom:20px;
-  padding:10px 35px 10px 10px;
+  margin-bottom:10px;
+  padding:10px 10px 4px 10px;
   white-space: nowrap;
   border-radius: 8px;
   text-decoration: none;
   color: white;
   transition: 0.3s ease;
-  transform:translateX(-10px);
+  transform: translateX(-10px);
 }
 
 .menu-link .menu-label {
   transition: opacity 0.3s ease;
+  font-size:1rem;
 }
 
 .sidebar.collapsed .menu-link .menu-label {
@@ -152,8 +154,13 @@ body {
 
 .menu-list .menu-link:is(:hover, .active) {
   color: #fff;
-  position: relative;
   background: #121ab9 ;
+  padding-right:35px;
+  position: relative;
+}
+
+.menu-item i{
+  font-size: 1.5rem;
 }
 
 .site-nav {
@@ -163,6 +170,7 @@ body {
   position: sticky;
   background: #0F1595;
   border-bottom: 1px solid  #3B475C;
+  z-index: 10;
 }
 
 .site-nav .sidebar-toggle {

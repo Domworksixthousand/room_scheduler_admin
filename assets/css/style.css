@@ -185,7 +185,7 @@ body{
     background: var(--card-bg, #fff);
     border: 1px solid var(--border-color, #e3e6f0);
     border-radius: var(--border-radius, 8px);
-    padding: 20px;
+    padding: 20px 20px 0 20px;
     height: 100%;
     transition: transform 0.2s ease;
     z-index:0;
@@ -226,40 +226,40 @@ body{
     background:#177ee6;
     padding: 20px;
     border-radius: 10px;
-    width:80px;
-    height:80px;
+    width:60px;
+    height:60px;
 }
 
 .dashboard_superadmin_section .right_first_row img{
     background: #d90d4e;
     padding: 20px;
     border-radius: 10px;
-    width:80px;
-    height:80px;
+    width:60px;
+    height:60px;
 }
 
 .dashboard_superadmin_section .second_row_first img{
     background: #4cb04f;
     padding: 20px;
     border-radius: 10px;
-    width:80px;
-    height:80px;
+    width:60px;
+    height:60px;
 }
 
 .dashboard_superadmin_section .left_third_row img{
     background: #4c5cb0;
     padding: 20px;
     border-radius: 10px;
-    width:80px;
-    height:80px;
+    width:60px;
+    height:60px;
 }
 
 .dashboard_superadmin_section .right_third_row img{
     background: #f7a539;
     padding: 20px;
     border-radius: 10px;
-    width:80px;
-    height:80px;
+    width:60px;
+    height:60px;
 }
 
 .dashboard_superadmin_section .left_first_row .box,
@@ -283,6 +283,33 @@ body{
     border-radius:18px;
 }
 
+.history_superadmin_section th,
+.reservation_superadmin_section th{
+    text-align: center;
+    background: #0F1595 !important;
+    color:white !important;
+}
+
+.history_superadmin_section td,
+.reservation_superadmin_section td{
+    text-align: center;
+}
+
+.reservation_superadmin_section .btn_add{
+    background: #0F1595 !important;
+}
+
+.reservation_superadmin_section .btn_add {
+    color:white;
+    display: flex;
+    gap:5px;
+}
+
+.reservation_superadmin_section .btn_add:hover{
+    background:#4549ac !important;
+    color:white;
+}
+
 /**/
 
 /*admin style*/
@@ -298,7 +325,7 @@ body{
     background: var(--card-bg, #fff);
     border: 1px solid var(--border-color, #e3e6f0);
     border-radius: var(--border-radius, 8px);
-    padding: 20px;
+    padding: 20px 20px 0 20px;
     height: 100%;
     transition: transform 0.2s ease;
 }
@@ -347,40 +374,40 @@ body{
     background:#177ee6;
     padding: 20px;
     border-radius: 10px;
-    width:80px;
-    height:80px;
+    width:60px;
+    height:60px;
 }
 
 .dashboard_admin_section .right_first_row img{
     background: #d90d4e;
     padding: 20px;
     border-radius: 10px;
-    width:80px;
-    height:80px;
+    width:60px;
+    height:60px;
 }
 
 .dashboard_admin_section .second_row_first img{
     background: #4cb04f;
     padding: 20px;
     border-radius: 10px;
-    width:80px;
-    height:80px;
+    width:60px;
+    height:60px;
 }
 
 .dashboard_admin_section .left_third_row img{
     background: #4c5cb0;
     padding: 20px;
     border-radius: 10px;
-    width:80px;
-    height:80px;
+    width:60px;
+    height:60px;
 }
 
 .dashboard_admin_section .right_third_row img{
     background: #f7a539;
     padding: 20px;
     border-radius: 10px;
-    width:80px;
-    height:80px;
+    width:60px;
+    height:60px;
 }
   
 .dashboard_admin_section .text_header,
@@ -470,7 +497,9 @@ body{
     padding:30px;
 }
 
-.room_add_section .inner_body{
+.room_add_section .inner_body,
+.floor_update_section .inner_body,
+.room_update_section .inner_body{
     background: white;
     padding: 26px;
     border-radius: 16px;
@@ -478,7 +507,11 @@ body{
 
 .room_add_section input,
 .room_add_section textarea,
-.room_add_section select{
+.room_add_section select,
+.floor_update_section input,
+.room_update_section input,
+.room_update_section select,
+.room_update_section textarea{
     background: #f0f0f0;
 }
 
@@ -556,6 +589,10 @@ body{
 .floor_add_section .btn_save i,
 .room_add_section i{
     transform: translateY(5px);
+}
+
+.floor_update_section i{
+    transform: translateY(px);
 }
 
 .floor_add_section .btn_save:hover,

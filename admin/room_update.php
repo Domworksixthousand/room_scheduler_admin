@@ -34,44 +34,46 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="room_id" value="<?php echo htmlspecialchars($room_id); ?>" readonly>
-                        <div class="mb-0 row">
-                            <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
-                                <label for="room_name" class="form-label">Room Name</label>
-                                <input type="text" class="form-control uppercase_function" name="room_name" value="<?php echo htmlspecialchars($room_name); ?>" placeholder="Enter Floor Name"  required>
+                        <div class="inner_body shadow-lg">
+                            <div class="mb-0 row">
+                                <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
+                                    <label for="room_name" class="form-label">Room Name</label>
+                                    <input type="text" class="form-control uppercase_function" name="room_name" value="<?php echo htmlspecialchars($room_name); ?>" placeholder="Enter Floor Name"  required>
+                                </div>
+                                <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
+                                    <label for="serial_numnber" class="form-label">Serial Number</label>
+                                    <input type="text" class="form-control" name="serial_number" value="<?php echo htmlspecialchars($serial_number); ?>" placeholder="Enter Serial Number "  required>
+                                </div>
                             </div>
-                            <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
-                                <label for="serial_numnber" class="form-label">Serial Number</label>
-                                <input type="text" class="form-control" name="serial_number" value="<?php echo htmlspecialchars($serial_number); ?>" placeholder="Enter Serial Number "  required>
-                            </div>
-                        </div>
-                        <div class="mb-0 row">
-                            <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
-                                <label for="floor" class="form-label">Floor</label>
-                                <select name="floor" id="floor" class="form-control">
-                                    <option value="<?php echo  htmlspecialchars($floor_id) ?? 'Select Floor'; ?>"><?php echo  htmlspecialchars($floor_name) ?? 'Select Floor'; ?></option>
-                                    <?php
-                                        $floor_get = $conn2->prepare("SELECT * FROM `floors`");
-                                        $floor_get->execute();
-                                        $get_floor = $floor_get->get_result();
-                                        if($get_floor->num_rows>0){
-                                            while($row_floor = $get_floor->fetch_assoc()){
-                                                $floor_name = htmlspecialchars($row_floor['floor_name'] ?? '');
-                                                $floor_id = htmlspecialchars($row_floor['floor_id'] ?? '');
-                                                
-                                                echo "<option value='$floor_id'>$floor_name</option>";
+                            <div class="mb-0 row">
+                                <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
+                                    <label for="floor" class="form-label">Floor</label>
+                                    <select name="floor" id="floor" class="form-control">
+                                        <option value="<?php echo  htmlspecialchars($floor_id) ?? 'Select Floor'; ?>"><?php echo  htmlspecialchars($floor_name) ?? 'Select Floor'; ?></option>
+                                        <?php
+                                            $floor_get = $conn2->prepare("SELECT * FROM `floors`");
+                                            $floor_get->execute();
+                                            $get_floor = $floor_get->get_result();
+                                            if($get_floor->num_rows>0){
+                                                while($row_floor = $get_floor->fetch_assoc()){
+                                                    $floor_name = htmlspecialchars($row_floor['floor_name'] ?? '');
+                                                    $floor_id = htmlspecialchars($row_floor['floor_id'] ?? '');
+                                                    
+                                                    echo "<option value='$floor_id'>$floor_name</option>";
+                                                }
                                             }
-                                        }
-                                    ?>
-                                </select>
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
+                                    <label for="capacity" class="form-label">Capacity</label>
+                                    <input type="text" class="form-control" id="capacity" name="capacity" value="<?php echo htmlspecialchars($capacity); ?>" placeholder="Enter Capacity"    required>
+                                </div>
                             </div>
-                            <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
-                                <label for="capacity" class="form-label">Capacity</label>
-                                <input type="text" class="form-control" id="capacity" name="capacity" value="<?php echo htmlspecialchars($capacity); ?>" placeholder="Enter Capacity"    required>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description / Amenities</label>
+                                <textarea name="description" class="form-control" id="description" placeholder="Type Your Text Here.."><?php echo htmlspecialchars($description); ?></textarea>
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description / Amenities</label>
-                            <textarea name="description" class="form-control" id="description" placeholder="Type Your Text Here.."><?php echo htmlspecialchars($description); ?></textarea>
                         </div>
                     </div>
                     <div class="modal-footer border-0">

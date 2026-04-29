@@ -30,18 +30,20 @@ include 'floors.php';
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="floor_id" value="<?php echo htmlspecialchars($floor_id);  ?>" readonly>
-                        <div class="mb-3">
-                            <label for="floor_name" class="form-label">Floor Name</label>
-                            <input type="text" class="form-control" id="floor_name" name="floor_name" value="<?php echo htmlspecialchars($floor_name); ?>" placeholder="Enter Floor Name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="number_of_rooms" class="form-label">Number of Rooms</label>
-                            <input type="text" class="form-control" name="number_of_rooms" value="<?php echo htmlspecialchars($rooms_number); ?>" placeholder="Enter Number of Rooms" id="number_of_rooms" required>
+                        <div class="inner_body shadow-lg">
+                            <div class="mb-3">
+                                <label for="floor_name" class="form-label">Floor Name</label>
+                                <input type="text" class="form-control" id="floor_name" name="floor_name" value="<?php echo htmlspecialchars($floor_name); ?>" placeholder="Enter Floor Name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="number_of_rooms" class="form-label">Number of Rooms</label>
+                                <input type="text" class="form-control" name="number_of_rooms" value="<?php echo htmlspecialchars($rooms_number); ?>" placeholder="Enter Number of Rooms" id="number_of_rooms" required>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer border-0">
                     <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-                      <button type="submit" name="floors_update" class="btn btn_update"> Update</button>
+                      <button type="submit" name="floors_update" class="btn btn_update"> Update <i class='bx bx-edit fs-5'></i></button>
                     </div>
                     </div>
                 </div>

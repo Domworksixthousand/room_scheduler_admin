@@ -131,7 +131,7 @@
                                 <div id="custom_container">
                                 <!--show data-->
                                 </div>
-                            </div>  
+                            </div>
                             <div class="row mb-0">
                                 <div class="col-lg-6 mb-4">
                                     <label for="fullname" class="form-label">Full Name</label>

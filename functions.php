@@ -184,20 +184,31 @@ if(isset($_POST['floors_save'])){
 }
 
 
-/*
+
 if(isset($_POST['delete_floor'])){
     $floor_id = htmlspecialchars($_POST['floor_id'] ?? '');
 
+    $delete_all = $conn2->prepare("
+    DELETE r, b 
+    FROM rooms r
+    LEFT JOIN booking b ON r.room_id = b.room_id 
+    WHERE r.floor_id = ?
+    ");
+    $delete_all->bind_param("s", $floor_id);
+    $delete_all->execute();
 
     $delete = $conn2->prepare("DELETE FROM `floors` WHERE `floor_id` = ?");
-    $delete->bind_param("i",$floor_id);
-    $delete->execute();
-    
-    $delete_room = $conn2->prepare("DELETE FROM `floors` WHERE `floor_id` = ?");
-    $delete->bind_param("i",$floor_id);
+    $delete->bind_param("s",$floor_id);
     $delete->execute();
 
-}*/
+
+    $_SESSION['success'] = "Successfully Deleted";
+    header("location:admin/floors.php");
+    exit();
+    
+   
+
+}
 
 
 if(isset($_POST['floors_update'])){
@@ -332,6 +343,10 @@ if(isset($_POST['room_update'])){
 if(isset($_POST['delete_room'])){
     $room_id = htmlspecialchars($_POST['room_id'] ?? '');
 
+    $delete_booking = $conn2->prepare("DELETE  FROM booking WHERE `room_id` = ?");
+    $delete_booking->bind_param("s",$room_id);
+    $delete_booking->execute();
+
     $delete = $conn2->prepare("DELETE FROM `rooms` WHERE `room_id` = ?");
     $delete->bind_param("s",$room_id);
     $delete->execute();
@@ -352,11 +367,58 @@ if(isset($_POST['cancel_booking'])){
     $update->execute();
 
     $_SESSION['success'] = "Successfully Cancelled";
-    header("location:admin/reservations.php");
-    exit();
+
+    if($_SESSION['superadmin_login']){
+        header("location:super_admin/reservations.php");
+        exit();
+    }elseif($_SESSION['admin_login']){
+        header("location:admin/reservations.php");
+        exit();
+    }else{
+        header('Location: index.php');
+        exit();
+    }
+   
 }
 
 
+
+
+
+
+if(isset($_POST['sigout_superadmin'])){
+     // Invalidate token in DB if session is active
+    if (isset($_SESSION['superadmin_login'])) {
+        $stmt = $conn2->prepare("UPDATE accounts SET remember_token = NULL WHERE employee_id = ?");
+        $stmt->bind_param("i", $admin_id);
+        $stmt->execute();
+    }
+
+    // Clear session
+    $_SESSION = array();
+
+    // Clear session cookie
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+
+    // Clear remember_token cookie
+    setcookie("remember_token", "", time() - 3600, "/", "", false, true); // HttpOnly
+
+
+    unset($_SESSION['superadmin_login']);
+
+    // Destroy session
+    session_destroy();
+
+    // Redirect
+    header("location:index.php");
+    exit();
+}
 
 
 if(isset($_POST['reservation_save'])){
@@ -393,6 +455,10 @@ if(isset($_POST['reservation_save'])){
     $_SESSION['meeting_title_admin'] = $meeting_title;
     $_SESSION['custom_fullname_admin'] = $custom_fullname;
     $_SESSION['checkbox_admin'] = $checkbox;
+
+
+
+    $folder = ($_SESSION['admin_login']) ? 'admin' : 'super_admin';
 
     $_SESSION['booked_details_admin'] = [];
     if (!empty($custom_start)) {
@@ -476,8 +542,8 @@ if(isset($_POST['reservation_save'])){
 
             if($check_diplicate->num_rows > 0){
                 $_SESSION['error'] = "Technical Error, Please Try again";
-                header("location:admin/reservation_add.php");
-                exit(); 
+                header("location:$folder/reservation_add.php");
+                exit();
             }
             $check_diplicate->close();
 
@@ -489,9 +555,9 @@ if(isset($_POST['reservation_save'])){
         }
 
         // CLEAR SESSIONS
-        unset($_SESSION['room_name_admin'], $_SESSION['start_date_admin'], $_SESSION['end_date_admin'], $_SESSION['start_time_admin'], $_SESSION['end_time_admin'], $_SESSION['fullname_admin'], $_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin'],$_SESSION['checkbox_admin'],$_SESSION['booked_details_admin'],$_SESSION['booked_details_admin']);
+        unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['fullname_admin'],$_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin']);
         $_SESSION['success'] = "All schedules saved successfully!";
-        header("location:admin/reservations.php");
+        header("location:$folder/reservations.php");
         exit();
     } 
     
@@ -545,8 +611,8 @@ if(!$errors_found && $checkbox === "no" && $start_date === $end_date){
 
     if($check_diplicate->num_rows > 0){
         $_SESSION['error'] = "Technical Error, Please Try again";
-        header("location:admin/reservation_add.php");
-        exit(); 
+        header("location:$folder/reservation_add.php");
+        exit();
     }
     
     $check_diplicate->close();
@@ -556,15 +622,11 @@ if(!$errors_found && $checkbox === "no" && $start_date === $end_date){
     
     if($insert->execute()){
         $insert->close();
-        unset($_SESSION['room_name_admin'], $_SESSION['start_date_admin'], $_SESSION['end_date_admin'], $_SESSION['start_time_admin'], $_SESSION['end_time_admin'], $_SESSION['fullname_admin'], $_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin'],$_SESSION['checkbox_admin'],$_SESSION['booked_details_admin']);
+        unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['fullname_admin'],$_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin']);
         $_SESSION['success'] = "Schedules saved successfully!";
-        header("location:admin/reservations.php");
+        header("location:$folder/reservations.php");
         exit();
-    } else {
-        $_SESSION['error'] = "Database Error: Please try again.";
-        header("location:admin/reservation_add.php");
-        exit();
-    }
+    } 
 }
 ////////////////////////////////////////////////////////////////////////////
 
@@ -578,7 +640,7 @@ $current_date = new DateTime($start_date);
 $last_date = new DateTime($end_date);
 $datetocheck = $current_date->format('Y-m-d');
 
-while ($current_date <= $last_date) {
+    while ($current_date <= $last_date) {
     $date_to_check = $current_date->format('Y-m-d');
 
     if($start_time_data >= $end_time_data){
@@ -621,6 +683,7 @@ while ($current_date <= $last_date) {
 }
 
 
+
 if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
 
     $current_date = new DateTime($start_date);
@@ -642,8 +705,8 @@ if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
         if($check_diplicate->num_rows > 0){
             $check_diplicate->close();
             $_SESSION['error'] = "Technical Error, Please Try again";
-            header("location:admin/reservation_add.php");
-            exit(); 
+            header("location:$folder/reservation_add.php");
+            exit();
         }
         
         $check_diplicate->close();
@@ -675,54 +738,22 @@ if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
         $current_date->modify('+1 day');
     }
 
-   unset($_SESSION['room_name_admin'], $_SESSION['start_date_admin'], $_SESSION['end_date_admin'], $_SESSION['start_time_admin'], $_SESSION['end_time_admin'], $_SESSION['fullname_admin'], $_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin'],$_SESSION['checkbox_admin'],$_SESSION['booked_details_admin']);
+  unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['fullname_admin'],$_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin']);
     $_SESSION['success'] = "Booking saved for all selected dates!";
-    header("location:admin/reservations.php");
+    header("location:$folder/reservations.php");
     exit();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 
     if($errors_found){
-        header("location:admin/reservation_add.php");
+        header("location:$folder/reservation_add.php");
+        exit();
+    }else{
+        header("location:$folder/reservation.php");
         exit();
     }
 
-}
-
-
-if(isset($_POST['sigout_superadmin'])){
-     // Invalidate token in DB if session is active
-    if (isset($_SESSION['superadmin_login'])) {
-        $stmt = $conn2->prepare("UPDATE accounts SET remember_token = NULL WHERE employee_id = ?");
-        $stmt->bind_param("i", $admin_id);
-        $stmt->execute();
-    }
-
-    // Clear session
-    $_SESSION = array();
-
-    // Clear session cookie
-    if (ini_get("session.use_cookies")) {
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $params["path"], $params["domain"],
-            $params["secure"], $params["httponly"]
-        );
-    }
-
-    // Clear remember_token cookie
-    setcookie("remember_token", "", time() - 3600, "/", "", false, true); // HttpOnly
-
-
-    unset($_SESSION['superadmin_login']);
-
-    // Destroy session
-    session_destroy();
-
-    // Redirect
-    header("location:index.php");
-    exit();
 }
 
 ?>

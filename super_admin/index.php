@@ -67,7 +67,7 @@
                     <span class="menu-label">Reservations</span>
                     </a>
                 </li>
-                <li class="menu-item" >
+                  <li class="menu-item" >
                     <a href="logout.php?location_back=index.php" class="menu-link">
                         <span class="material-symbols-rounded "><i class='bx bx-log-out fs-4'></i></span>
                         <span class="menu-label">Sign Out</span>
@@ -84,7 +84,7 @@
                 <h2 class="page-title"> Dashboard</h2>
             </div>
         </div>
-        <section class="dashboard_superadmin_section">
+          <section class="dashboard_superadmin_section">
             <div class="container">
                 
                 <div class="row">
@@ -198,23 +198,23 @@
              <div class="container">
             <div class="inner_graph">
               <h3 class="text-center fw-bold mb-5">Daily, Weekly, Montly, Yearly Booked Chart</h3>
-              <form action="" method="GET" id="filterForm">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <select name="view" class="form-control mb-3" onchange="this.form.submit()">
-                            <option value="daily" <?php echo ($_GET['view'] ?? '') == 'daily' ? 'selected' : ''; ?>>Daily</option>
-                            <option value="weekly" <?php echo ($_GET['view'] ?? '') == 'weekly' ? 'selected' : ''; ?>>Weekly</option>
-                            <option value="monthly" <?php echo ($_GET['view'] ?? '') == 'monthly' ? 'selected' : ''; ?>>Monthly</option>
-                            <option value="yearly" <?php echo ($_GET['view'] ?? '') == 'yearly' ? 'selected' : ''; ?>>Yearly</option>
-                        </select>
+                <form action="" method="GET" id="filterForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <select name="view" class="form-control mb-3" onchange="this.form.submit()">
+                                <option value="daily" <?php echo ($_GET['view'] ?? '') == 'daily' ? 'selected' : ''; ?>>Daily</option>
+                                <option value="weekly" <?php echo ($_GET['view'] ?? '') == 'weekly' ? 'selected' : ''; ?>>Weekly</option>
+                                <option value="monthly" <?php echo ($_GET['view'] ?? '') == 'monthly' ? 'selected' : ''; ?>>Monthly</option>
+                                <option value="yearly" <?php echo ($_GET['view'] ?? '') == 'yearly' ? 'selected' : ''; ?>>Yearly</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input type="month" name="month" class="form-control" value="<?php echo $_GET['month'] ?? date('Y-m'); ?>" onchange="this.form.submit()">
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="month" name="month" class="form-control" value="<?php echo $_GET['month'] ?? date('Y-m'); ?>" onchange="this.form.submit()">
-                    </div>
-                </div>
-              </form>
-              <?php
-              
+                </form>
+                 <?php
+               
                 $view = $_GET['view'] ?? 'daily';
                 $month_filter = $_GET['month'] ?? date('Y-m');
 
@@ -264,19 +264,20 @@
                 $js_occupied = json_encode($status_data['Occupied']);
                 $js_cancelled = json_encode($status_data['Cancelled']);
               ?>
-              <div id="chart" class="chart"></div>
+             <div id="chart" class="chart"></div>
             </div>
           </div>
         </section>
     </div>
 </div>
 
-
+<script src="../assets/js/jquery.js"></script>
 <script src="../assets/js/chart.js"></script>
 <script src="../assets/js/cool_alert.js"></script>
 <script src="../assets/js/box_icons.js"></script>
 <script src="../assets/js/script.js"></script>
 <script src="../assets/js/boostrap.js"></script>
-<?php include '../admin/chart.php'; ?>
+<?php include '../chart.php';?>
 </body>
 </html>
+

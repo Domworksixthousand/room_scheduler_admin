@@ -3,7 +3,7 @@
     include "$location_back";
 ?>
 
-<form action="../functions.php" method="POST" id="assignForm">
+<form action="./../functions.php" method="POST" id="assignForm">
     <input type="hidden" name="sigout_superadmin" value="1">
 </form>
 

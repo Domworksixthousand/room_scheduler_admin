@@ -86,39 +86,38 @@
         <section class="history_admin_section">
           <div class="container">
             <h2 class="text_header">History </h2>
-            <div class="inner_con">
-              
-                <div class="d-flex gap-2 mb-4">
-              <input type="search" class="form-control" id="input_history" placeholder="Search Date,Meeting Title,Room Name...">
-            </div>
+            <div class="inner_con"> 
+              <div class="d-flex gap-2 mb-4">
+                <input type="search" class="form-control" id="input_history" placeholder="Search Date,Meeting Title,Room Name...">
+              </div>
 
-            <div class="overflow-auto">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Meeting Title</th>
-                    <th>Employee</th>
-                    <th>Room Name</th>
-                    <th>Floor Name</th>
-                    <th>Cancelled At</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="history_body">
-                  <!--data-->
-                </tbody>
-              </table>
-            </div>
+              <div class="overflow-auto">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Time</th>
+                      <th>Meeting Title</th>
+                      <th>Employee</th>
+                      <th>Room Name</th>
+                      <th>Floor Name</th>
+                      <th>Cancelled At</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="history_body">
+                    <!--data-->
+                  </tbody>
+                </table>
+              </div>
 
-            <div class="d-flex justify-content-end align-items-end">
-              <nav aria-label="Page navigation">
-                <ul class="pagination" id="history_paginatiom">
-                  <!--data-->
-                </ul>
-              </nav>
-            </div>
+              <div class="d-flex justify-content-end align-items-end">
+                <nav aria-label="Page navigation">
+                  <ul class="pagination" id="history_paginatiom">
+                    <!--data-->
+                  </ul>
+                </nav>
+              </div>
 
             </div>
           </div>

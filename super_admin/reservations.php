@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
   </head>
   <body>
-
+<?php include '../loading_animation.php'; ?>
 <!-- Navbar -->
 <nav class="site-nav">
     <button class="sidebar-toggle">
@@ -34,7 +34,7 @@
      <aside class="sidebar collapsed">
         <!-- Sidebar header -->
         <div class="sidebar-header">
-            <img src="../assets/images/fs_logo.jpg" alt="CodingNepal" class="header-logo" />
+            <img src="../assets/images/fs_logo.jpg" alt="" class="header-logo" />
             <button class="sidebar-toggle">
             <span class="material-symbols-rounded"><img src="../assets/images/menu_icon.png" alt=""></span>
             </button>
@@ -94,15 +94,15 @@
                     <table class="table">
                     <thead>
                         <tr>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Meeting Title</th>
-                        <th>Employee</th>
-                        <th>Room Name</th>
-                        <th>Floor Name</th>
-                        <th>Status</th>
-                        <th>Cancelled At</th>
-                        <th>Actions</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Meeting Title</th>
+                            <th>Employee</th>
+                            <th>Room Name</th>
+                            <th>Floor Name</th>
+                            <th>Status</th>
+                            <th>Cancelled At</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="superadmin_reservation_body">

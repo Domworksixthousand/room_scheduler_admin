@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="../assets/css/sidebar_superadmin.css">
   </head>
   <body>
-
+<?php include '../loading_animation.php'; ?>
 <!-- Navbar -->
 <nav class="site-nav">
     <button class="sidebar-toggle">
@@ -33,7 +33,7 @@
     <aside class="sidebar collapsed">
         <!-- Sidebar header -->
         <div class="sidebar-header">
-            <img src="../assets/images/fs_logo.jpg" alt="CodingNepal" class="header-logo" />
+            <img src="../assets/images/fs_logo.jpg" alt="" class="header-logo" />
             <button class="sidebar-toggle">
             <span class="material-symbols-rounded"><img src="../assets/images/menu_icon.png" alt=""></span>
             </button>

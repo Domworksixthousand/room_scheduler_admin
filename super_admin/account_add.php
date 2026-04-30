@@ -1,21 +1,6 @@
 <?php include 'accounts.php'; ?>
 
 
-<style>
-    .assign_account_section .modal-body{
-        padding:20px;
-        background:white;
-    }
-    .assign_account_section .inner_body{
-         background: white;
-    padding: 26px;
-    border-radius: 16px;
-    }
-
-    .assign_account_section input{
-        background: #f0f0f0;
-    }
-</style>
 
 <main >
     <section class="assign_account_section" >

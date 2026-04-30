@@ -20,6 +20,7 @@
   if(!isset($_SESSION['admin_login'])){
     echo "<script>location.href='../index.php';</script>";
   }
+  include '../loading_animation.php';
  ?>
 
 

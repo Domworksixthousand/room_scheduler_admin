@@ -19,7 +19,7 @@
     echo "<script>location.href='../index.php';</script>";
     exit;
   }
-
+  include '../loading_animation.php';
 ?>
 
 

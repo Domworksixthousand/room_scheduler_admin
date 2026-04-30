@@ -1,5 +1,15 @@
 
-
+window.addEventListener("load", function() {
+    const preloader = document.getElementById("preloader");
+    
+    // Smooth transition paalis
+    preloader.style.transition = "opacity 0.6s ease-in-out";
+    preloader.style.opacity = "0";
+    
+    setTimeout(() => {
+        preloader.style.display = "none";
+    }, 600);
+});
 
 //modal show
 document.addEventListener("DOMContentLoaded", ()=> {
@@ -606,6 +616,8 @@ $(document).ready(function() {
         container.appendChild(div);
     }
 });
+
+
 
 //superadmin
 /*

@@ -15,6 +15,7 @@
     <title>Farmstation.ph</title>
 </head>
 <body>
+<?php include 'loading_animation.php'; ?>
 
 
 <main>
@@ -37,17 +38,17 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <button type="submit" name="login" class="btn btn_login w-100">Login</button>
+                    <button type="submit" name="login" class="btn btn_login w-100">SIGN IN</button>
                 </div>
             </form>
         </div>
     </section>
 </main>
 
-
-<script src="assets/js/cool_alert.js"></script>
 <script src="assets/js/script.js"></script>
+<script src="assets/js/cool_alert.js"></script>
 <script src="assets/js/boostrap.js"></script>
 <?php include 'alert.php'; ?>
 </body>
 </html>
+

@@ -44,7 +44,6 @@ if(isset($_POST['delete_account'])){
     $_SESSION['success'] = "Successfully Deleted";
     header("location:super_admin/accounts.php");
     exit();
-
 }
 
 

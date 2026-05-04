@@ -23,6 +23,88 @@
 ?>
 
 
+<style>
+.room_admin_section .card{
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+.room_admin_section .card:hover{
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.room_admin_section .card img{
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 13px;
+    border-top-right-radius: 13px;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+}
+
+.room_admin_section .card img:hover{
+    transform: scale(1.1);
+}
+
+.room_admin_section .floor_name{
+  font-size: 12px;
+}
+    
+.room_admin_section .card{
+  border-radius: 13px;
+}
+.room_admin_section .buttton_actions {
+  display: flex;
+  gap:10px;
+}
+
+.room_admin_section .card .btn_reserve{
+  font-weight:900;
+  padding:10px;
+  border-radius: 10px;
+  color:white;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
+ background: #0F1595;
+}
+
+.room_admin_section .card .btn_reserve:hover{
+ background: #141cc3;
+}
+
+.room_admin_section .floor_name {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.buttton_actions{
+    position: absolute;
+    top: 50px;
+    left: 0;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.buttton_actions a{
+  border-radius:50%;
+
+}
+
+.buttton_actions a i{
+  transform: translateY(2px);
+}     
+</style>    
+
 
     <div class="sidebar close">
       <div class="logo-details">
@@ -37,15 +119,15 @@
           </ul>
         </li>
         <li>
-          <a href="rooms.php" class="active"><i class="bx bx-door-open"></i><span class="link_name">Rooms</span></a>
-          <ul class="sub-menu blank">
-            <li><a class="link_name" href="rooms.php">Rooms</a></li>
-          </ul>
-        </li>
-        <li>
           <a href="floors.php"><i class='bx bx-building'></i><span class="link_name">Floors</span></a>
           <ul class="sub-menu blank">
             <li><a class="link_name" href="floors.php">Floors</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="rooms.php" class="active"><i class="bx bx-door-open"></i><span class="link_name">Rooms</span></a>
+          <ul class="sub-menu blank">
+            <li><a class="link_name" href="rooms.php">Rooms</a></li>
           </ul>
         </li>
         <li>
@@ -87,25 +169,9 @@
               <input type="search" class="form-control" id="input_room" placeholder="Search rooms, serials, or floors...">
               <a href="room_add.php" class="btn btn_add">Add <i class="bx bx-plus-circle fs-5"></i></a>
             </div>
-
-            <div class="overflow-auto">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Room Name</th>
-                    <th>Serial Number</th>
-                    <th>Floor</th>
-                    <th>Description</th>
-                    <th>Capacity</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="room_body">
-                  <!--data-->
-                </tbody>
-              </table>
-            </div>
-
+              <div class="row" id="room_body">
+                <!-- rooms -->
+              </div>
             <div class="d-flex justify-content-end align-items-end">
               <nav aria-label="Page navigation">
                 <ul class="pagination" id="pagination_links">
@@ -118,6 +184,8 @@
       </section>
     </div>
 
+
+
     <script src="../assets/js/jquery.js"></script>
     <script src="../assets/js/cool_alert.js"></script>
     <script src="../assets/js/box_icons.js"></script>
@@ -126,4 +194,3 @@
     <?php include '../alert.php'; ?>
   </body>
 </html>
-

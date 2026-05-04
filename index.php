@@ -17,6 +17,9 @@
 <body>
 <?php include 'loading_animation.php'; ?>
 
+<!--wmic bios get serialnumber
+SerialNumber
+9S716R8312058ZR9000394 -->
 
 <main>
     <section class="login_section">

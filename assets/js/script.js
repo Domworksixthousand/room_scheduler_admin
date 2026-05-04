@@ -11,6 +11,28 @@ window.addEventListener("load", function() {
     }, 600);
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('imageInput').addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Update Preview
+            const preview = document.getElementById('previewImage');
+            const icon = document.getElementById('uploadIcon');
+            
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            icon.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+});
+
+
+
+
 //modal show
 document.addEventListener("DOMContentLoaded", ()=> {
     let myModal = new bootstrap.Modal(document.getElementById('modal_system'));
@@ -205,51 +227,69 @@ $(document).ready(function(){
 
 
 //admin room.php
- $(document).ready(function() {
-        let searchTimer;
-        let currentPage = 1;
+$(document).ready(function() {
+    let searchTimer;
+    let currentPage = 1;
 
-        function fetchRooms(page = 1) {
-            const searchTerm = $('#input_room').val();
-            currentPage = page;
+    function fetchRooms(page = 1) {
+        const searchTerm = $('#input_room').val();
+        currentPage = page;
 
-            $.ajax({
-                url: "room_fetch.php",
-                method: "GET",
-                data: { search: searchTerm, page: page },
-                success: function(response) {
-                    const parts = response.split("|||");
-                    $('#room_body').html(parts[0]);
-                    $('#pagination_links').html(parts[1]);
-                },
-                error: function() {
-                    $('#room_body').html("<tr><td colspan='6' class='text-center'>Error loading data.</td></tr>");
-                }
-            });
-        }
+        $.ajax({
+            url: "room_fetch.php",
+            method: "GET",
+            data: { search: searchTerm, page: page },
+            success: function(response) {
+                // --- 1. CLEANUP: Dispose of old tooltips before replacing HTML ---
+                $('.tooltip').remove(); // Force remove any stuck tooltip elements from DOM
+                $('[data-bs-toggle="tooltip"]').each(function() {
+                    const instance = bootstrap.Tooltip.getInstance(this);
+                    if (instance) {
+                        instance.dispose();
+                    }
+                });
 
-        // Live search
-        $('#input_room').on('keyup', function() {
-            clearTimeout(searchTimer);
-            searchTimer = setTimeout(() => fetchRooms(1), 300);
+                const parts = response.split("|||");
+                $('#room_body').html(parts[0]);
+                $('#pagination_links').html(parts[1]);
+
+             
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+            
+             
+            },
+            error: function() {
+                $('#room_body').html("<tr><td colspan='6' class='text-center'>Error loading data.</td></tr>");
+            }
         });
+    }
 
-        // Handle Pagination Clicks
-        $(document).on('click', '.page-link-ajax', function(e) {
-            e.preventDefault();
-            const page = $(this).data('page');
-            fetchRooms(page);
-        });
-
-        // Initial Load
-        fetchRooms();
-        
-        // Optional: Polling
-        setInterval(() => {
-            if ($('#input_room').val() === "") fetchRooms(currentPage);
-        }, 1000); 
+    // Live search
+    $('#input_room').on('keyup', function() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => fetchRooms(1), 300);
     });
 
+    // Handle Pagination Clicks
+    $(document).on('click', '.page-link-ajax', function(e) {
+        e.preventDefault();
+        const page = $(this).data('page');
+        fetchRooms(page);
+    });
+
+    // Initial Load
+    fetchRooms();
+
+    // Polling
+    setInterval(() => {
+ 
+        if ($('#input_room').val() === "") {
+            fetchRooms(currentPage);
+        }
+    }, 5000);
+});
 
     
 //admin reservation
@@ -395,7 +435,6 @@ document.addEventListener("DOMContentLoaded", ()=> {
         }
     });
 });
-
 
 
 

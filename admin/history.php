@@ -41,15 +41,15 @@
           </ul>
         </li>
         <li>
-          <a href="rooms.php" ><i class="bx bx-door-open"></i><span class="link_name">Rooms</span></a>
-          <ul class="sub-menu blank">
-            <li><a class="link_name" href="rooms.php">Rooms</a></li>
-          </ul>
-        </li>
-        <li>
           <a href="floors.php" ><i class='bx bx-building'></i><span class="link_name">Floors</span></a>
           <ul class="sub-menu blank">
             <li><a class="link_name" href="floors.php">Floors</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="rooms.php" ><i class="bx bx-door-open"></i><span class="link_name">Rooms</span></a>
+          <ul class="sub-menu blank">
+            <li><a class="link_name" href="rooms.php">Rooms</a></li>
           </ul>
         </li>
         <li>

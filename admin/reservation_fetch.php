@@ -41,6 +41,7 @@ if($result->num_rows > 0) {
             $hidden_func = "disabled";
         }
         
+        
         echo "<tr>
                 <td><small>{$row['start_date']} to {$row['end_date']}</small></td>
                 <td><small>" . date('h:i A', strtotime($row['start_time'] ?? '')) . " to " . date('h:i A', strtotime($row['end_time'] ?? '')) . "</small></td>

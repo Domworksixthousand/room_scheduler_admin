@@ -1,9 +1,51 @@
-<?php include 'rooms.php'; ?>
+<?php
+
+include 'rooms.php'; 
+
+$img_filename = '';
+$session_prefix = '';
+
+
+if (empty($_SESSION['trash_img'])) {
+    $_SESSION['new_img_session'] = "";
+}
+
+
+$has_session_img = !empty($_SESSION['trash_img']) || !empty($_SESSION['new_img_session']);
+
+if ($has_session_img) {
+
+    $trash_val = $_SESSION['trash_img'] ?? '';
+    $parts = explode('_', $trash_val);
+    $session_prefix = $parts[0] ?? ''; 
+
+  
+    if ($session_prefix === ($admin_id ?? '')) {
+        $img_filename = !empty($_SESSION['trash_img']) ? $_SESSION['trash_img'] : ($_SESSION['new_img_session'] ?? '');
+    }
+}
+
+
+#para sa session kung exist
+if($_SESSION['floor']){
+    $get_data = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_id` = ?");
+    $get_data->bind_param("s",$_SESSION['floor']);
+    $get_data->execute();
+    $result_get = $get_data->get_result();
+    if ($result_get->num_rows > 0) {
+        while ($row_floor = mysqli_fetch_assoc($result_get)) { 
+            $floor_name_data = htmlspecialchars($row_floor['floor_name'] ?? '');         
+        
+        }   
+    }
+}
+?>
+
 
 
 <main >
     <section class="room_add_section" >
-       <form action="../functions.php" method="POST">
+       <form action="../functions.php" method="POST" enctype="multipart/form-data">
             <div class="modal fade" id="modal_system" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -27,7 +69,7 @@
                                 <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
                                     <label for="floor" class="form-label">Floor</label>
                                     <select name="floor" id="floor" class="form-control" required>
-                                        <option  value="<?php echo  $_SESSION['floor'] ?? 'Select Floor'; ?>"><?php echo  $_SESSION['floor'] ?? 'Select Floor'; ?></option>
+                                        <option  value="<?php echo  $_SESSION['floor'] ?? 'Select Floor'; ?>"><?php echo  $floor_name_data ?? 'Select Floor'; ?></option>
                                         <?php
                                             $floor_get = $conn2->prepare("SELECT * FROM `floors`");
                                             $floor_get->execute();
@@ -45,8 +87,24 @@
                                 </div>
                                 <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
                                     <label for="capacity" class="form-label">Capacity</label>
-                                    <input type="text" class="form-control" id="capacity" name="capacity" value="<?php echo $_SESSION['capacity'] ?? ''  ?>" placeholder="Enter Capacity"    required>
+                                    <input type="text" class="form-control" id="capacity" name="capacity" value="<?php echo $_SESSION['capacity'] ?? ''  ?>" placeholder="Enter Capacity" required>
                                 </div>
+                            </div>
+                           <div class="mb-3 ">
+                                <label class="form-label fw-bold">Upload Room Image</label>
+                                <div id="dropZone" class="upload-box border rounded p-4 mb-2 d-flex justify-content-center align-items-center flex-column" 
+                                    style="cursor: pointer; border-style: dashed !important; background:#f0f0f0; min-height: 150px;"
+                                    onclick="document.getElementById('imageInput').click();">
+                                    <i class='bx bx-image-add' id="uploadIcon" 
+                                    style="font-size: 3rem; color:#7d7f81; display: <?= $has_session_img ? 'none' : 'block' ?>;"></i>
+
+                                    <img id="previewImage" 
+                                        src="<?= $has_session_img ? '../assets/trash_images/' . $_SESSION['new_img_session'] : '#' ?>" 
+                                        style="max-width: 100%; max-height: 150px; display: <?= $has_session_img ? 'block' : 'none' ?>; margin: 0 auto;">
+                                    
+                                    <p class="text-muted small mb-0 mt-2">Click to change image</p>
+                            </div>
+                            <input type="file" id="imageInput" accept=".jpg, .jpeg" name="image" style="display: none;">
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description / Amenities</label>

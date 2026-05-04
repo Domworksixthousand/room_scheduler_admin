@@ -70,4 +70,10 @@ date_default_timezone_set("asia/manila");
  $update_automatic = $conn2->prepare("UPDATE `booking` SET `status` = ?  WHERE `status` = ? AND `end_date` <  ? AND `status` = ? ");
  $update_automatic->bind_param("ssss",$status_new,$status_occupied,$datetoday,$status_old);
  $update_automatic->execute();
+
+
+
+
+
+
 ?>

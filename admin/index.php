@@ -42,21 +42,21 @@
             </ul>
           </li>
           <li>
-            <a href="rooms.php">
-              <i class="bx bx-door-open" ></i>
-              <span class="link_name">Rooms</span>
-            </a>
-            <ul class="sub-menu blank">
-              <li><a class="link_name" href="rooms.php">Rooms</a></li>
-            </ul>
-          </li>
-          <li>
             <a href="floors.php">
               <i class='bx bx-building'></i>
               <span class="link_name">Floors</span>
             </a>
             <ul class="sub-menu blank">
               <li><a class="link_name" href="floors.php">Floors</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="rooms.php">
+              <i class="bx bx-door-open" ></i>
+              <span class="link_name">Rooms</span>
+            </a>
+            <ul class="sub-menu blank">
+              <li><a class="link_name" href="rooms.php">Rooms</a></li>
             </ul>
           </li>
           <li>
@@ -99,6 +99,21 @@
           <div class="container">
             <h2 class="text_header">Dashboard </h2>
             <div class="inner_con">
+
+              <div class="row">
+                <div class="col-lg-12 mb-3 left_third_row">
+                  <div class="box" onclick="location.href='rooms.php'">
+                    <img src="../assets/images/meeting_icon.png" alt="Logo">
+                    <div class="details">
+                      <?php
+                         $count_rooms= $conn2->query("SELECT COUNT(*) AS count FROM rooms")->fetch_assoc()['count'];
+                      ?>
+                      <h2 class="fw-bold text-dark"><?php echo $count_rooms; ?></h2>
+                      <p class="text-secondary">Rooms</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div class="row">
                 <div class="col-lg-6 mb-3 left_first_row">
@@ -173,33 +188,6 @@
                       ?>
                       <h2 class="fw-bold text-dark"><?php echo $total_booked_done; ?></h2>
                       <p class="text-secondary">Total Done</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-lg-6 mb-3 left_third_row">
-                  <div class="box" onclick="location.href='rooms.php'">
-                    <img src="../assets/images/meeting_icon.png" alt="Logo">
-                    <div class="details">
-                      <?php
-                         $count_rooms= $conn2->query("SELECT COUNT(*) AS count FROM rooms")->fetch_assoc()['count'];
-                      ?>
-                      <h2 class="fw-bold text-dark"><?php echo $count_rooms; ?></h2>
-                      <p class="text-secondary">Rooms</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-3 right_third_row">
-                 <div class="box" onclick="location.href='floors.php'">
-                    <img src="../assets/images/building_icon.png" alt="Logo">
-                    <div class="details">
-                       <?php
-                         $count_floors = $conn2->query("SELECT COUNT(*) AS count FROM floors")->fetch_assoc()['count'];
-                      ?>
-                      <h2 class="fw-bold text-dark"><?php echo $count_floors; ?></h2>
-                      <p class="text-secondary">Floors</p>
                     </div>
                   </div>
                 </div>

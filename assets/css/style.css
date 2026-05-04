@@ -40,22 +40,21 @@ body{
 
 /*loading animation*/
 #preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-   backdrop-filter: blur(0px) saturate(180%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(0px) saturate(180%);
     -webkit-backdrop-filter: blur(0px) saturate(180%);
     background-color: rgba(0, 0, 0, 0.75);
-    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.125);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  flex-direction: column;
-  gap:10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    flex-direction: column;
+    gap:10px;
 }
 
 
@@ -542,7 +541,6 @@ body{
 }
 
 .floor_admin_section th,
-.room_admin_section th,
 .history_admin_section th,
 .reservation_admin_section th{
     background-color: #0F1595 !important;
@@ -550,7 +548,6 @@ body{
     text-align: center;
 }
 
-.room_admin_section td,
 .floor_admin_section td,
 .history_admin_section td,
 .reservation_admin_section  td{
@@ -607,6 +604,24 @@ body{
 .room_update_section select,
 .room_update_section textarea{
     background: #f0f0f0;
+}
+
+.room_add_section .upload-box.dragover {
+    background-color: #e2e6ea !important;
+    border-color: #0d6efd !important; 
+    color: #0d6efd;
+}
+
+.room_add_section .upload-box.has-image .upload-icon,
+.upload-box.has-image .upload-text {
+    display: none;
+}
+
+.room_add_section #previewImage {
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 8px;
+    display: none; 
 }
 
 .reservation_add_section .checkbox-wrapper input[type="checkbox"] {

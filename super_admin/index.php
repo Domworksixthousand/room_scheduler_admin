@@ -86,6 +86,21 @@
         </div>
           <section class="dashboard_superadmin_section">
             <div class="container">
+
+                <div class="row">
+                  <div class="col-lg-12 mb-3 left_third_row">
+                    <div class="box">
+                      <img src="../assets/images/meeting_icon.png" alt="Logo">
+                      <div class="details">
+                        <?php
+                          $count_rooms= $conn2->query("SELECT COUNT(*) AS count FROM rooms")->fetch_assoc()['count'];
+                        ?>
+                        <h2 class="fw-bold text-dark"><?php echo $count_rooms; ?></h2>
+                        <p class="text-secondary">Rooms</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 
                 <div class="row">
                     <div class="col-lg-6 mb-3 left_first_row">
@@ -160,33 +175,6 @@
                       ?>
                       <h2 class="fw-bold text-dark"><?php echo $total_booked_done; ?></h2>
                       <p class="text-secondary">Total Done</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-lg-6 mb-3 left_third_row">
-                  <div class="box">
-                    <img src="../assets/images/meeting_icon.png" alt="Logo">
-                    <div class="details">
-                      <?php
-                         $count_rooms= $conn2->query("SELECT COUNT(*) AS count FROM rooms")->fetch_assoc()['count'];
-                      ?>
-                      <h2 class="fw-bold text-dark"><?php echo $count_rooms; ?></h2>
-                      <p class="text-secondary">Rooms</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-3 right_third_row">
-                 <div class="box">
-                    <img src="../assets/images/building_icon.png" alt="Logo">
-                    <div class="details">
-                       <?php
-                         $count_floors = $conn2->query("SELECT COUNT(*) AS count FROM floors")->fetch_assoc()['count'];
-                      ?>
-                      <h2 class="fw-bold text-dark"><?php echo $count_floors; ?></h2>
-                      <p class="text-secondary">Floors</p>
                     </div>
                   </div>
                 </div>

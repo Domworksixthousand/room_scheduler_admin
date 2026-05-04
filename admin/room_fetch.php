@@ -35,18 +35,30 @@ if ($result->num_rows > 0) {
         $id = $row['room_id'];
         $desc = htmlspecialchars($row['description'] ?? '');
         $short_desc = (strlen($desc) > 25 ? substr($desc, 0, 25) . '...' : $desc);
-        
-        echo "<tr>
-                <td>".htmlspecialchars($row['room_name'])."</td>
-                <td>".htmlspecialchars($row['serial_number'])."</td>
-                <td>".htmlspecialchars($row['floor_name'])."</td>
-                <td>$short_desc</td>
-                <td>".htmlspecialchars($row['capacity'])."</td>
-                <td>
-                    <a href='room_delete.php?room_id=$id'  class='btn btn-danger btn-sm' ><i class='bx bx-trash'></i> Delete</a>
-                    <a href='room_update.php?room_id=$id' class='btn btn-primary btn-sm'><i class='bx bx-edit'></i> Update</a>
-                </td>
-              </tr>";
+
+       echo '
+            <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                <div class="card border-0 shadow-sm">
+                   <div class="overflow-hidden">
+                     <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" alt="">
+                   </div>
+                    <div class="card-body">
+                        <p class="card-title fw-bold fs-6">'.htmlspecialchars($row['room_name']).'</p>
+                        <p class="card-text text-secondary">'.$short_desc.'</p>
+                        <p class="card-text floor_name "><i class="bx bx-building mt-1"></i> '.htmlspecialchars($row['floor_name']).'</p>
+                        <div class="reservation_bottona">
+                        <a href="reserve.php?room_id='.$id.'" class="btn  btn_reserve btn-sm w-100 "><i class="bx bxs-calendar-check"></i> Book</a>
+                        </div>
+                        <div class="buttton_actions">
+                            <a href="room_delete.php?room_id='.$id.'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Delete" class="btn btn-danger btn-sm w-100"><i class="bx bx-trash "></i> </a>
+                            <a href="room_update.php?room_id='.$id.'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Update" class="btn btn-primary btn-sm w-100"><i class="bx bx-edit "></i> </a>
+                            <a href="room_info.php?room_id='.$id.'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="More Info" class="btn btn-info btn-sm w-100"><i class="bx bx-info-circle text-light"></i> </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       ';
+
             }
         } else {
             echo "<tr><td colspan='6' class='text-center'>No rooms found.</td></tr>";
@@ -69,3 +81,4 @@ if ($result->num_rows > 0) {
             }
         }
         ?>
+

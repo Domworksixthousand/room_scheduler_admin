@@ -127,6 +127,45 @@ if(isset($_POST['sigout_admin'])){
     // Clear remember_token cookie
     setcookie("remember_token", "", time() - 3600, "/", "", false, true); // HttpOnly
 
+  
+
+    #dile image deleter
+    $trash_folder = 'assets/trash_images/';
+
+    if (isset($admin_id) && !empty($admin_id)) {
+        
+
+        $files = glob($trash_folder . '*');
+
+        foreach ($files as $file) {
+            if (is_file($file)) {
+              
+                $basename = basename($file);
+
+                // Hanapin ang position ng unang underscore o hyphen
+                $underscore_pos = strpos($basename, '_');
+                $hyphen_pos = strpos($basename, '-');
+
+                // Tukuyin kung alin ang naunang separator
+                $separator_pos = false;
+                if ($underscore_pos !== false && $hyphen_pos !== false) {
+                    $separator_pos = min($underscore_pos, $hyphen_pos);
+                } else {
+                    $separator_pos = ($underscore_pos !== false) ? $underscore_pos : $hyphen_pos;
+                }
+
+                // Kung may nahanap na separator, kunin ang prefix
+                if ($separator_pos !== false) {
+                    $file_prefix = substr($basename, 0, $separator_pos);
+
+                    // I-compare ang prefix sa admin_id
+                    if ($file_prefix === (string)$admin_id) {
+                        unlink($file); // Dito buburahin ang file
+                    }
+                }
+            }
+        }
+    }
 
     unset($_SESSION['admin_login']);
 
@@ -233,72 +272,96 @@ if(isset($_POST['floors_update'])){
         exit();
     }
 }
-
 if(isset($_POST['room_save'])){
-    $room_name = htmlspecialchars($_POST['room_name'] ?? '');
+ 
+    $room_name     = htmlspecialchars($_POST['room_name'] ?? '');
     $serial_number = htmlspecialchars($_POST['serial_number'] ?? '');
-    $floor = htmlspecialchars($_POST['floor'] ?? '');
-    $capacity = htmlspecialchars($_POST['capacity'] ?? '');
-    $description = htmlspecialchars($_POST['description'] ?? '');
+    $floor         = htmlspecialchars($_POST['floor'] ?? '');
+    $capacity      = htmlspecialchars($_POST['capacity'] ?? '');
+    $description   = htmlspecialchars($_POST['description'] ?? '');
+    
 
-    $room_id = "room" . rand() . uniqid();
-
-    $_SESSION['room_name'] = $room_name;
+    $_SESSION['room_name']     = $room_name;
     $_SESSION['serial_number'] = $serial_number;
-    $_SESSION['floor'] = $floor;
-    $_SESSION['capacity'] = $capacity;
-    $_SESSION['description'] = $description;
+    $_SESSION['floor']         = $floor;
+    $_SESSION['capacity']      = $capacity;
+    $_SESSION['description']   = $description;
+
+    $image     = $_FILES['image']['name'] ?? ''; 
+    $image_tmp = $_FILES['image']['tmp_name'] ?? ''; 
+    $extension = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+
+
+    if(!empty($image)){
+      
+        $trash_filename = $admin_id . '_' . time() . '_' . $image;
+        $trash_path = 'assets/trash_images/' . $trash_filename;
+
+        if(move_uploaded_file($image_tmp, $trash_path)){
+            // I-save sa session na may bagong image na sa trash
+            $_SESSION['new_img_session'] = $trash_filename;
+            $_SESSION['trash_img'] = $trash_filename;
+        }
+    }
+
+   
+    if(empty($image) && empty($_SESSION['new_img_session'])){
+        $_SESSION['error'] = "Please Upload an Image";
+        header("location:admin/room_add.php");
+        exit();
+    }
 
     if($floor === "Select Floor"){
         $_SESSION['error'] = "Please Select Floor";
         header("location:admin/room_add.php");
         exit();
     }
-    
 
-    $check = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_name` = ?");
-    $check->bind_param("s",$room_name);
+  
+    $check = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_name` = ? OR `serial_number` = ?");
+    $check->bind_param("ss", $room_name, $serial_number);
     $check->execute();
     $result_check = $check->get_result();
-    if($result_check->num_rows>0){
-        $_SESSION['error'] = "Room Name Already Taken";
+
+    if($result_check->num_rows > 0){
+  
+        $_SESSION['error'] = "Room Name or Serial Number Already Taken. Your image is saved.";
         header("location:admin/room_add.php");
         exit();
     }
 
-    $check1 = $conn2->prepare("SELECT * FROM `rooms` WHERE `serial_number` = ?");
-    $check1->bind_param("s",$serial_number);
-    $check1->execute();
-    $result_check1 = $check1->get_result();
-    if($result_check1->num_rows>0){
-        $_SESSION['error'] = "Serial Number Already Taken";
+
+    $room_id = "room" . rand() . uniqid();
+    $fileName = $_SESSION['new_img_session'];
+    
+    $sourcePath = 'assets/trash_images/' . $fileName;
+    $destinationPath = 'assets/uploads/' . $fileName;
+
+
+    if (file_exists($sourcePath)) {
+        if (rename($sourcePath, $destinationPath)) {
+            $insert = $conn2->prepare("INSERT INTO `rooms` (`room_id`,`room_name`,`serial_number`,`floor_id`,`capacity`,`description`,`image`) VALUES (?,?,?,?,?,?,?)");
+            $insert->bind_param("sssssss", $room_id, $room_name, $serial_number, $floor, $capacity, $description, $fileName);
+            
+            if($insert->execute()){
+            
+                unset($_SESSION['room_name'], $_SESSION['serial_number'], $_SESSION['floor'], $_SESSION['capacity'], $_SESSION['description'], $_SESSION['image'], $_SESSION['trash_img'], $_SESSION['new_img_session']);
+
+                $all_trash = glob('assets/trash_images/' . $admin_id . '_*');
+                foreach($all_trash as $file) {
+                    if (is_file($file)) unlink($file);
+                }
+
+                $_SESSION['success'] = "Successfully Inserted";
+                header("location:admin/rooms.php");
+                exit();
+            }
+        }
+    } else {
+        $_SESSION['error'] = "File error. Please try uploading again.";
         header("location:admin/room_add.php");
         exit();
     }
-
-    $check2 = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_id` = ?");
-    $check2->bind_param("s",$room_id);
-    $check2->execute();
-    $result_check2 = $check2->get_result();
-    if($result_check2->num_rows>0){
-        $_SESSION['error'] = "Technical Error Please Try Again";
-        header("location:admin/room_add.php");
-        exit();
-    }
-
-    $insert = $conn2->prepare("INSERT INTO `rooms` (`room_id`,`room_name`,`serial_number`,`floor_id`,`capacity`,`description`) VALUES (?,?,?,?,?,?)");
-    $insert->bind_param("ssssss",$room_id,$room_name,$serial_number,$floor,$capacity,$description);
-    $insert->execute();
-
-    unset($_SESSION['room_name']);
-    unset($_SESSION['serial_number']);
-    unset($_SESSION['floor']);
-    unset($_SESSION['capacity']);
-    unset($_SESSION['description']);
-
-    $_SESSION['success'] = "Successfully Inserted";
-    header("location:admin/rooms.php");
-    exit();
 }
 
 if(isset($_POST['room_update'])){

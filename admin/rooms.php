@@ -23,87 +23,6 @@
 ?>
 
 
-<style>
-.room_admin_section .card{
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s ease;
-}
-.room_admin_section .card:hover{
-  transform: translateY(-5px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-}
-
-.room_admin_section .card img{
-    height: 200px;
-    object-fit: cover;
-    border-top-left-radius: 13px;
-    border-top-right-radius: 13px;
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-}
-
-.room_admin_section .card img:hover{
-    transform: scale(1.1);
-}
-
-.room_admin_section .floor_name{
-  font-size: 12px;
-}
-    
-.room_admin_section .card{
-  border-radius: 13px;
-}
-.room_admin_section .buttton_actions {
-  display: flex;
-  gap:10px;
-}
-
-.room_admin_section .card .btn_reserve{
-  font-weight:900;
-  padding:10px;
-  border-radius: 10px;
-  color:white;
-  transition-duration: 300ms;
-  transition-timing-function: ease-in-out;
- background: #0F1595;
-}
-
-.room_admin_section .card .btn_reserve:hover{
- background: #141cc3;
-}
-
-.room_admin_section .floor_name {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
-.buttton_actions{
-    position: absolute;
-    top: 50px;
-    left: 0;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.buttton_actions a{
-  border-radius:50%;
-
-}
-
-.buttton_actions a i{
-  transform: translateY(2px);
-}     
-</style>    
 
 
     <div class="sidebar close">
@@ -165,11 +84,49 @@
         <div class="container">
           <h2 class="text_header">Rooms</h2>
           <div class="inner_con">
-            <div class="d-flex gap-2 mb-4">
-              <input type="search" class="form-control" id="input_room" placeholder="Search rooms, serials, or floors...">
-              <a href="room_add.php" class="btn btn_add">Add <i class="bx bx-plus-circle fs-5"></i></a>
+            <div class="upper_search">
+              <div class="input-group flex-nowrap">
+                <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                <input type="search" class="form-control "  id="input_room"  placeholder="Search rooms, serials, or floors..." aria-label="Username" aria-describedby="addon-wrapping">
+              </div>
+              <div class="button_dec">
+                <a href="room_add.php" class="btn btn_add">Add <i class="bx bx-plus-circle fs-5"></i></a>
+                <button type="button" id="filter_btn" class="btn btn_add">Filter <i class="bx bx-slider fs-5"></i></button>
+              </div>
+            </div>
+            <div class="filter_options">
+              <div class="mb-4">
+                <h6 class="fw-bold mb-3">Floors</h6>
+                <ul class="d-flex gap-3 p-0">
+                  <?php
+                  $floor_sql = "SELECT * FROM floors";
+                  $floor_result = $conn2->query($floor_sql);
+                  if ($floor_result->num_rows > 0) {
+                    while ($floor_row = $floor_result->fetch_assoc()) {
+           
+            echo "<li class='filter-item'> 
+                    <input type='checkbox' class='hidden-checkbox' id='floor_" . $floor_row['floor_id'] . "'> 
+                    <label class='clickable-label' for='floor_" . $floor_row['floor_id'] . "'>
+                        <i class='bx bx-layer'></i> " . $floor_row['floor_name'] . "
+                    </label>
+                  </li>";
+                    
+                    }
+                  }
+                  ?>
+                </ul>
+              </div>
+              <div class="mb-3">
+                <h6 class="fw-bold mb-3">Availability</h6>
+                <ul class="d-flex gap-3 p-0">
+                  <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="available">  <label for="available" class='clickable-label'> <i class='bx bx-check-circle'></i> Available</label></li>
+                  <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied"> <label for="partially_occupied" class='clickable-label'><i class='bx bx-time-five'></i> Partially Occupied</label></li>
+                  <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> <label for="fully_occupied" class='clickable-label'><i class='bx bx-x-circle'></i> Fully Occupied</label></li>
+                </ul>
+              </div>
             </div>
               <div class="row" id="room_body">
+                
                 <!-- rooms -->
               </div>
             <div class="d-flex justify-content-end align-items-end">
@@ -191,6 +148,7 @@
     <script src="../assets/js/box_icons.js"></script>
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/calendar.io.js"></script>
     <?php include '../alert.php'; ?>
   </body>
 </html>

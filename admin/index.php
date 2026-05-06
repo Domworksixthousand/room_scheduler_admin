@@ -21,6 +21,33 @@
       echo "<script>location.href='../index.php';</script>";
     }
     include '../loading_animation.php';
+
+    
+    //calendar ini
+    $occupied = 'Occupied';
+    $Done = 'Done';
+    $query = "SELECT meeting_title, start_date, end_date, start_time, end_time, fullname, status FROM `booking` WHERE `status` = '$occupied' OR `status` = '$Done' ORDER BY start_time ASC";
+    $result = mysqli_query($conn2, $query);
+
+    $events = [];
+    while($row = mysqli_fetch_assoc($result)) {
+        $start = $row['start_date'] . 'T' . date("H:i:s", strtotime($row['start_time']));
+        $end = $row['end_date'] . 'T' . date("H:i:s", strtotime($row['end_time']));
+        $timeRange = date("g:i A", strtotime($row['start_time'])) . " - " . date("g:i A", strtotime($row['end_time']));
+        $status = $row['status'];
+        $events[] = [
+            'title' => $row['meeting_title'],
+            'start' => $start,
+            'end'   => $end,
+            'allDay' => false,
+            'extendedProps' => [
+                'fullname'  => $row['fullname'],
+                'timeRange' => $timeRange,
+                'status'    => $status
+            ]
+        ];
+    }
+    $eventsJson = json_encode($events);
   ?>
 
  
@@ -140,6 +167,18 @@
                     </div>
                   </div>
                 </div>
+                <div class="col-lg-6 mb-3 right_first_row">
+                 <div class="box" onclick="location.href='reservations.php'">
+                    <img src="../assets/images/cancel-event_cabcelled.png" alt="Logo">
+                    <div class="details">
+                       <?php
+                         $count_cancelled_today = $conn2->query("SELECT COUNT(*) AS count FROM booking WHERE `start_date` >= '$datetoday' AND `end_date` <= '$datetoday' AND status = 'Cancelled'")->fetch_assoc()['count'];
+                      ?>
+                      <h2 class="fw-bold text-dark"><?php echo $count_cancelled_today; ?></h2>
+                      <p class="text-secondary">Cancelled Booked Today</p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div class="row">
@@ -198,74 +237,9 @@
         <section class="graph_admin_section">
           <div class="container">
             <div class="inner_graph">
-              <h3 class="text-center fw-bold mb-5">Daily, Weekly, Montly, Yearly Booked Chart</h3>
-              <form action="" method="GET" id="filterForm">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <select name="view" class="form-control mb-3" onchange="this.form.submit()">
-                            <option value="daily" <?php echo ($_GET['view'] ?? '') == 'daily' ? 'selected' : ''; ?>>Daily</option>
-                            <option value="weekly" <?php echo ($_GET['view'] ?? '') == 'weekly' ? 'selected' : ''; ?>>Weekly</option>
-                            <option value="monthly" <?php echo ($_GET['view'] ?? '') == 'monthly' ? 'selected' : ''; ?>>Monthly</option>
-                            <option value="yearly" <?php echo ($_GET['view'] ?? '') == 'yearly' ? 'selected' : ''; ?>>Yearly</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <input type="month" name="month" class="form-control" value="<?php echo $_GET['month'] ?? date('Y-m'); ?>" onchange="this.form.submit()">
-                    </div>
-                </div>
-              </form>
-              <?php
-              
-                $view = $_GET['view'] ?? 'daily';
-                $month_filter = $_GET['month'] ?? date('Y-m');
-
-                // I-adjust ang SQL base sa filter
-                if ($view == 'weekly') {
-                    $date_format = "CONCAT('Week ', WEEK(start_date))";
-                } elseif ($view == 'monthly') {
-                    $date_format = "DATE_FORMAT(start_date, '%Y-%m')";
-                } elseif ($view == 'yearly') {
-                    $date_format = "DATE_FORMAT(start_date, '%Y')";
-                } else { // default is daily
-                    $date_format = "DATE_FORMAT(start_date, '%Y-%m-%d')";
-                }
-
-
-                $query = "SELECT $date_format AS label, status, COUNT(*) AS total 
-                          FROM booking 
-                          WHERE start_date LIKE '$month_filter%' 
-                          GROUP BY label, status 
-                          ORDER BY label ASC";
-
-                $result = $conn2->query($query)->fetch_all(MYSQLI_ASSOC);
-
-
-                $labels = [];
-                $status_data = ['Done' => [], 'Occupied' => [], 'Cancelled' => []];
-
-                foreach ($result as $row) {
-                    if (!in_array($row['label'], $labels)) $labels[] = $row['label'];
-                }
-
-                foreach ($labels as $lbl) {
-                    foreach (['Done', 'Occupied', 'Cancelled'] as $st) {
-                        $val = 0;
-                        foreach ($result as $row) {
-                            if ($row['label'] == $lbl && $row['status'] == $st) {
-                                $val = (int)$row['total'];
-                                break;
-                            }
-                        }
-                        $status_data[$st][] = $val;
-                    }
-                }
-
-                $js_labels = json_encode($labels);
-                $js_done = json_encode($status_data['Done']);
-                $js_occupied = json_encode($status_data['Occupied']);
-                $js_cancelled = json_encode($status_data['Cancelled']);
-              ?>
-              <div id="chart" class="chart"></div>
+              <div id="calendar-container" >
+                  <div id="calendar"></div>
+              </div>
             </div>
           </div>
         </section>
@@ -275,11 +249,101 @@
  
 
 
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+    const calendarEl = document.getElementById('calendar');
+    const modalEl = document.getElementById('modal_system');
+    const bookingData = <?php echo $eventsJson; ?>;
+
+    // 1. Initialize the calendar variable
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    headerToolbar: {
+    left: 'prev,next today',
+    center: 'title',
+    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    events: bookingData,
+    navLinks: true,
+    selectable: true,
+    dayMaxEvents: 3, 
+    height: 'auto',
+
+    eventContent: function(arg) {
+    let container = document.createElement('div');
+    container.style.cssText = 'overflow: hidden;';
+    container.innerHTML = `
+        <div style="font-size: 0.75rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            ${arg.event.title}
+        </div>
+        <div style="font-size: 0.65rem; color: rgba(255,255,255,0.85); display: flex; align-items: center; margin-top: 2px;">
+            <span style="margin-right: 4px;">•</span> ${arg.event.extendedProps.timeRange}
+        </div>
+    `;
+    return { domNodes: [container] };
+    },
+
+    eventDidMount: function(info) {
+    info.el.setAttribute('title', `${info.event.title} | ${info.event.extendedProps.fullname}`);
+    },
+
+    eventClick: function(info) {
+    CoolAlert.show({
+        title: `<span style="color:white; font-weight: bold; border-bottom: 2px solid white; padding-bottom: 5px;">Event Detailed Brief</span>`,
+        html: `
+            <div style="text-align: left; margin-top: 20px; font-family: 'Segoe UI', sans-serif;">
+                <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                    <div style="margin-bottom: 15px;">
+                        <small style="color: white; text-transform: uppercase; font-weight: bold; font-size: 0.7rem;">Meeting Title</small>
+                        <div style="font-size: 1.1rem; font-weight: 600; color: white;">${info.event.title}</div>
+                    </div>
+                    <div>
+                        <small style="color: white; text-transform: uppercase; font-weight: bold; font-size: 0.7rem;">Status</small>
+                        <div style="color: white;">${info.event.extendedProps.status}</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div>
+                        <small style="color: white; text-transform: uppercase; font-weight: bold; font-size: 0.7rem;">Schedule</small>
+                        <div style="color: white;">${info.event.extendedProps.timeRange}</div>
+                    </div>
+                    <div>
+                        <small style="color: white; text-transform: uppercase; font-weight: bold; font-size: 0.7rem;">Organizer</small>
+                        <div style="color: white;">${info.event.extendedProps.fullname}</div>
+                    </div>
+                </div>
+            </div>`,
+        confirmButtonText: "Return to Calendar",
+        confirmButtonColor: "#000080"
+    });
+    }
+    });
+
+
+    calendar.render();
+
+        modalEl.addEventListener('shown.bs.modal', function () {
+            calendar.updateSize();
+        });
+
+
+        const calendarTabTrigger = document.querySelector('#profile-tab');
+        if (calendarTabTrigger) {
+            calendarTabTrigger.addEventListener('shown.bs.tab', function () {
+                calendar.updateSize(); 
+            });
+        }
+    });
+</script>
+
+
 <script src="../assets/js/chart.js"></script>
 <script src="../assets/js/cool_alert.js"></script>
 <script src="../assets/js/box_icons.js"></script>
 <script src="../assets/js/script.js"></script>
 <script src="../assets/js/boostrap.js"></script>
+<script src="../assets/js/calendar.io.js"></script>
 <?php include '../chart.php' ?>
 </body>
 </html>

@@ -31,6 +31,15 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
+//filter display
+ document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("filter_btn").addEventListener("click", function() {
+      const filterOptions = document.querySelector(".filter_options");
+      filterOptions.style.display = filterOptions.style.display === "block" ? "none" : "block";
+    });
+  });
+
+
 
 
 //modal show
@@ -55,7 +64,32 @@ document.addEventListener("DOMContentLoaded", ()=> {
     });
 });
 
-
+document.addEventListener("DOMContentLoaded", function() {
+    const fileInput = document.getElementById('imageInput2');
+    
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('previewImage2');
+                    const icon = document.getElementById('uploadIcon2');
+                    
+                    // Update Image Source
+                    preview.src = e.target.result;
+                    
+                    // Force Styles
+                    preview.style.setProperty('display', 'block', 'important');
+                    if (icon) {
+                        icon.style.setProperty('display', 'none', 'important');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
 
 /*super admin sidebar*/
 document.addEventListener("DOMContentLoaded", () => {
@@ -228,99 +262,135 @@ $(document).ready(function(){
 
 //admin room.php
 $(document).ready(function() {
-    let searchTimer;
-    let currentPage = 1;
-
-    function fetchRooms(page = 1) {
-        const searchTerm = $('#input_room').val();
-        currentPage = page;
-
-        $.ajax({
-            url: "room_fetch.php",
-            method: "GET",
-            data: { search: searchTerm, page: page },
-            success: function(response) {
-                // --- 1. CLEANUP: Dispose of old tooltips before replacing HTML ---
-                $('.tooltip').remove(); // Force remove any stuck tooltip elements from DOM
-                $('[data-bs-toggle="tooltip"]').each(function() {
-                    const instance = bootstrap.Tooltip.getInstance(this);
-                    if (instance) {
-                        instance.dispose();
-                    }
-                });
-
-                const parts = response.split("|||");
-                $('#room_body').html(parts[0]);
-                $('#pagination_links').html(parts[1]);
-
-             
-                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-                [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-            
-             
-            },
-            error: function() {
-                $('#room_body').html("<tr><td colspan='6' class='text-center'>Error loading data.</td></tr>");
-            }
-        });
-    }
-
-    // Live search
+    // Trigger search on typing
     $('#input_room').on('keyup', function() {
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => fetchRooms(1), 300);
+        fetchRooms(1);
     });
 
-    // Handle Pagination Clicks
+    // Trigger search on checkbox change
+    $(document).on('change', '.hidden-checkbox, #available, #partially_occupied, #fully_occupied', function() {
+        fetchRooms(1);
+    });
+
+    // Initial load
+    fetchRooms(1);
+});
+
+function fetchRooms(page = 1) {
+    const searchTerm = $('#input_room').val();
+    
+    // Collect Floors
+    let selectedFloors = [];
+    $('.hidden-checkbox:checked').each(function() {
+        selectedFloors.push($(this).val());
+    });
+
+    // Collect Availability Statuses
+    let selectedStatus = [];
+    if($('#available').is(':checked')) selectedStatus.push('Available');
+    if($('#partially_occupied').is(':checked')) selectedStatus.push('Partially Occupied');
+    if($('#fully_occupied').is(':checked')) selectedStatus.push('Fully Occupied');
+
+    $.ajax({
+        url: "room_fetch.php",
+        method: "GET",
+        data: { 
+            search: searchTerm, 
+            page: page, 
+            floors: selectedFloors,
+            status: selectedStatus
+        },
+        success: function(response) {
+            const parts = response.split("|||");
+            if (parts.length === 2) {
+                $('#room_body').html(parts[0]);
+                $('#pagination_links').html(parts[1]);
+                  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+            }
+            
+
+           
+        }
+    });
+}
+
+
+$(document).ready(function() {
+    // 1. Listen for search input typing
+    $('#input_room').on('input', function() {
+        fetchRooms(1);
+    });
+
+    // 2. Listen for filter checkbox changes
+    $(document).on('change', '.hidden-checkbox, #available, #partially_occupied, #fully_occupied', function() {
+        fetchRooms(1);
+    });
+
+    // 3. FIX: Handle Pagination Clicks via Delegation
     $(document).on('click', '.page-link-ajax', function(e) {
         e.preventDefault();
         const page = $(this).data('page');
         fetchRooms(page);
     });
-
-    // Initial Load
-    fetchRooms();
-
-    // Polling
-    setInterval(() => {
- 
-        if ($('#input_room').val() === "") {
-            fetchRooms(currentPage);
-        }
-    }, 5000);
 });
 
-    
+
+
+
+
+
+
+
 //admin reservation
 $(document).ready(function() {
     let searchTimer;
     let currentPage = 1;
     let isTyping = false;
 
-    const fetchHistory = (page = 1) => {
-        const searchTerm = $('#input_reservation').val();
-        currentPage = page;
+   const fetchHistory = (page = 1) => {
+    const searchTerm = $('#input_reservation').val();
+    currentPage = page;
 
-        $.ajax({
-            url: "reservation_fetch.php",
-            method: "GET",
-            data: { search: searchTerm, page: page },
-            success: function(response) {
-  
-                const parts = response.split("|||");
-                if (parts.length === 2) {
-                    $('#reservation_body').html(parts[0]);
-                    $('#pagination_reservation').html(parts[1]);
-                }
-            },
-            error: function() {
-                console.log("Error fetching data.");
+    // Kunin ang mga piniling Floors
+    let selectedFloors = [];
+    $('.hidden-checkbox:checked').each(function() {
+        // Siguraduhin na floor ID lang ang nakukuha (i-check ang HTML mo)
+        if($(this).attr('id').includes('floor_')) {
+            selectedFloors.push($(this).attr('id').replace('floor_', ''));
+        }
+    });
+
+    // Kunin ang mga piniling Status/Availability
+    let selectedStatus = [];
+    if($('#available').is(':checked')) selectedStatus.push('Available');
+    if($('#partially_occupied').is(':checked')) selectedStatus.push('Partially Occupied');
+    if($('#fully_occupied').is(':checked')) selectedStatus.push('Fully Occupied');
+    if($('#cancelled').is(':checked')) selectedStatus.push('Cancelled');
+
+    $.ajax({
+        url: "reservation_fetch.php",
+        method: "GET",
+        data: { 
+            search: searchTerm, 
+            page: page,
+            floors: selectedFloors, 
+            status: selectedStatus  
+        },
+        success: function(response) {
+            const parts = response.split("|||");
+            if (parts.length === 2) {
+                $('#reservation_body').html(parts[0]);
+                $('#pagination_reservation').html(parts[1]);
             }
-        });
-    };
+        }
+    });
+};
 
-    fetchHistory();
+
+    $(document).on('change', '.hidden-checkbox', function() {
+        fetchHistory(1);
+    });
 
 
     $(document).on('keyup', '#input_reservation', function() {
@@ -657,6 +727,57 @@ $(document).ready(function() {
 });
 
 
+//para sa dropdown sa book.php
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("empSearch");
+    const dropdown = document.getElementById("empDropdown");
+    const items = document.querySelectorAll(".emp-item");
+    const hiddenInput = document.getElementById("selectedEmployee");
+
+    // Normalize function (important)
+    function normalize(str) {
+        return str.toLowerCase().replace(/\s+/g, ' ').trim();
+    }
+
+    searchInput.addEventListener("focus", () => {
+        dropdown.classList.remove("d-none");
+    });
+
+    searchInput.addEventListener("keyup", function () {
+        let search = normalize(this.value);
+
+        items.forEach(item => {
+            let text = normalize(item.textContent);
+
+            // Split words (for flexible search)
+            let searchWords = search.split(" ");
+
+            let match = searchWords.every(word => text.includes(word));
+
+            item.style.display = match ? "" : "none";
+        });
+    });
+
+    // Select
+    items.forEach(item => {
+        item.addEventListener("click", function () {
+            let name = this.getAttribute("data-name");
+
+            searchInput.value = name;
+            hiddenInput.value = name;
+
+            dropdown.classList.add("d-none");
+        });
+    });
+
+    document.addEventListener("click", function (e) {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.add("d-none");
+        }
+    });
+
+});
 
 //superadmin
 /*

@@ -82,42 +82,161 @@
         <section class="reservation_admin_section">
           <div class="container">
             <h2 class="text_header">Reservations </h2>
-            <div class="inner_con">
-              <div class="d-flex gap-2 mb-4">
-                <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Date">
-                <a href="reservation_add.php" class="btn btn_add "> Add <i class="bx bx-plus-circle  fs-5"></i></a>
-              </div>  
-              <div class="overflow-auto">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Time</th>
-                      <th>Meeting Title</th>
-                      <th>Employee</th>
-                      <th>Room Name</th>
-                      <th>Floor Name</th>
-                      <th>Status</th>
-                      <th>Cancelled At</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="reservation_body">
-                    <!-- floors -->
-                  </tbody>
-                </table>
+              <div class="upper_search">
+                  <div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                    <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Date">
+                </div>
+                <div class="button_dec">
+                  <a href="reservation_add.php" class="btn btn_add "> Add <i class="bx bx-plus-circle  fs-5"></i></a>
+                  <button type="button" id="filter_btn" class="btn btn_add">Filter <i class="bx bx-slider fs-5"></i></button>
+                </div>
+              </div>
+              <div class="filter_options">
+                <div class="mb-4">
+                  <h6 class="fw-bold mb-3">Floors</h6>
+                  <ul class="d-flex gap-3 p-0">
+                    <?php
+                    $floor_sql = "SELECT * FROM floors";
+                    $floor_result = $conn2->query($floor_sql);
+                    if ($floor_result->num_rows > 0) {
+                      while ($floor_row = $floor_result->fetch_assoc()) {
+            
+                    echo "<li class='filter-item'> 
+                          <input type='checkbox' class='hidden-checkbox' id='floor_" . $floor_row['floor_id'] . "'> 
+                          <label class='clickable-label' for='floor_" . $floor_row['floor_id'] . "'>
+                              <i class='bx bx-layer'></i> " . $floor_row['floor_name'] . "
+                          </label>
+                        </li>";
+                      
+                      }
+                    }
+                    ?>
+                  </ul>
+                </div>
+                <div class="mb-3">
+                  <h6 class="fw-bold mb-3">Availability</h6>
+                  <ul class="d-flex gap-3 p-0">
+                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="available">  <label for="available" class='clickable-label'> <i class='bx bx-check-circle'></i> Available</label></li>
+                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied"> <label for="partially_occupied" class='clickable-label'><i class='bx bx-time-five'></i> Partially Occupied</label></li>
+                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> <label for="fully_occupied" class='clickable-label'><i class='bx bx-x-circle'></i> Fully Occupied</label></li>
+                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="cancelled"> <label for="cancelled" class='clickable-label'><i class='bx bx-block'></i> Cancelled</label></li>
+                  </ul>
+                </div>
+               </div>
+              <div class="row" id="reservation_body">
+                <!--data-->
               </div>
               <div class="d-flex justify-content-end align-items-end">
-                <nav aria-label="Page navigation">
-                  <ul class="pagination" id="pagination_reservation">
-                    <!--data-->
-                  </ul>
-                </nav>
-              </div>
+              <nav aria-label="Page navigation">
+                <ul class="pagination" id="pagination_reservation">
+                  <!--data-->
+                </ul>
+              </nav>
+            </div>
             </div>
           </div>
         </section>
     </div>
+
+    <style>
+      
+ .card{
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    border-radius: 13px;
+}
+
+.card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+ .card img{
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 13px;
+    border-top-right-radius: 13px;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+}
+
+ .card img:hover{
+    transform: scale(1.1);
+}
+
+ .floor_name{
+  font-size: 12px;
+}
+
+ .buttton_actions {
+  display: flex;
+  gap:10px;
+  position: absolute;
+  top: 50px;
+  left: -50px;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: all 0.3s ease;
+}
+
+ .buttton_actions a {
+    transition: all 0.3s ease;
+    opacity: 0; 
+    transform: translateX(-20px);
+}
+
+ .card:hover .buttton_actions {
+    top: 50px;
+    left: 0px;
+}
+
+ .card:hover .buttton_actions a {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+ .card:hover .buttton_actions a:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+ .card:hover .buttton_actions a:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+ .card:hover .buttton_actions a:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+ .card .btn_reserve{
+  font-weight:900;
+  padding:10px;
+  border-radius: 10px;
+  color:white;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
+ background: #0F1595;
+}
+
+ .card .btn_reserve:hover{
+ background: #141cc3;
+}
+
+.room_admin_section .floor_name {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+    </style>
 
     <script src="../assets/js/jquery.js"></script>
     <script src="../assets/js/cool_alert.js"></script>

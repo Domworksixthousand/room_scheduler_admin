@@ -1,27 +1,7 @@
 <?php
 
-    include 'reservations.php'; 
-
-    $data1 = "Select Room"; 
-    $room_id_session = "";
-
-    if(isset($_SESSION['room_name_admin'])){
-        $room_val = $_SESSION['room_name_admin']; 
-        $check_session = $conn2->prepare("SELECT * FROM `rooms` LEFT JOIN floors ON rooms.floor_id = floors.floor_id WHERE rooms.serial_number = ?");
-        $check_session->bind_param("s", $room_val);
-        $check_session->execute();
-        $result_session = $check_session->get_result();
-        
-        if($row_session = $result_session->fetch_assoc()){
-            $room_name_session = htmlspecialchars($row_session['room_name'] ?? '');
-            $room_id_session = htmlspecialchars($row_session['room_id'] ?? '');
-            $floor_named_session = htmlspecialchars($row_session['floor_name'] ?? '');
-
-
-            $data1 = $room_name_session . " (" . $floor_named_session . ")";
-        }
-    }
-
+    include 'rooms.php'; 
+            $date    = $_GET['date'] ?? '';
             $booked_details = isset($_SESSION['booked_details_admin']) ? $_SESSION['booked_details_admin'] : [];
             if(isset($_SESSION['checkbox_admin']) && $_SESSION['checkbox_admin'] === "yes"){
             #para auto labas ng checkbox
@@ -56,9 +36,11 @@
                 });
                 </script>";
             }
+
+            
     ?>
 
-
+    
 
 
 <main >
@@ -69,34 +51,15 @@
                     <div class="modal-content">
                     <div class="modal-header border-0 d-flex justify-content-between">
                         <p class="modal-title  fw-bold" id="staticBackdropLabel">Add Reservation</p>
-                        <a href="reservations.php" class=" btn_x "><i class="bx bx-x"></i></a>
+                        <a href="rooms.php" class=" btn_x "><i class="bx bx-x"></i></a>
                     </div>
                     <div class="modal-body">
                         <div class="inner_body shadow-lg">
-                            <div class="mb-3">
-                                <label for="room" class="form-label">Select Room</label>
-                                <select name="room_id" id="room" class="form-control" required>
-                                    <option value="<?php echo $room_id_session ?? 'Select Room'; ?>"><?php echo $data1 ?? 'Select Room'; ?></option>
-                                    <?php
-                                        $room_get = $conn2->prepare("SELECT * FROM `rooms` LEFT JOIN `floors` ON rooms.floor_id = floors.floor_id ORDER BY rooms.room_name ASC");
-                                        $room_get->execute();
-                                        $get_room = $room_get->get_result();
-                                        if($get_room->num_rows>0){
-                                            while($row_room = $get_room->fetch_assoc()){
-                                                $room_name = htmlspecialchars($row_room['room_name'] ?? '');
-                                                $room_id = htmlspecialchars($row_room['room_id'] ?? '');
-                                                $floor_name = htmlspecialchars($row_room['floor_name'] ?? '');
-                                                
-                                                echo "<option value='$room_id'>$room_name ($floor_name)</option>";
-                                            }
-                                        }
-                                    ?>
-                                </select>
-                            </div>
+                            <input type="hidden" value="<?php echo htmlspecialchars($_GET['room_id'] ?? ''); ?>" name="room_id">
                             <div class="row mb-0">
                                     <div class="col-lg-6 mb-4">
                                         <label class="form-label">Select Start Date</label>
-                                        <input type="date" class="form-control" id="start_date" name="start_date" value="<?php echo $_SESSION['start_date_admin'] ?? ''; ?>" required>
+                                        <input type="date" class="form-control" id="start_date" name="start_date" value="<?php echo $_SESSION['start_date_admin'] ?? $date; ?>" required>
                                     </div>
                                     <div class="col-lg-6 mb-4">
                                         <label class="form-label">Select End Date</label>
@@ -135,36 +98,44 @@
                             <div class="row mb-0">
                                 <div class="col-lg-6 mb-4">
                                     <label for="fullname" class="form-label">Full Name</label>
-                                    <select name="fullname" id="fullname"  class="form-control">
-                                        <option value="<?php echo $_SESSION['fullname_admin'] ?? 'Select Fullname'; ?>"><?php echo $_SESSION['fullname_admin'] ?? 'Select Fullname'; ?></option>
-                                        <option value="Others">Type your Name</option>
-                                        <?php
-                                        $users = $conn1->prepare("SELECT * FROM `employee` ORDER BY LastName,FirstName,MiddleName ASC");
-                                        $users->execute();
-                                        $result_users = $users->get_result();
-                                        if($result_users->num_rows>0){
-                                        while ($row_users = $result_users->fetch_assoc()) {
+                                    <div class="position-relative">
+                                        <!-- Search Input -->
+                                        <input type="text" id="empSearch" class="form-control" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off">
+                                            <input type="hidden" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" name="employee_name"  id="selectedEmployee" required>
+                                            <!-- Dropdown -->
+                                            <div id="empDropdown" 
+                                                class="dropdown_body card position-absolute w-100 shadow-sm mt-1 d-none" >
+                                                <div class="list-group list-group-flush" id="empList">
+                                                    <?php
+                                                    $users = $conn1->prepare("SELECT * FROM `employee` ORDER BY LastName, FirstName ASC");
+                                                    $users->execute();
+                                                    $result_users = $users->get_result();
 
-                                                $lastname   = htmlspecialchars($row_users['LastName'] ?? '', ENT_QUOTES, 'UTF-8');
-                                                $firstname  = htmlspecialchars($row_users['FirstName'] ?? '', ENT_QUOTES, 'UTF-8');
-                                                $middlename = htmlspecialchars($row_users['MiddleName'] ?? '', ENT_QUOTES, 'UTF-8');
+                                                    if($result_users->num_rows > 0){
+                                                        while ($row_users = $result_users->fetch_assoc()) {
 
-                                                $fullname = "$lastname $firstname $middlename";
-
-                                                echo "<option value='$fullname'>$fullname</option>";
-                                            }
-                                        }
-                                        ?>
-                                    </select>
+                                                            $lastname  = htmlspecialchars($row_users['LastName'] ?? '', ENT_QUOTES, 'UTF-8');
+                                                            $firstname = htmlspecialchars($row_users['FirstName'] ?? '', ENT_QUOTES, 'UTF-8');
+                                                            $middlename = htmlspecialchars($row_users['MiddleName'] ?? '', ENT_QUOTES, 'UTF-8');
+                                                            $fullname  = trim("$lastname $firstname $middlename");
+                                                    ?>
+                                                        <button type="button" 
+                                                                class="list-group-item list-group-item-action emp-item"
+                                                                data-name="<?php echo $fullname; ?>">
+                                                            <?php echo $fullname; ?>
+                                                        </button>
+                                                    <?php 
+                                                        }
+                                                    } 
+                                                    ?>
+                                                </div>
+                                            </div>
+                                    </div>
                                 </div>
                                 <div class="col-lg-6 mb-4">
                                     <label for="meeting_title" class="form-label ">Meeting Title</label>
                                     <input type="text" value="<?php echo $_SESSION['meeting_title_admin'] ?? ''; ?>" class="form-control uppercase_function" id="meeting_title" name="meeting_title" placeholder="Enter Meeting Title" required>
                                 </div>
-                            </div>
-                            <div class="mb-4 d-none" id="custom_fullname">
-                                <label for="custom_fullname" class="form-label">Type Your Full Name</label>
-                                <input type="text" value="<?php echo $_SESSION['custom_fullname_admin'] ?? ''; ?>" name="custom_fullname" class="form-control uppercase_function"  placeholder="Enter Your Full Name" >
                             </div>
                         </div>
                     </div>
@@ -178,8 +149,6 @@
        </form>
     </section>
 </main>
-
-
 
 
 

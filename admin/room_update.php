@@ -4,6 +4,30 @@
         $room_id = htmlspecialchars($_GET['room_id'] ?? '');
     }
 
+    
+$img_filename = '';
+$session_prefix = '';
+
+
+if (empty($_SESSION['trash_img'])) {
+    $_SESSION['new_img_session'] = "";
+}
+
+
+$has_session_img = !empty($_SESSION['trash_img']) || !empty($_SESSION['new_img_session']);
+
+if ($has_session_img) {
+
+    $trash_val = $_SESSION['trash_img'] ?? '';
+    $parts = explode('_', $trash_val);
+    $session_prefix = $parts[0] ?? ''; 
+
+  
+    if ($session_prefix === ($admin_id ?? '')) {
+        $img_filename = !empty($_SESSION['trash_img']) ? $_SESSION['trash_img'] : ($_SESSION['new_img_session'] ?? '');
+    }
+}
+
     $get_rooms = $conn2->prepare("SELECT * FROM `rooms`  LEFT JOIN `floors` ON rooms.floor_id = floors.floor_id WHERE `room_id` = ?");
     $get_rooms->bind_param("s",$room_id);
     $get_rooms->execute();
@@ -16,15 +40,15 @@
         $floor_id = htmlspecialchars($row_get['floor_id'] ?? '');
         $capacity = htmlspecialchars($row_get['capacity'] ?? '');
         $description = htmlspecialchars($row_get['description'] ?? '');
+        $image = $row_get['image'] ;
         }
     }
-
 
 ?>
 
 <main >
     <section class="room_update_section" >
-       <form action="../functions.php" method="POST">
+       <form action="../functions.php" method="POST" enctype="multipart/form-data">
             <div class="modal fade" id="modal_system" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -69,6 +93,22 @@
                                     <label for="capacity" class="form-label">Capacity</label>
                                     <input type="text" class="form-control" id="capacity" name="capacity" value="<?php echo htmlspecialchars($capacity); ?>" placeholder="Enter Capacity"    required>
                                 </div>
+                            </div>
+                            <div class="mb-3 ">
+                                <label class="form-label fw-bold">Upload Room Image</label>
+                                <div id="dropZone" class="upload-box border rounded p-4 mb-2 d-flex justify-content-center align-items-center flex-column" 
+                                    style="cursor: pointer; border-style: dashed !important; background:#f0f0f0; min-height: 150px;"
+                                    onclick="document.getElementById('imageInput2').click();">
+                                  <i class='bx bx-image-add' id="uploadIcon2" 
+                                    style="font-size: 3rem; color:#7d7f81; display: <?php echo (!empty($image)) ? 'none' : 'block'; ?>;">
+                                    </i>
+                                    <img id="previewImage2" 
+                                        src="../assets/uploads/<?php echo htmlspecialchars($image); ?>" 
+                                        style="max-width: 100%; max-height: 150px; display: <?=  '../assets/uploads/' .  $image  ? 'block' : 'none' ?>; margin: 0 auto;">
+                                    
+                                    <p class="text-muted small mb-0 mt-2">Click to change image</p>
+                            </div>
+                            <input type="file" id="imageInput2" accept=".jpg, .jpeg" name="image" style="display: none;">
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description / Amenities</label>

@@ -242,6 +242,8 @@
   width: calc(100% - 260px);
   transition: all 0.5s ease;
   overflow-y: auto; 
+  padding-top:0;
+  margin:0;
 }
 
 .sidebar.close ~ .main_content {

@@ -272,6 +272,7 @@ if(isset($_POST['floors_update'])){
         exit();
     }
 }
+
 if(isset($_POST['room_save'])){
  
     $room_name     = htmlspecialchars($_POST['room_name'] ?? '');
@@ -371,7 +372,18 @@ if(isset($_POST['room_update'])){
     $floor = htmlspecialchars($_POST['floor'] ?? '');
     $capacity = htmlspecialchars($_POST['capacity'] ?? '');
     $description = htmlspecialchars($_POST['description'] ?? '');
-    
+    $image     = $_FILES['image']['name'] ?? ''; 
+    $image_tmp = $_FILES['image']['tmp_name'] ?? ''; 
+    $extension = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+    $trash_filename = $admin_id . '_' . time() . '_' . $image;
+    $trash_path = 'assets/uploads/' . $trash_filename;
+
+    if($extension !== "jpeg" || $extension !== "jpg"){
+        $_SESSION['error'] = "jpeg image type only";
+        header("location:admin/room_update.php?room_id=$room_id");
+        exit();
+    }
+
     $check = $conn2->prepare("SELECT * FROM `rooms` WHERE `serial_number` = ? AND `room_id` != ?  ");
     $check->bind_param("ss",$serial_number,$room_id);
     $check->execute();
@@ -392,18 +404,70 @@ if(isset($_POST['room_update'])){
         exit();
     }
 
-    $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=? WHERE `room_id` =?");
-    $update->bind_param("ssssss",$room_name,$serial_number,$floor,$capacity,$description,$room_id);
-    $update->execute();
+    if(empty($image)){
+         $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=? WHERE `room_id` =?");
+        $update->bind_param("ssssss",$room_name,$serial_number,$floor,$capacity,$description,$room_id);
+        $update->execute();
 
-    $_SESSION['success'] = "Successfully Updated";
-    header("location:admin/rooms.php");
-    exit();
+        $_SESSION['success'] = "Successfully Updated";
+        header("location:admin/rooms.php");
+        exit();
+    }else{
+            $check_if_exist = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_id` = ?");
+            $check_if_exist->bind_param("s",$room_id);
+            $check_if_exist->execute();
+            $result_check_if_exist = $check_if_exist->get_result();
+            if($result_check_if_exist->num_rows>0){
+            while($data = $result_check_if_exist->fetch_assoc()){
+                    $existing_image = $data['image'] ?? '';
+            
+            
+                if($existing_image){
+                    $existing_image_path = 'assets/uploads/' . $existing_image;
+                    if(file_exists($existing_image_path)){
+                        unlink($existing_image_path);
+                    }
+                }
+            }
+    
+        }
+        if(move_uploaded_file($image_tmp,$trash_path)){
+            $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?, `image` = ? WHERE `room_id` =?");
+            $update->bind_param("sssssss",$room_name,$serial_number,$floor,$capacity,$description,$trash_filename,$room_id);
+            $update->execute();
+
+            $_SESSION['success'] = "Successfully Updated";
+            header("location:admin/rooms.php");
+            exit();
+        }
+    }
+
+
+   
 
 }
 
 if(isset($_POST['delete_room'])){
-    $room_id = htmlspecialchars($_POST['room_id'] ?? '');
+        $room_id = htmlspecialchars($_POST['room_id'] ?? '');
+        
+        $check_if_exist = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_id` = ?");
+        $check_if_exist->bind_param("s",$room_id);
+        $check_if_exist->execute();
+        $result_check_if_exist = $check_if_exist->get_result();
+        if($result_check_if_exist->num_rows>0){
+        while($data = $result_check_if_exist->fetch_assoc()){
+                $existing_image = $data['image'] ?? '';
+        
+        
+            if($existing_image){
+                $existing_image_path = 'assets/uploads/' . $existing_image;
+                if(file_exists($existing_image_path)){
+                    unlink($existing_image_path);
+                }
+            }
+        }
+
+    }
 
     $delete_booking = $conn2->prepare("DELETE  FROM booking WHERE `room_id` = ?");
     $delete_booking->bind_param("s",$room_id);
@@ -489,13 +553,12 @@ if(isset($_POST['reservation_save'])){
     $end_date = htmlspecialchars($_POST['end_date'] ?? '');
     $start_time_data = date("H:i:s", strtotime($_POST['start_time'] ?? '00:00'));
     $end_time_data = date("H:i:s", strtotime($_POST['end_time'] ?? '00:00'));
-    $fullname = htmlspecialchars($_POST['fullname'] ?? '');
+   
     $meeting_title = htmlspecialchars($_POST['meeting_title'] ?? '');
-    $custom_fullname = htmlspecialchars($_POST['custom_fullname'] ?? '');
+    $employee_name = htmlspecialchars($_POST['employee_name'] ?? '');
     $custom_start = $_POST['custom_start'] ?? [];
     $custom_end = $_POST['custom_end'] ?? [];
     $checkbox = $_POST['checkbox'] ?? 'no';
-    $final_name = ($fullname === "Others") ? $custom_fullname : $fullname;
     $room_id = htmlspecialchars($_POST['room_id'] ?? '');
 
 
@@ -508,14 +571,14 @@ if(isset($_POST['reservation_save'])){
         $final_serial = htmlspecialchars($row_serial_number['serial_number'] ?? '');
     }
 
-    $_SESSION['room_name_admin'] = $final_serial;
+    $_SESSION['room_id'] = $room_id;
     $_SESSION['start_date_admin'] = $start_date;
     $_SESSION['end_date_admin'] = $end_date;
     $_SESSION['start_time_admin'] = $start_time_data;
     $_SESSION['end_time_admin'] = $end_time_data;
     $_SESSION['fullname_admin'] = $fullname;
     $_SESSION['meeting_title_admin'] = $meeting_title;
-    $_SESSION['custom_fullname_admin'] = $custom_fullname;
+    $_SESSION['employee_name'] = $employee_name;
     $_SESSION['checkbox_admin'] = $checkbox;
 
 
@@ -610,14 +673,14 @@ if(isset($_POST['reservation_save'])){
             $check_diplicate->close();
 
             $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $insert->bind_param("sssssssss", $b_id, $curr_d, $curr_d, $sql_s, $sql_e, $final_name, $meeting_title, $room_id, $occupied);
+            $insert->bind_param("sssssssss", $b_id, $curr_d, $curr_d, $sql_s, $sql_e, $employee_name, $meeting_title, $room_id, $occupied);
             $insert->execute();
             
             $date_ins->modify('+1 day');
         }
 
         // CLEAR SESSIONS
-        unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['fullname_admin'],$_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin']);
+        unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['meeting_title_admin'],$_SESSION['employee_name']);
         $_SESSION['success'] = "All schedules saved successfully!";
         header("location:$folder/reservations.php");
         exit();
@@ -680,11 +743,11 @@ if(!$errors_found && $checkbox === "no" && $start_date === $end_date){
     $check_diplicate->close();
 
     $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $insert->bind_param("sssssssss", $b_id, $start_date, $end_date, $start_time_data, $end_time_data, $final_name, $meeting_title, $room_id, $occupied);
+    $insert->bind_param("sssssssss", $b_id, $start_date, $end_date, $start_time_data, $end_time_data, $employee_name, $meeting_title, $room_id, $occupied);
     
     if($insert->execute()){
         $insert->close();
-        unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['fullname_admin'],$_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin']);
+        unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['meeting_title_admin'],$_SESSION['employee_name']);
         $_SESSION['success'] = "Schedules saved successfully!";
         header("location:$folder/reservations.php");
         exit();
@@ -787,7 +850,7 @@ if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
             $date_to_save, 
             $start_time_data, 
             $end_time_data, 
-            $final_name, 
+            $employee_name, 
             $meeting_title, 
             $room_id, 
             $occupied
@@ -800,7 +863,7 @@ if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
         $current_date->modify('+1 day');
     }
 
-  unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['fullname_admin'],$_SESSION['meeting_title_admin'],$_SESSION['custom_fullname_admin']);
+  unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['meeting_title_admin'],$_SESSION['employee_name']);
     $_SESSION['success'] = "Booking saved for all selected dates!";
     header("location:$folder/reservations.php");
     exit();
@@ -809,7 +872,7 @@ if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
 
 
     if($errors_found){
-        header("location:$folder/reservation_add.php");
+        header("location:$folder/reservation_add.php?room_id=$room_id");
         exit();
     }else{
         header("location:$folder/reservation.php");

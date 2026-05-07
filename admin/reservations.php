@@ -20,7 +20,27 @@
       echo "<script>location.href='../index.php';</script>";
     }
       include '../loading_animation.php';
-  ?>
+
+    if(isset($_GET['filter'])){
+        $filter = $_GET['filter']; // e.g., "ongoing"
+        echo '<script>
+          document.addEventListener("DOMContentLoaded", function(){
+              const filterOptions = document.querySelector(".filter_options");
+              if(filterOptions) {
+                  filterOptions.style.display = "block";
+             
+                  const checkbox = document.getElementById("'.$filter.'");
+                  if(checkbox) {
+                      checkbox.checked = true;
+       
+                      $(checkbox).trigger("change");
+                  }
+              }
+          });
+        </script>';
+    }
+?>
+ 
 
 
 
@@ -82,48 +102,51 @@
         <section class="reservation_admin_section">
           <div class="container">
             <h2 class="text_header">Reservations </h2>
-              <div class="upper_search">
-                  <div class="input-group flex-nowrap">
-                    <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
-                    <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Date">
+                <div class="upper_search">
+                    <div class="input-group flex-nowrap">
+                      <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                      <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Date">
+                    </div>
+                    <div class="input-group flex-nowrap">
+                      <span class="input-group-text" id="addon-wrapping"><i class="bx bx-calendar"></i></span>
+                      <input type="date" id="date_reservation" class="form-control" placeholder="Search Floor Name or Date">
+                    </div>
+                    <div class="button_dec">
+                      <button type="button" id="filter_btn" class="btn btn_add">Filter <i class="bx bx-slider fs-5"></i></button>
+                    </div>
                 </div>
-                <div class="button_dec">
-                  <a href="reservation_add.php" class="btn btn_add "> Add <i class="bx bx-plus-circle  fs-5"></i></a>
-                  <button type="button" id="filter_btn" class="btn btn_add">Filter <i class="bx bx-slider fs-5"></i></button>
-                </div>
-              </div>
-              <div class="filter_options">
-                <div class="mb-4">
-                  <h6 class="fw-bold mb-3">Floors</h6>
-                  <ul class="d-flex gap-3 p-0">
-                    <?php
-                    $floor_sql = "SELECT * FROM floors";
-                    $floor_result = $conn2->query($floor_sql);
-                    if ($floor_result->num_rows > 0) {
-                      while ($floor_row = $floor_result->fetch_assoc()) {
-            
-                    echo "<li class='filter-item'> 
-                          <input type='checkbox' class='hidden-checkbox' id='floor_" . $floor_row['floor_id'] . "'> 
-                          <label class='clickable-label' for='floor_" . $floor_row['floor_id'] . "'>
-                              <i class='bx bx-layer'></i> " . $floor_row['floor_name'] . "
-                          </label>
-                        </li>";
-                      
+                <div class="filter_options">
+                  <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Floors</h6>
+                    <ul class="d-flex gap-3 p-0">
+                      <?php
+                      $floor_sql = "SELECT * FROM floors";
+                      $floor_result = $conn2->query($floor_sql);
+                      if ($floor_result->num_rows > 0) {
+                        while ($floor_row = $floor_result->fetch_assoc()) {
+              
+                      echo "<li class='filter-item'> 
+                            <input type='checkbox' class='hidden-checkbox' id='floor_" . $floor_row['floor_id'] . "'> 
+                            <label class='clickable-label' for='floor_" . $floor_row['floor_id'] . "'>
+                                <i class='bx bx-layer'></i> " . $floor_row['floor_name'] . "
+                            </label>
+                          </li>";
+                        
+                        }
                       }
-                    }
-                    ?>
-                  </ul>
+                      ?>
+                    </ul>
+                  </div>
+                  <div class="mb-3">
+                    <h6 class="fw-bold mb-3">Availability</h6>
+                    <ul class="d-flex gap-3 p-0">
+                      <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="ongoing">  <label for="ongoing" class='clickable-label'> <i class='bx bx-calendar-event'></i> On&nbsp;Going</label></li>
+                      <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="upcoming"> <label for="upcoming" class='clickable-label'><i class='bx bx-time-five'></i> Upcoming</label></li>
+                      <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="done"> <label for="done" class='clickable-label'><i class='bx bx-check-circle'></i> Done</label></li>
+                      <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="cancelled"> <label for="cancelled" class='clickable-label'><i class='bx bx-block'></i> Cancelled</label></li>
+                    </ul>
+                  </div>
                 </div>
-                <div class="mb-3">
-                  <h6 class="fw-bold mb-3">Availability</h6>
-                  <ul class="d-flex gap-3 p-0">
-                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="available">  <label for="available" class='clickable-label'> <i class='bx bx-check-circle'></i> Available</label></li>
-                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied"> <label for="partially_occupied" class='clickable-label'><i class='bx bx-time-five'></i> Partially Occupied</label></li>
-                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> <label for="fully_occupied" class='clickable-label'><i class='bx bx-x-circle'></i> Fully Occupied</label></li>
-                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="cancelled"> <label for="cancelled" class='clickable-label'><i class='bx bx-block'></i> Cancelled</label></li>
-                  </ul>
-                </div>
-               </div>
               <div class="row" id="reservation_body">
                 <!--data-->
               </div>
@@ -140,7 +163,28 @@
     </div>
 
     <style>
-      
+    .action_butt{
+      display: flex;
+      justify-content: center;
+      gap:5px;
+      padding:15px;
+    }
+  .reservation_admin_section .btn_cancelled{
+    background:#b30000;
+    color:white;
+    width:100%;
+        font-weight: 900;
+    
+    border-radius: 10px;
+  }
+    .reservation_admin_section .btn_view{
+       background: var(--primary-navy) !important;
+    color:white;
+    width:100%;
+        font-weight: 900;
+
+    border-radius: 10px;
+    }
  .card{
     position: relative;
     overflow: hidden;
@@ -151,6 +195,7 @@
 .card:hover{
     transform: translateY(-5px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    
 }
 
  .card img{
@@ -236,6 +281,18 @@
   padding: 5px 10px;
   border-radius: 5px;
 }
+
+
+.card-text {
+  font-size:1rem;
+}
+
+@media(max-width:991px){
+  .action_butt{
+    display:flex;
+    flex-direction: column;
+  }
+}
     </style>
 
     <script src="../assets/js/jquery.js"></script>
@@ -243,6 +300,7 @@
     <script src="../assets/js/box_icons.js"></script>
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/calendar.io.js"></script>
     <?php include '../alert.php'; ?>
 </body>
 </html>

@@ -51,8 +51,6 @@ if ($conn2->connect_error) {
  }
 
 
-
-
  #timezone
 date_default_timezone_set("asia/manila");
  #get date today

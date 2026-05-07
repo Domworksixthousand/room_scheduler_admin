@@ -1,9 +1,10 @@
 <?php
-    include 'rooms.php'; 
-    if(isset($_GET['room_id'])){
+   
+    if(isset($_GET['room_id']) && isset($_GET['location_back']) ){
         $room_id = htmlspecialchars($_GET['room_id'] ?? '');
+        $location_back = htmlspecialchars($_GET['location_back'] ?? '');
     }
-
+     include $location_back; 
     $get_rooms = $conn2->prepare("SELECT * FROM `rooms`  LEFT JOIN `floors` ON rooms.floor_id = floors.floor_id WHERE `room_id` = ?");
     $get_rooms->bind_param("s",$room_id);
     $get_rooms->execute();
@@ -57,7 +58,7 @@
                     <div class="modal-content">
                     <div class="modal-header border-0 d-flex justify-content-between">
                         <p class="modal-title fs-5 fw-bold" id="staticBackdropLabel"> Room Information</p>
-                        <a href="rooms.php" class=" btn_x "><i class="bx bx-x"></i></a>
+                        <a href="<?php echo $location_back; ?>" class=" btn_x "><i class="bx bx-x"></i></a>
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="room_id" value="<?php echo htmlspecialchars($room_id); ?>" readonly>
@@ -231,7 +232,7 @@
                         <div style="color: white;">${info.event.extendedProps.timeRange}</div>
                     </div>
                     <div>
-                        <small style="color: white; text-transform: uppercase; font-weight: bold; font-size: 0.7rem;">Organizer</small>
+                        <small style="color: white; text-transform: uppercase; font-weight: bold; font-size: 0.7rem;">Reserved by</small>
                         <div style="color: white;">${info.event.extendedProps.fullname}</div>
                     </div>
                 </div>

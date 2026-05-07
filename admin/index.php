@@ -34,7 +34,15 @@
         $start = $row['start_date'] . 'T' . date("H:i:s", strtotime($row['start_time']));
         $end = $row['end_date'] . 'T' . date("H:i:s", strtotime($row['end_time']));
         $timeRange = date("g:i A", strtotime($row['start_time'])) . " - " . date("g:i A", strtotime($row['end_time']));
+        $start_date = $row['start_date'];
+        $start_date = $row['start_date'];
         $status = $row['status'];
+        /*
+       $status = " ";
+       if($row['status'] === 'Cancelled'){
+        $status = "Cancelled";
+       }elseif($row['status'] === "Done" || $start_date <= $datetoday && )
+*/
         $events[] = [
             'title' => $row['meeting_title'],
             'start' => $start,
@@ -127,6 +135,8 @@
             <h2 class="text_header">Dashboard </h2>
             <div class="inner_con">
 
+
+            <!--room box ini pogi-->
               <div class="row">
                 <div class="col-lg-12 mb-3 left_third_row">
                   <div class="box" onclick="location.href='rooms.php'">
@@ -143,39 +153,103 @@
               </div>
 
               <div class="row">
-                <div class="col-lg-6 mb-3 left_first_row">
-                  <div class="box" onclick="location.href='reservations.php'">
-                    <img src="../assets/images/booked_today_icon.png" alt="Logo">
+                <div class="col-lg-4 mb-3 left_first_row">
+                  <div class="box" onclick="location.href='rooms.php?filter=available'">
+                    <img src="../assets/images/availble_calendar_icon.png" alt="Logo">
                     <div class="details">
-                      <?php
-                         $count_booked_today = $conn2->query("SELECT COUNT(*) AS count FROM booking WHERE `start_date` >= '$datetoday' AND `end_date` <= '$datetoday' AND status = 'Occupied'")->fetch_assoc()['count'];
-                      ?>
-                      <h2 class="fw-bold text-dark"><?php echo $count_booked_today; ?></h2>
-                      <p class="text-secondary">Occupied Booked Today</p>
+                  <?php
+                    $sql = "SELECT COUNT(*) as total_available FROM rooms 
+                            WHERE room_id NOT IN (
+                                SELECT room_id FROM booking 
+                                WHERE start_date = ? 
+                                AND status = 'Occupied' 
+                                AND ? BETWEEN start_time AND end_time
+                            )";
+
+                    $stmt = $conn2->prepare($sql);
+                    $stmt->bind_param("ss", $datetoday, $timetoday2);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $available = 0;
+
+                    if($row = $result->fetch_assoc()){
+                        $available = $row['total_available'];
+                    }
+                    ?>
+                      <h2 class="fw-bold "><?php echo $available; ?></h2>
+                      <p class="text-secondary">Available Today</p>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6 mb-3 right_first_row">
-                 <div class="box" onclick="location.href='reservations.php'">
-                    <img src="../assets/images/cancel-event_cabcelled.png" alt="Logo">
-                    <div class="details">
-                       <?php
-                         $count_cancelled_today = $conn2->query("SELECT COUNT(*) AS count FROM booking WHERE `start_date` >= '$datetoday' AND `end_date` <= '$datetoday' AND status = 'Cancelled'")->fetch_assoc()['count'];
-                      ?>
-                      <h2 class="fw-bold text-dark"><?php echo $count_cancelled_today; ?></h2>
-                      <p class="text-secondary">Cancelled Booked Today</p>
+                <div class="col-lg-4 mb-3 right_first_row">
+                  <div class="box" onclick="location.href='rooms.php?filter=partially_occupied'">
+                      <img src="../assets/images/partially_room_icon.png" alt="Logo">
+                      <div class="details">
+                            <div class="details">
+                                      <?php
+                        $end_time_limit = "23:00:00";
+                        $status = 'Occupied';
+
+                        $sql = "SELECT COUNT(*) as total_partially FROM rooms 
+                                WHERE room_id IN (
+                                    SELECT room_id FROM booking 
+                                    WHERE start_date = ? 
+                                    AND status = ? 
+                                    AND end_time <= ?
+                                )";
+
+                        $stmt = $conn2->prepare($sql);
+
+                       
+                        $stmt->bind_param("sss", $datetoday, $status, $end_time_limit);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        $total_partially = 0; 
+                        if($row = $result->fetch_assoc()){
+                            $total_partially = $row['total_partially'];
+                        }
+                        ?>
+
+                        <h2 class="fw-bold "><?php echo $total_partially; ?></h2>
+                        <p class="text-secondary">Partially Occupied Today</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6 mb-3 right_first_row">
-                 <div class="box" onclick="location.href='reservations.php'">
-                    <img src="../assets/images/cancel-event_cabcelled.png" alt="Logo">
-                    <div class="details">
-                       <?php
-                         $count_cancelled_today = $conn2->query("SELECT COUNT(*) AS count FROM booking WHERE `start_date` >= '$datetoday' AND `end_date` <= '$datetoday' AND status = 'Cancelled'")->fetch_assoc()['count'];
-                      ?>
-                      <h2 class="fw-bold text-dark"><?php echo $count_cancelled_today; ?></h2>
-                      <p class="text-secondary">Cancelled Booked Today</p>
+                <div class="col-lg-4 mb-3 middle_first_row">
+                  <div class="box" onclick="location.href='rooms.php?filter=fully_occupied'">
+                      <img src="../assets/images/fullybooked_calendar_icon.png" alt="Logo">
+                      <div class="details">
+                            <div class="details">
+                              <?php
+                                  $end_time_limit = "23:00:00";
+                                  $status = 'Occupied';
+
+                                  $sql = "SELECT COUNT(*) as total_occupied FROM rooms 
+                                          WHERE room_id IN (
+                                              SELECT room_id FROM booking 
+                                              WHERE start_date = ? 
+                                              AND status = ? 
+                                              AND end_time >= ?
+                                          )";
+
+                                  $stmt = $conn2->prepare($sql);
+
+                               
+                                  $stmt->bind_param("sss", $datetoday, $status, $end_time_limit);
+                                  $stmt->execute();
+                                  $result = $stmt->get_result();
+
+                                  $total_occupied = 0; 
+                                  if($row = $result->fetch_assoc()){
+                                      $total_occupied = $row['total_occupied'];
+                                  }
+                                  ?>
+
+                        <h2 class="fw-bold text-danger"><?php echo $total_occupied; ?></h2>
+                        <p class="text-secondary">Fully Occupied Today</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -183,50 +257,91 @@
 
               <div class="row">
                 <div class="col-lg-3 col-md-6 mb-3 second_row_first" >
-                  <div class="box" onclick="location.href='reservations.php'">
-                    <img src="../assets/images/booking_icon.png" alt="">
+                  <div class="box" onclick="location.href='reservations.php?filter=ongoing'">
+                    <img src="../assets/images/ongoing _booked_icons.png" alt="">
                     <div class="details">
-                         <?php
-                         $total_booked = $conn2->query("SELECT COUNT(*) AS count FROM booking ")->fetch_assoc()['count'];
-                      ?>
-                      <h2 class="fw-bold text-dark"><?php echo $total_booked; ?></h2>
-                      <p class="text-secondary">Total Booked</p>
+                      <?php
+                        $stmt = $conn2->prepare("SELECT COUNT(*) AS total_ongoing FROM booking WHERE start_time <= ? AND end_time >= ? AND start_date = ?");
+
+                        $stmt->bind_param("sss", $timetoday2, $timetoday2, $datetoday);
+                        $stmt->execute();
+
+                        $result = $stmt->get_result();
+                        $ongoing_count = 0;
+
+                        if ($row = $result->fetch_assoc()) {
+                            $ongoing_count = $row['total_ongoing'];
+                        }
+                        ?>
+                      <h2 class="fw-bold text-success"><?php echo $ongoing_count; ?></h2>
+                      <p class="text-secondary">Ongoing Booked Today</p>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3 right_first_row ">
-                  <div class="box" onclick="location.href='reservations.php'">
-                    <img src="../assets/images/calendar_cancelled_icon.png" alt="">
+                <div class="col-lg-3 col-md-6 mb-3 second_row_second ">
+                  <div class="box" onclick="location.href='reservations.php?filter=upcoming'">
+                    <img src="../assets/images/upcoming_booked_icon.png" alt="">
                     <div class="details">
-                         <?php
-                         $total_ALL_cancelled = $conn2->query("SELECT COUNT(*) AS count FROM booking WHERE status = 'Cancelled'")->fetch_assoc()['count'];
-                      ?>
-                      <h2 class="fw-bold text-dark"><?php echo $total_ALL_cancelled; ?></h2>
-                      <p class="text-secondary">Total Cancelled</p>
+                        <?php
+                        $stmt = $conn2->prepare("SELECT COUNT(*) AS total_upcoming FROM booking WHERE start_time > ?  AND start_date = ?");
+
+                        $stmt->bind_param("ss", $timetoday2, $datetoday);
+                        $stmt->execute();
+
+                        $result = $stmt->get_result();
+                        $ongoing_count = 0;
+
+                        if ($row = $result->fetch_assoc()) {
+                            $upcoming_count = $row['total_upcoming'];
+                        }
+                        ?>
+                      <h2 class="fw-bold text-primary"><?php echo $upcoming_count; ?></h2>
+                      <p class="text-secondary">Upcoming Booked Today </p>
                     </div>
                   </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-3 left_first_row">
-                  <div class="box" onclick="location.href='reservations.php'">
+                  <div class="box" onclick="location.href='reservations.php?filter=done'">
                       <img src="../assets/images/calendar_check_icon.png" alt="">
                       <div class="details">
                           <?php
-                          $total_ALL_occupied = $conn2->query("SELECT COUNT(*) AS count FROM booking WHERE status = 'Occupied'")->fetch_assoc()['count'];
+                        $stmt = $conn2->prepare("SELECT COUNT(*) AS total_done FROM booking WHERE end_time < ?  AND start_date = ?");
+
+                        $stmt->bind_param("ss", $timetoday2, $datetoday);
+                        $stmt->execute();
+
+                        $result = $stmt->get_result();
+                        $ongoing_count = 0;
+
+                        if ($row = $result->fetch_assoc()) {
+                            $done_count = $row['total_done'];
+                        }
                         ?>
-                        <h2 class="fw-bold text-dark"><?php echo $total_ALL_occupied; ?></h2>
-                        <p class="text-secondary">Total Occupied</p>
+                        <h2 class="fw-bold text-dark"><?php echo $done_count; ?></h2>
+                        <p class="text-secondary">Done Booked Today</p>
                       </div>
                   </div>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3 second_row_first" >
-                  <div class="box" onclick="location.href='reservations.php'">
-                    <img src="../assets/images/calendar_done.png" alt="">
+                <div class="col-lg-3 col-md-6 mb-3 second_row_fourt" >
+                  <div class="box" onclick="location.href='reservations.php?filter=cancelled'">
+                    <img src="../assets/images/cancel-event_cabcelled.png" alt="">
                     <div class="details">
-                      <?php
-                         $total_booked_done = $conn2->query("SELECT COUNT(*) AS count FROM booking WHERE status = 'Done'")->fetch_assoc()['count'];
-                      ?>
-                      <h2 class="fw-bold text-dark"><?php echo $total_booked_done; ?></h2>
-                      <p class="text-secondary">Total Done</p>
+                         <?php
+                         $status = 'Cancelled';
+                        $stmt = $conn2->prepare("SELECT COUNT(*) AS total_cancelled FROM booking WHERE status = ?  AND start_date = ?");
+
+                        $stmt->bind_param("ss", $status, $datetoday);
+                        $stmt->execute();
+
+                        $result = $stmt->get_result();
+                        $ongoing_count = 0;
+
+                        if ($row = $result->fetch_assoc()) {
+                            $cancelled_count = $row['total_cancelled'];
+                        }
+                        ?>
+                      <h2 class="fw-bold text-danger"><?php echo $cancelled_count; ?></h2>
+                      <p class="text-secondary">Total Cancelled</p>
                     </div>
                   </div>
                 </div>
@@ -243,7 +358,7 @@
             </div>
           </div>
         </section>
-    </div>
+      </div>
 
     
  
@@ -259,6 +374,7 @@
     // 1. Initialize the calendar variable
     const calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
+    selectable: true,
     headerToolbar: {
     left: 'prev,next today',
     center: 'title',

@@ -20,6 +20,24 @@
     exit;
   }
   include '../loading_animation.php';
+    if(isset($_GET['filter'])){
+        $filter = $_GET['filter']; 
+        echo '<script>
+          document.addEventListener("DOMContentLoaded", function(){
+              const filterOptions = document.querySelector(".filter_options");
+              if(filterOptions) {
+                  filterOptions.style.display = "block";
+             
+                  const checkbox = document.getElementById("'.$filter.'");
+                  if(checkbox) {
+                      checkbox.checked = true;
+       
+                      $(checkbox).trigger("change");
+                  }
+              }
+          });
+        </script>';
+    }
 ?>
 
 
@@ -120,8 +138,8 @@
                 <h6 class="fw-bold mb-3">Availability</h6>
                 <ul class="d-flex gap-3 p-0">
                   <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="available">  <label for="available" class='clickable-label'> <i class='bx bx-check-circle'></i> Available</label></li>
-                  <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied"> <label for="partially_occupied" class='clickable-label'><i class='bx bx-time-five'></i> Partially Occupied</label></li>
-                  <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> <label for="fully_occupied" class='clickable-label'><i class='bx bx-x-circle'></i> Fully Occupied</label></li>
+                  <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied"> <label for="partially_occupied" class='clickable-label'><i class='bx bx-time-five'></i> Partially&nbsp;Occupied</label></li>
+                  <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> <label for="fully_occupied" class='clickable-label'><i class='bx bx-x-circle'></i> Fully&nbsp;Occupied</label></li>
                 </ul>
               </div>
             </div>

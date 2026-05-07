@@ -43,8 +43,6 @@ $today = date('Y-m-d');
 $current_time = date('H:i:s');
 $status_filter = 'Occupied';
 
-
-
 $today = date('Y-m-d');
 $current_time = date('H:i:s');
 
@@ -54,7 +52,7 @@ while ($row = $all_results->fetch_assoc()) {
     $total_booked_minutes = 0;
 
     //kuhaon an booking niyan
-    $status_sql = "SELECT start_time, end_time FROM `booking` 
+    $status_sql = "SELECT start_time, end_time,start_date FROM `booking` 
                    WHERE room_id = ? AND start_date = ? AND `status` = 'Occupied'";
     $stmt_status = $conn2->prepare($status_sql);
     $stmt_status->bind_param("ss", $id, $today);
@@ -64,12 +62,15 @@ while ($row = $all_results->fetch_assoc()) {
     while ($b = $res_status->fetch_assoc()) {
         $start = $b['start_time'];
         $end = $b['end_time'];
+        $start_date = $b['start_date'];
 
         // ang end time is 11:00 pm
-        $comparison_end = ($end == '00:00:00') ? '11:00:00' : $end;
+        $comparison_end = ($end == '00:00:00') ? '23:00:00' : $end;
+        $actual_end_for_calc = ($end == '00:00:00') ? '23:00:00' : $end;
+        $end_ts = strtotime($actual_end_for_calc);
 
         // check kun occipied na an oras pogi
-        if ($current_time >= $start && $current_time <= $comparison_end) {
+        if ($current_time >= $start && $current_time <= $comparison_end &&  $datetoday <= $start_date  ) {
             $is_currently_occupied = true;
         }
 
@@ -90,11 +91,17 @@ while ($row = $all_results->fetch_assoc()) {
     // Magiging Fully Occupied kung:
     // - May gumagamit sa mismong oras na ito (e.g. 6pm to 12am at ngayon ay 8pm)
     // - O kaya naman ay puno na ang total minutes na in-allow mo (e.g. 540 mins)
-    if ($is_currently_occupied || $total_booked_minutes >= 540) {
+    if ($total_booked_minutes >= 900) {
+        // Puno na ang schedule para sa buong araw (9 hours total)
         $current_label = "Fully Occupied";
+    } else if ($is_currently_occupied) {
+        // May gumagamit ngayon, pero may vacant slots pa sa ibang oras
+        $current_label = "Partially Occupied";
     } else if ($total_booked_minutes > 0) {
+        // Walang gumagamit ngayon, pero may booking sa ibang oras ng araw na ito
         $current_label = "Partially Occupied";
     } else {
+        // Walang booking sa buong araw
         $current_label = "Available";
     }
 
@@ -124,11 +131,11 @@ if (!empty($display_rooms)) {
                 <div class="card border-0 shadow-sm h-100">
                     <div class="overflow-hidden position-relative">
                         <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" alt="'.$room_name.'" style="height: 180px; object-fit: cover;">
-                        <span class="badge position-absolute top-0 end-0 m-2 '.$badge_class.'">'.$status_label.'</span>
+                        <span class="badge position-absolute rounded-pill top-0 end-0 m-2 '.$badge_class.'">'.$status_label.'</span>
                         <div class="buttton_actions">
                             <a href="room_delete.php?room_id='.$row['room_id'].'"  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Delete" class="btn btn-danger btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-trash"></i></a>
                             <a href="room_update.php?room_id='.$row['room_id'].'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Update"  class="btn btn-primary btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-edit"></i></a>
-                            <a href="room_info.php?room_id='.$row['room_id'].'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Info" class="btn btn-info btn-sm text-light"><i class="bx bx-info-circle"></i></a>
+                            <a href="room_info.php?room_id='.$row['room_id'].'&location_back=rooms.php" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Info" class="btn btn-info btn-sm text-light"><i class="bx bx-info-circle"></i></a>
                         </div>
                     </div>
                     <div class="card-body d-flex flex-column">
@@ -141,12 +148,13 @@ if (!empty($display_rooms)) {
                     </div>
                 </div>
               </div>';
+              
     }
 } else {
     echo "<div class='col-12 text-center py-5'><i class='bx bx-search-alt text-muted' style='font-size: 3rem;'></i><p class='mt-2 text-secondary'>No rooms found matching your filters.</p></div>";
 }
 
-echo "|||"; // Pagination Splitter
+echo "|||"; // Pagination Splitter ito pogi
 
 // --- CONSISTENT PAGINATION WITH PREV/NEXT ---
 if ($total_pages > 1) {

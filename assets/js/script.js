@@ -345,75 +345,78 @@ $(document).ready(function() {
 //admin reservation
 $(document).ready(function() {
     let searchTimer;
-    let currentPage = 1;
+    let currentPage = 1; // This is global to this scope
     let isTyping = false;
 
-   const fetchHistory = (page = 1) => {
-    const searchTerm = $('#input_reservation').val();
-    currentPage = page;
+    const fetchHistory = (page = 1) => {
+        currentPage = page; // CRITICAL: Update the global currentPage
+        const searchTerm = $('#input_reservation').val();
+        const searchDate = $('#date_reservation').val();
 
-    // Kunin ang mga piniling Floors
-    let selectedFloors = [];
-    $('.hidden-checkbox:checked').each(function() {
-        // Siguraduhin na floor ID lang ang nakukuha (i-check ang HTML mo)
-        if($(this).attr('id').includes('floor_')) {
-            selectedFloors.push($(this).attr('id').replace('floor_', ''));
-        }
-    });
+        let selectedFloors = [];
+        $('.hidden-checkbox:checked').each(function() {
+            if($(this).attr('id').includes('floor_')) {
+                selectedFloors.push($(this).attr('id').replace('floor_', ''));
+            }
+        });
 
-    // Kunin ang mga piniling Status/Availability
-    let selectedStatus = [];
-    if($('#available').is(':checked')) selectedStatus.push('Available');
-    if($('#partially_occupied').is(':checked')) selectedStatus.push('Partially Occupied');
-    if($('#fully_occupied').is(':checked')) selectedStatus.push('Fully Occupied');
-    if($('#cancelled').is(':checked')) selectedStatus.push('Cancelled');
+        let selectedStatus = [];
+        if($('#ongoing').is(':checked')) selectedStatus.push('On Going');
+        if($('#upcoming').is(':checked')) selectedStatus.push('Upcoming');
+        if($('#done').is(':checked')) selectedStatus.push('Done');
+        if($('#cancelled').is(':checked')) selectedStatus.push('Cancelled');
 
-    $.ajax({
-        url: "reservation_fetch.php",
-        method: "GET",
-        data: { 
-            search: searchTerm, 
-            page: page,
-            floors: selectedFloors, 
-            status: selectedStatus  
-        },
-        success: function(response) {
-            const parts = response.split("|||");
-            if (parts.length === 2) {
+        $.ajax({
+            url: "reservation_fetch.php",
+            method: "GET",
+            data: { 
+                search: searchTerm, 
+                date: searchDate,
+                page: page, // Send the requested page
+                floors: selectedFloors, 
+                status: selectedStatus  
+            },
+            success: function(response) {
+                const parts = response.split("|||");
                 $('#reservation_body').html(parts[0]);
                 $('#pagination_reservation').html(parts[1]);
             }
-        }
+        });
+    };
+
+    // --- Events ---
+
+    // Click Pagination
+    $(document).on('click', '.page-link-ajax', function(e) {
+        e.preventDefault();
+        const nextPage = $(this).data('page');
+        fetchHistory(nextPage); // This updates currentPage and fetches data
     });
-};
 
-
-    $(document).on('change', '.hidden-checkbox', function() {
-        fetchHistory(1);
+    // Checkboxes & Date
+    $(document).on('change', '.hidden-checkbox, #date_reservation', function() {
+        fetchHistory(1); // Reset to page 1 on filter change
     });
 
-
+    // Search Input
     $(document).on('keyup', '#input_reservation', function() {
-        isTyping = true; 
+        isTyping = true;
         clearTimeout(searchTimer);
         searchTimer = setTimeout(() => {
-            fetchHistory(1);
+            fetchHistory(1); // Reset to page 1 on new search
             isTyping = false;
         }, 500);
     });
+    
+    // Initial Load
+    fetchHistory(1);
 
-    // 3. Pagination Click (Manual)
-    $(document).on('click', '.page-link-ajax', function(e) {
-        e.preventDefault();
-        fetchHistory($(this).data('page'));
-    });
-
-
+    // Auto Refresh (Now uses the updated currentPage)
     setInterval(function() {
         if (!isTyping) {
-            fetchHistory(currentPage);
+            fetchHistory(currentPage); 
         }
-    }, 1000); 
+    }, 3000); // Recommendation: Increase to 3-5 seconds to save server resources
 });
 
 

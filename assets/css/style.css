@@ -1049,8 +1049,9 @@ body{
     color:white;
 }
 
-.graph_admin_section{
-    padding-bottom:100px;
+ .graph_admin_section{
+    padding-bottom:100px !important;
+
 }
 
 .graph_admin_section .inner_graph{
@@ -1064,6 +1065,13 @@ body{
     .login_section form{
         width: 80%;
     }
+    
+    .graph_admin_section .fc-header-toolbar,
+     .room_info_section .fc-header-toolbar{
+        display: flex;
+        flex-direction: column;
+        gap:10px;
+     }
 }
 
 @media(max-width:761px){
@@ -1082,5 +1090,9 @@ body{
         justify-content:center;
         align-items:center;
     }
+
+ 
+
+  
 }
 

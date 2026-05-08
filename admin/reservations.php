@@ -287,11 +287,15 @@
   font-size:1rem;
 }
 
-@media(max-width:991px){
-  .action_butt{
+@media(max-width:761px){
+  .upper_search{
     display:flex;
     flex-direction: column;
   }
+   .upper_search button{
+    width:100%;
+    
+   }
 }
     </style>
 

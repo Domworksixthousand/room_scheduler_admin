@@ -97,10 +97,11 @@ while ($row = $all_results->fetch_assoc()) {
     } else if ($is_currently_occupied) {
         // May gumagamit ngayon, pero may vacant slots pa sa ibang oras
         $current_label = "Partially Occupied";
-    } else if ($total_booked_minutes > 0) {
+    } //else if ($total_booked_minutes > 0) {
         // Walang gumagamit ngayon, pero may booking sa ibang oras ng araw na ito
-        $current_label = "Partially Occupied";
-    } else {
+      //  $current_label = "Partially Occupied";
+    //} 
+    else {
         // Walang booking sa buong araw
         $current_label = "Available";
     }

@@ -378,7 +378,7 @@ if(isset($_POST['room_update'])){
     $trash_filename = $admin_id . '_' . time() . '_' . $image;
     $trash_path = 'assets/uploads/' . $trash_filename;
 
-    if($extension !== "jpeg" || $extension !== "jpg"){
+    if($extension !== "jpeg" && $extension !== "jpg"){
         $_SESSION['error'] = "jpeg image type only";
         header("location:admin/room_update.php?room_id=$room_id");
         exit();

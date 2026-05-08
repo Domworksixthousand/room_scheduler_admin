@@ -33,7 +33,27 @@
         $start = $row['start_date'] . 'T' . date("H:i:s", strtotime($row['start_time']));
         $end = $row['end_date'] . 'T' . date("H:i:s", strtotime($row['end_time']));
         $timeRange = date("g:i A", strtotime($row['start_time'])) . " - " . date("g:i A", strtotime($row['end_time']));
-        $status = $row['status'];
+          $status = "Upcoming"; 
+
+            if ($row['status'] === 'Done') {
+                $status = "Done";
+            } elseif ($row['status'] === 'Cancelled') {
+                $status = "Cancelled";
+            } else {
+                if ($start_date < $datetoday) {
+                    $status = "Done";
+                } elseif ($start_date > $datetoday) {
+                    $status = "Upcoming"; 
+                } else {
+                    if ($timetoday2 > $end_time) {
+                        $status = "Done";
+                    } elseif ($timetoday2 >= $start_time && $timetoday2 <= $end_time) {
+                        $status = "On Going";
+                    } else {
+                        $status = "Upcoming";
+                    }
+                }
+            }
         $events[] = [
             'title' => $row['meeting_title'],
             'start' => $start,

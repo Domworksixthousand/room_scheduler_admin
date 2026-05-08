@@ -35,14 +35,30 @@
         $end = $row['end_date'] . 'T' . date("H:i:s", strtotime($row['end_time']));
         $timeRange = date("g:i A", strtotime($row['start_time'])) . " - " . date("g:i A", strtotime($row['end_time']));
         $start_date = $row['start_date'];
-        $start_date = $row['start_date'];
-        $status = $row['status'];
-        /*
-       $status = " ";
-       if($row['status'] === 'Cancelled'){
-        $status = "Cancelled";
-       }elseif($row['status'] === "Done" || $start_date <= $datetoday && )
-*/
+        $start_time = $row['start_time'];
+        $end_time = $row['end_time'];
+     
+        $status = "Upcoming"; 
+
+      if ($row['status'] === 'Done') {
+          $status = "Done";
+      } elseif ($row['status'] === 'Cancelled') {
+          $status = "Cancelled";
+      } else {
+          if ($start_date < $datetoday) {
+              $status = "Done";
+          } elseif ($start_date > $datetoday) {
+              $status = "Upcoming"; 
+          } else {
+              if ($timetoday2 > $end_time) {
+                  $status = "Done";
+              } elseif ($timetoday2 >= $start_time && $timetoday2 <= $end_time) {
+                  $status = "On Going";
+              } else {
+                  $status = "Upcoming";
+              }
+          }
+      }
         $events[] = [
             'title' => $row['meeting_title'],
             'start' => $start,
@@ -58,7 +74,6 @@
     $eventsJson = json_encode($events);
   ?>
 
- 
 
 
       <div class="sidebar close">

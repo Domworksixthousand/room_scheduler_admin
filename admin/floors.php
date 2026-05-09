@@ -86,7 +86,10 @@
           <h2 class="text_header">Floors</h2>
           <div class="inner_con">
               <div class="d-flex gap-2 mb-4">
-                <input type="search" id="input_floor" class="form-control" placeholder="Search Floor Name or Number of Floors">
+                <div class="input-group flex-nowrap">
+                  <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                  <input type="search" class="form-control " id="input_floor" placeholder="Search Floor Name or Number of Floors" aria-label="Username" aria-describedby="addon-wrapping">
+                </div>
                 <a href="floor_add.php" class="btn btn_add "> Add <i class="bx bx-plus-circle  fs-5"></i></a>
               </div>  
               <div class="overflow-auto">

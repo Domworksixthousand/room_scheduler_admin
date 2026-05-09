@@ -279,17 +279,18 @@ $(document).ready(function() {
 function fetchRooms(page = 1) {
     const searchTerm = $('#input_room').val();
     
-    // Collect Floors
     let selectedFloors = [];
     $('.hidden-checkbox:checked').each(function() {
         selectedFloors.push($(this).val());
     });
 
-    // Collect Availability Statuses
     let selectedStatus = [];
     if($('#available').is(':checked')) selectedStatus.push('Available');
     if($('#partially_occupied').is(':checked')) selectedStatus.push('Partially Occupied');
     if($('#fully_occupied').is(':checked')) selectedStatus.push('Fully Occupied');
+
+    // Visual feedback that it's loading
+    $('#room_body').css('opacity', '0.5');
 
     $.ajax({
         url: "room_fetch.php",
@@ -303,14 +304,13 @@ function fetchRooms(page = 1) {
         success: function(response) {
             const parts = response.split("|||");
             if (parts.length === 2) {
-                $('#room_body').html(parts[0]);
+                $('#room_body').html(parts[0]).css('opacity', '1');
                 $('#pagination_links').html(parts[1]);
-                  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                
+                // Re-initialize tooltips
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
                 [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
             }
-            
-
-           
         }
     });
 }

@@ -5,8 +5,8 @@ include '../config.php';
 $items_per_page = 8;
 $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $search_query = isset($_GET['search']) ? $_GET['search'] : '';
-$selected_floors = isset($_GET['floors']) ? $_GET['floors'] : [];
-$selected_status = isset($_GET['status']) ? $_GET['status'] : [];
+$selected_floors = isset($_GET['floors']) ? (array)$_GET['floors'] : [];
+$selected_status = isset($_GET['status']) ? (array)$_GET['status'] : [];
 $filter_date = isset($_GET['date']) ? $_GET['date'] : '';
 
 $offset = max(0, ($current_page - 1) * $items_per_page);
@@ -65,47 +65,49 @@ $filtered_data = [];
 
 // 4. THE CALCULATION LOOP (Filter by Status here)
 while ($row = $all_results->fetch_assoc()) {
-    $start_time = $row['start_time'];
-    $end_time = $row['end_time'];
-    $row_start_date = $row['start_date'];
-    $db_status = $row['status'];
+    $id = $row['room_id'];
+    $is_currently_occupied = false;
+    $total_booked_minutes = 0;
 
-    // Determine Dynamic Status
-    if ($db_status === "Cancelled") {
-        $status_label = "Cancelled";
-        $badge_class = "bg-danger";
-        $btn_state = "disabled";
-    } elseif ($today_date > $row_start_date) {
-        $status_label = "Done";
-        $badge_class = "bg-success";
-        $btn_state = "d-none";
-    } elseif ($today_date < $row_start_date) {
-        $status_label = "Upcoming";
-        $badge_class = "bg-primary";
-        $btn_state = "";
-    } else {
-        // It is TODAY
-        if ($now_time >= $start_time && $now_time <= $end_time) {
-            $status_label = "On Going";
-            $badge_class = "bg-danger";
-            $btn_state = "disabled";
-        } elseif ($now_time < $start_time) {
-            $status_label = "Upcoming";
-            $badge_class = "bg-primary";
-            $btn_state = "";
-        } else {
-            $status_label = "Done";
-            $badge_class = "bg-success";
-            $btn_state = "disabled";
+    // Fetch bookings for this room today
+    $status_sql = "SELECT start_time, end_time, start_date FROM `booking` 
+                   WHERE room_id = ? AND start_date = ? AND `status` = 'Occupied'";
+    $stmt_status = $conn2->prepare($status_sql);
+    $stmt_status->bind_param("ss", $id, $today);
+    $stmt_status->execute();
+    $res_status = $stmt_status->get_result();
+
+    while ($b = $res_status->fetch_assoc()) {
+        $start = $b['start_time'];
+        $end = $b['end_time'];
+        $comparison_end = ($end == '00:00:00') ? '23:59:59' : $end;
+
+        // FIXED: Changed $datetoday to $today
+        if ($current_time >= $start && $current_time <= $comparison_end) {
+            $is_currently_occupied = true;
         }
+
+        $start_ts = strtotime($start);
+        $end_ts = strtotime($end);
+        if ($end_ts <= $start_ts) $end_ts += 86400; 
+        
+        $total_booked_minutes += ($end_ts - $start_ts) / 60;
     }
 
-    // Apply Status Filter
-    if (empty($selected_status) || in_array($status_label, $selected_status)) {
-        $row['dynamic_status'] = $status_label;
-        $row['dynamic_badge'] = $badge_class;
-        $row['btn_state'] = $btn_state;
-        $filtered_data[] = $row;
+    // Determine Label
+    if ($total_booked_minutes >= 900) {
+        $current_label = "Fully Occupied";
+    } else if ($is_currently_occupied) {
+        $current_label = "Partially Occupied";
+    } else {
+        $current_label = "Available";
+    }
+
+    // THE FILTERING LOGIC
+    // If no status is selected, show all. If status is selected, only show matches.
+    if (empty($selected_status) || in_array($current_label, $selected_status)) {
+        $row['calc_label'] = $current_label;
+        $filtered_rooms[] = $row;
     }
 }
 
@@ -116,7 +118,7 @@ $display_data = array_slice($filtered_data, $offset, $items_per_page);
 
 // 6. OUTPUT UI
 $display_date_label = !empty($filter_date) ? date('M d, Y', strtotime($filter_date)) : date('M d, Y');
-echo "<p class='fw-bold mt-2'>RESERVATIONS FOR " . strtoupper($display_date_label) . "</p>";
+echo "<p class='fw-bold mt-2'>RESERVATIONS FOR (" . strtoupper($display_date_label) . ")</p>";
 
 if ($total_rows > 0) {
     echo '<div class="row">';

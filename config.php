@@ -48,7 +48,22 @@ if ($conn2->connect_error) {
         $fullname = $lastname . ' ' . $firstname . ' ' . $middlename;
     }
    }
+
+    $get_user_info = $conn2->prepare("SELECT * FROM `accounts` WHERE `employee_id` = ?");
+    $get_user_info->bind_param("s",$admin_id);
+    $get_user_info->execute();
+    $get_personal_info = $get_user_info->get_result();
+    if($get_personal_info ->num_rows>0){
+        while($row_personal = mysqli_fetch_assoc($get_personal_info)){
+            $role = $row_personal['role'];
+        }
+    }
+
  }
+
+
+
+
 
 
  #timezone

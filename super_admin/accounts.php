@@ -53,6 +53,12 @@
                     </a>
                 </li>
                 <li class="menu-item">
+                    <a href="rooms.php" class="menu-link">
+                    <span class="material-symbols-rounded"><i class="bx bx-door-open" ></i></span>
+                    <span class="menu-label ">Rooms</span>
+                    </a>
+                </li>
+                <li class="menu-item">
                     <a href="history.php" class="menu-link">
                     <span class="material-symbols-rounded "><i class='bx bx-history fs-4'></i></span>
                     <span class="menu-label">History</span>

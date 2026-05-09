@@ -8,7 +8,7 @@ $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $search_query = isset($_GET['search']) ? $_GET['search'] : '';
 $selected_floors = isset($_GET['floors']) ? $_GET['floors'] : [];
 $selected_status = isset($_GET['status']) ? $_GET['status'] : [];
-$status_text = !empty($selected_status) ? implode(', ', $selected_status) : 'All';
+
 $offset = max(0, ($current_page - 1) * $items_per_page);
 $search_param = "%" . $search_query . "%";
 
@@ -21,8 +21,8 @@ if (!empty($selected_floors)) {
     $placeholders = implode(',', array_fill(0, count($selected_floors), '?'));
     $where_clauses[] = "rooms.floor_id IN ($placeholders)";
     foreach ($selected_floors as $f_id) {
-        $params[] = $f_id;
-        $types .= "s";
+        $params[] = (int)$f_id;
+        $types .= "i";
     }
 }
 
@@ -70,7 +70,7 @@ while ($row = $all_results->fetch_assoc()) {
         $end_ts = strtotime($actual_end_for_calc);
 
         // check kun occipied na an oras pogi
-        if ($current_time >= $start && $current_time <= $comparison_end && $today <= $start_date) {
+        if ($current_time >= $start && $current_time <= $comparison_end &&  $datetoday <= $start_date  ) {
             $is_currently_occupied = true;
         }
 
@@ -105,10 +105,11 @@ while ($row = $all_results->fetch_assoc()) {
         // Walang booking sa buong araw
         $current_label = "Available";
     }
-if (empty($selected_status) || in_array($current_label, $selected_status)) {
-    $row['calc_label'] = $current_label;
-    $filtered_rooms[] = $row;
-}
+
+    if (empty($selected_status) || in_array($current_label, $selected_status)) {
+        $row['calc_label'] = $current_label;
+        $filtered_rooms[] = $row;
+    }
 }
 
 // Manual Pagination logic
@@ -125,9 +126,9 @@ if (!empty($display_rooms)) {
         $room_name = htmlspecialchars($row['room_name'] ?? '');
         $short_desc = (strlen($desc) > 25 ? substr($desc, 0, 25) . '...' : $desc);
         $room_name_short = (strlen($room_name) > 22 ? substr($room_name, 0, 22) . '...' : $room_name);
-     
+        
         echo '<div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-             
+    
                 <div class="card border-0 shadow-sm h-100">
                     <div class="overflow-hidden position-relative">
                         <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" alt="'.$room_name.'" style="height: 180px; object-fit: cover;">

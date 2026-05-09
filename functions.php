@@ -188,7 +188,7 @@ if(isset($_POST['floors_save'])){
 
     # Check floor_id
     $check_floor_id = $conn2->prepare("SELECT * FROM floors WHERE floor_id = ?");
-    $check_floor_id->bind_param("i", $floor_id);
+    $check_floor_id->bind_param("s", $floor_id);
     $check_floor_id->execute();
     $result = $check_floor_id->get_result();
     if($result->num_rows > 0){
@@ -255,7 +255,7 @@ if(isset($_POST['floors_update'])){
     $number_of_rooms = htmlspecialchars($_POST['number_of_rooms'] ?? '');
 
     $check = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_name` = ? AND `floor_id` != ?");
-    $check->bind_param("si",$floor_name,$floor_id);
+    $check->bind_param("ss",$floor_name,$floor_id);
     $check->execute();
     $result_check = $check->get_result();
     if($result_check->num_rows>0){
@@ -264,7 +264,7 @@ if(isset($_POST['floors_update'])){
         exit();
     }else{
         $update = $conn2->prepare("UPDATE `floors` SET `floor_name` = ?, `rooms_number` = ? WHERE `floor_id` = ?");
-        $update->bind_param("ssi",$floor_name,$number_of_rooms,$floor_id);
+        $update->bind_param("sss",$floor_name,$number_of_rooms,$floor_id);
         $update->execute();
       
         $_SESSION['success'] = "Successfully Updated";
@@ -377,10 +377,11 @@ if(isset($_POST['room_update'])){
     $extension = strtolower(pathinfo($image, PATHINFO_EXTENSION));
     $trash_filename = $admin_id . '_' . time() . '_' . $image;
     $trash_path = 'assets/uploads/' . $trash_filename;
+    $location_back = ($role === "1") ? "super_admin" : "admin";
 
-    if($extension !== "jpeg" && $extension !== "jpg"){
+    if($extension !== "jpeg" && $extension !== "jpg"  &&  !empty($image)){
         $_SESSION['error'] = "jpeg image type only";
-        header("location:admin/room_update.php?room_id=$room_id");
+        header("location:$location_back/room_update.php?room_id=$room_id");
         exit();
     }
 
@@ -390,7 +391,7 @@ if(isset($_POST['room_update'])){
     $result_check = $check->get_result();
     if($result_check->num_rows>0){
         $_SESSION['error'] = "Serial Number Already Taken";
-        header("location:admin/room_update.php?room_id=$room_id");
+        header("location:$location_back/room_update.php?room_id=$room_id");
         exit();
     }
 
@@ -400,7 +401,7 @@ if(isset($_POST['room_update'])){
     $result_check1 = $check1->get_result();
     if($result_check1->num_rows>0){
         $_SESSION['error'] = "Room Name Already Taken";
-        header("location:admin/room_update.php?room_id=$room_id");
+        header("location:$location_back/room_update.php?room_id=$room_id");
         exit();
     }
 
@@ -410,7 +411,7 @@ if(isset($_POST['room_update'])){
         $update->execute();
 
         $_SESSION['success'] = "Successfully Updated";
-        header("location:admin/rooms.php");
+        header("location:$location_back/rooms.php");
         exit();
     }else{
             $check_if_exist = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_id` = ?");
@@ -437,7 +438,7 @@ if(isset($_POST['room_update'])){
             $update->execute();
 
             $_SESSION['success'] = "Successfully Updated";
-            header("location:admin/rooms.php");
+            header("location:$location_back/rooms.php");
             exit();
         }
     }

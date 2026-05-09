@@ -63,23 +63,24 @@ $total_rows = $c_stmt->get_result()->fetch_assoc()['total'];
 $total_pages = ceil($total_rows / $limit);
 
 
-if ($total_pages > 1) {
-    // Previous Button
-    if ($page > 1) {
-        $prev_page = $page - 1;
-        echo "<li class='page-item'><a class='page-link page-link-ajax' href='#' data-page='$prev_page'>Previous</a></li>";
-    }
-
+  if ($total_pages > 1) {
+    echo '<ul class="pagination pagination-sm mb-0">';
+    
+    // Previous Link
+    $prev_disabled = ($page <= 1) ? 'disabled' : '';
+    $prev_val = max(1, $page - 1);
+    echo "<li class='page-item $prev_disabled'><a class='page-link page-link-ajax' href='#' data-page='$prev_val'>Previous</a></li>";
 
     for ($i = 1; $i <= $total_pages; $i++) {
-        $active = ($i == $page) ? ' active' : '';
-        echo "<li class='page-item$active'><a class='page-link page-link-ajax' href='#' data-page='$i'>$i</a></li>";
+        $active = ($i == $page) ? 'active' : '';
+        echo "<li class='page-item $active'><a class='page-link page-link-ajax' href='#' data-page='$i'>$i</a></li>";
     }
 
-
-    if ($page < $total_pages) {
-        $next_page = $page + 1;
-        echo "<li class='page-item'><a class='page-link page-link-ajax' href='#' data-page='$next_page'>Next</a></li>";
-    }
+    // Next Link
+    $next_disabled = ($page >= $total_pages) ? 'disabled' : '';
+    $next_val = min($total_pages, $page + 1);
+    echo "<li class='page-item $next_disabled'><a class='page-link page-link-ajax' href='#' data-page='$next_val'>Next</a></li>";
+    
+    echo '</ul>';
 }
 ?>

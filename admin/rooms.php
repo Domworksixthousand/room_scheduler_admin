@@ -120,17 +120,20 @@
                   $floor_sql = "SELECT * FROM floors";
                   $floor_result = $conn2->query($floor_sql);
                   if ($floor_result->num_rows > 0) {
-                    while ($floor_row = $floor_result->fetch_assoc()) {
-           
-            echo "<li class='filter-item'> 
-                    <input type='checkbox' class='hidden-checkbox' id='floor_" . $floor_row['floor_id'] . "'> 
-                    <label class='clickable-label' for='floor_" . $floor_row['floor_id'] . "'>
-                        <i class='bx bx-layer'></i> " . $floor_row['floor_name'] . "
-                    </label>
-                  </li>";
-                    
+
+                while ($floor_row = $floor_result->fetch_assoc()) {
+                    echo "<li class='filter-item'> 
+                        <input type='checkbox' 
+                              class='hidden-checkbox' 
+                              value='" . $floor_row['floor_id'] . "'
+                              id='floor_" . $floor_row['floor_id'] . "'> 
+                        <label class='clickable-label' for='floor_" . $floor_row['floor_id'] . "'>
+                            <i class='bx bx-layer'></i> " . $floor_row['floor_name'] . "
+                        </label>
+                    </li>";
+                }                                                     
                     }
-                  }
+                
                   ?>
                 </ul>
               </div>

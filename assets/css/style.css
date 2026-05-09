@@ -126,19 +126,22 @@ body{
     background-color: rgba(0, 0, 128, 0.03) !important;
 }
 
-.room_admin_section .card{
+.room_admin_section .card,
+.room_superadmin_section .card{
     position: relative;
     overflow: hidden;
     transition: transform 0.2s ease;
     border-radius: 13px;
 }
 
-.room_admin_section .card:hover{
+.room_admin_section .card:hover,
+.room_superadmin_section .card:hover{
     transform: translateY(-5px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 }
 
-.room_admin_section .card img{
+.room_admin_section .card img,
+.room_superadmin_section .card img{
     height: 200px;
     object-fit: cover;
     border-top-left-radius: 13px;
@@ -147,15 +150,18 @@ body{
     transition-timing-function: ease-in-out;
 }
 
-.room_admin_section .card img:hover{
+.room_admin_section .card img:hover,
+.room_superadmin_section .card img:hover{
     transform: scale(1.1);
 }
 
-.room_admin_section .floor_name{
+.room_admin_section .floor_name,
+.room_superadmin_section .floor_name{
   font-size: 12px;
 }
 
-.room_admin_section .buttton_actions {
+.room_admin_section .buttton_actions,
+.room_superadmin_section .buttton_actions {
   display: flex;
   gap:10px;
   position: absolute;
@@ -170,35 +176,42 @@ body{
   transition: all 0.3s ease;
 }
 
-.room_admin_section .buttton_actions a {
+.room_admin_section .buttton_actions a,
+.room_superadmin_section .buttton_actions a{
     transition: all 0.3s ease;
     opacity: 0; 
     transform: translateX(-20px);
 }
 
-.room_admin_section .card:hover .buttton_actions {
+.room_admin_section .card:hover .buttton_actions,
+.room_superadmin_section .card:hover .buttton_actions{
     top: 50px;
     left: 0px;
 }
 
-.room_admin_section .card:hover .buttton_actions a {
+.room_admin_section .card:hover .buttton_actions a,
+.room_superadmin_section  .card:hover .buttton_actions a{
     opacity: 1;
     transform: translateX(0);
 }
 
-.room_admin_section .card:hover .buttton_actions a:nth-child(1) {
+.room_admin_section .card:hover .buttton_actions a:nth-child(1),
+.room_superadmin_section   .card:hover .buttton_actions a:nth-child(1){
     transition-delay: 0.1s;
 }
 
-.room_admin_section .card:hover .buttton_actions a:nth-child(2) {
+.room_admin_section .card:hover .buttton_actions a:nth-child(2),
+.room_superadmin_section  .card:hover .buttton_actions a:nth-child(2){
     transition-delay: 0.2s;
 }
 
-.room_admin_section .card:hover .buttton_actions a:nth-child(3) {
+.room_admin_section .card:hover .buttton_actions a:nth-child(3),
+.room_superadmin_section  .card:hover .buttton_actions a:nth-child(3){
     transition-delay: 0.3s;
 }
 
-.room_admin_section .card .btn_reserve{
+.room_admin_section .card .btn_reserve,
+.room_superadmin_section .card .btn_reserve {
   font-weight:900;
   padding:10px;
   border-radius: 10px;
@@ -208,11 +221,13 @@ body{
  background: #0F1595;
 }
 
-.room_admin_section .card .btn_reserve:hover{
+.room_admin_section .card .btn_reserve:hover,
+.room_superadmin_section  .card .btn_reserve:hover{
  background: #141cc3;
 }
 
-.room_admin_section .floor_name {
+.room_admin_section .floor_name,
+.room_superadmin_section  .floor_name {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -222,43 +237,51 @@ body{
   border-radius: 5px;
 }
 
-.room_admin_section .buttton_actions a{
+.room_admin_section .buttton_actions a,
+.room_superadmin_section  .buttton_actions a{
   border-radius:50%;
 }
 
-.room_admin_section .buttton_actions a i{
+.room_admin_section .buttton_actions a i,
+.room_superadmin_section .buttton_actions a i {
   transform: translateY(2px);
 }     
 
-.room_admin_section .upper_search{
+.room_admin_section .upper_search,
+.room_superadmin_section .upper_search{
     display:flex;
     gap:10px;
     margin-bottom:20px;
 }
 
-.room_admin_section .button_dec{
+.room_admin_section .button_dec,
+.room_superadmin_section .button_dec{
     display:flex;
     gap:10px;
 }
 
 .room_admin_section li,
-.reservation_admin_section li{
+.reservation_admin_section li,
+.room_superadmin_section li{
     list-style:none;
     display:flex;
 }
 
 .room_admin_section li label,
-.reservation_admin_section li label{
+.reservation_admin_section li label,
+.room_superadmin_section li label{
   margin-left:5px;
 }
 
 .room_admin_section ul,
-.reservation_admin_section ul{
+.reservation_admin_section ul,
+.room_superadmin_section  ul{
   overflow-x:auto;
 }
 
 .room_admin_section .filter_options,
-.reservation_admin_section .filter_options{
+.reservation_admin_section .filter_options,
+.room_superadmin_section .filter_options{
   background:#ffffff;
   padding: 30px 20px 20px 20px;
   border-radius: 10px;
@@ -270,7 +293,8 @@ body{
 }
 
 .room_admin_section .floor-item,
-.reservation_admin_section .floor-item{
+.reservation_admin_section .floor-item,
+.room_superadmin_section  .floor-item{
     display: flex;        
     align-items: center;  
     gap: 8px;              
@@ -279,19 +303,22 @@ body{
 }
 
 .room_admin_section .floor-item label,
-.reservation_admin_section  .floor-item label{
+.reservation_admin_section  .floor-item label,
+.room_superadmin_section  .floor-item label{
     display: inline;    
     margin: 0;
     cursor: pointer;
 }
 
 .room_admin_section .hidden-checkbox,
-.reservation_admin_section .hidden-checkbox {
+.reservation_admin_section .hidden-checkbox,
+.room_superadmin_section .hidden-checkbox{
     display: none;
 }
 
 .room_admin_section  .clickable-label,
-.reservation_admin_section .clickable-label {
+.reservation_admin_section .clickable-label,
+.room_superadmin_section   .clickable-label{
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -305,25 +332,29 @@ body{
 }
 
 .room_admin_section  .clickable-label:hover,
-.reservation_admin_section  .clickable-label:hover{
+.reservation_admin_section  .clickable-label:hover,
+.room_superadmin_section  .clickable-label:hover{
     background-color: #e9ecef;
     border-color: #ccc;
 }
 
 .room_admin_section  .hidden-checkbox:checked + .clickable-label,
-.reservation_admin_section  .hidden-checkbox:checked + .clickable-label{
+.reservation_admin_section  .hidden-checkbox:checked + .clickable-label,
+.room_superadmin_section .hidden-checkbox:checked + .clickable-label {
     background-color: #0c127d;
     color: white;
 
 }
 .room_admin_section  .room_admin_section  .card-title,
-.reservation_admin_section .room_admin_section  .card-title{
+.reservation_admin_section .room_admin_section  .card-title,
+.room_superadmin_section  .room_admin_section  .card-title {
   font-weight: 900;
   font-size:1.3rem;
 }
 
 .room_admin_section .card:hover .card-title,
-.reservation_admin_section .card:hover .card-title{
+.reservation_admin_section .card:hover .card-title,
+.room_superadmin_section   .card:hover .card-title{
     color:#0c127d;
 }
 
@@ -569,7 +600,12 @@ body{
     border:1px solid #C50000;
 }
 
-  .dashboard_superadmin_section .box{
+.dashboard_superadmin_section{
+    padding: 30px  0 60px 0;
+}
+
+
+.dashboard_superadmin_section .box{
     background: var(--card-bg, #fff);
     border: 1px solid var(--border-color, #e3e6f0);
     border-radius: var(--border-radius, 8px);
@@ -579,48 +615,13 @@ body{
     z-index:0;
 }
 
+
 .dashboard_superadmin_section .box:hover{
     transform: translateY(-5px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     z-index:0;
 }
 
-.dashboard_superadmin_section .left_first_row  h2{
-    color:#177ee6 !important;
-    font-weight:900 !important;
-}
-
-.dashboard_superadmin_section .right_third_row h2{
-    color:#f7a539 !important;
-    font-weight:900 !important;
-}
-
-.dashboard_superadmin_section .left_third_row h2{
-    color:#4c5cb0 !important;
-    font-weight:900 !important;
-}
-
-.dashboard_superadmin_section .right_first_row h2{
-    color:#e31717 !important;
-    font-weight:900 !important;
-}
-
-.dashboard_superadmin_section .left_first_row img{
-    background:#177ee6;
-    padding: 20px;
-    border-radius: 10px;
-    width:60px;
-    height:60px;
-}
-
-.dashboard_superadmin_section .right_first_row img,
-.dashboard_admin_section .second_row_fourt img{
-    background: #b30000;
-    padding: 20px;
-    border-radius: 10px;
-    width:60px;
-    height:60px;
-}
 
 .dashboard_admin_section .second_row_second img{
     background: #0d6efd;
@@ -654,29 +655,6 @@ body{
     height:60px;
 }
 
-.dashboard_superadmin_section .left_first_row .box,
-.dashboard_superadmin_section .right_first_row .box,
-.dashboard_superadmin_section .second_row_first .box,
-.dashboard_superadmin_section .left_third_row .box,
-.dashboard_superadmin_section .right_third_row .box,
-.dashboard_admin_section .second_row_second .box,
-.dashboard_admin_section .second_row_fourt .box{
-    display: flex;
-    gap:20px;
-    cursor:pointer;
-} 
-
-
-.chart_superadmin_section{
-    padding:50px 0;
-}
-
-.chart_superadmin_section .inner_graph{
-    background:white;
-    padding:30px;
-    border-radius:18px;
-}
-
 .history_superadmin_section th,
 .reservation_superadmin_section th{
     text-align: center;
@@ -702,6 +680,18 @@ body{
 .reservation_superadmin_section .btn_add:hover{
     background:#4549ac !important;
     color:white;
+}
+
+.dashboard_superadmin_section .left_third_row h2{
+    color: #4c5cb0 !important; 
+}
+
+.dashboard_superadmin_section .second_row_second img{
+    background-color:#0d6efd !important;
+    padding: 20px;
+    border-radius: 10px;
+    width:60px;
+    height:60px;
 }
 
 /**/
@@ -745,10 +735,20 @@ body{
 .dashboard_admin_section .second_row_first .box,
 .dashboard_admin_section .left_third_row .box,
 .dashboard_admin_section .right_third_row .box,
-.dashboard_admin_section .middle_first_row .box{
-    display: flex;
-    gap:20px;
-    cursor:pointer;
+.dashboard_admin_section .middle_first_row .box,
+.dashboard_admin_section .second_row_second .box,
+.dashboard_admin_section .second_row_fourt .box,
+.dashboard_superadmin_section .left_third_row .box,
+.dashboard_superadmin_section  .left_first_row .box,
+.dashboard_superadmin_section .right_first_row .box,
+.dashboard_superadmin_section .middle_first_row .box,
+.dashboard_superadmin_section .second_row_first .box,
+.dashboard_superadmin_section .second_row_second .box,
+.dashboard_superadmin_section .second_row_fourt .box
+{
+    display: flex !important;
+    gap:20px !important;
+    cursor:pointer!important; 
 } 
 
 .dashboard_admin_section .left_first_row  h2{
@@ -779,7 +779,10 @@ body{
     height:60px;
 }
 
-.dashboard_admin_section .middle_first_row img{
+.dashboard_admin_section .middle_first_row img,
+.dashboard_superadmin_section .middle_first_row img,
+.dashboard_superadmin_section .second_row_fourt img,
+.dashboard_admin_section .second_row_fourt img{
     background: #b30000;
     padding: 20px;
     border-radius: 10px;
@@ -787,7 +790,8 @@ body{
     height:60px;
 }
 
-.dashboard_admin_section .right_first_row img{
+.dashboard_admin_section .right_first_row img,
+.dashboard_superadmin_section .right_first_row img{
     background: #ffc107;
     padding: 20px;
     border-radius: 10px;
@@ -795,7 +799,8 @@ body{
     height:60px;
 }
 
-.dashboard_admin_section .second_row_first img{
+.dashboard_admin_section .second_row_first img,
+.dashboard_superadmin_section  .left_first_row img{
     background: #198654;
     padding: 20px;
     border-radius: 10px;
@@ -810,7 +815,7 @@ body{
     width:60px;
     height:60px;
 }
-
+    
 .dashboard_admin_section .right_third_row img{
     background: #f7a539;
     padding: 20px;
@@ -840,7 +845,8 @@ body{
 .floor_admin_section .btn_add,
 .room_admin_section .btn_add,
 .history_admin_section .btn_add,
-.reservation_admin_section .btn_add{
+.reservation_admin_section .btn_add,
+.room_superadmin_section .btn_add{
     display: flex !important;
     gap:8px !important;
     background-color: #0F1595 !important;

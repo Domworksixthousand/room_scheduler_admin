@@ -440,7 +440,7 @@
                         <div style="color: white;">${info.event.extendedProps.timeRange}</div>
                     </div>
                     <div>
-                        <small style="color: white; text-transform: uppercase; font-weight: bold; font-size: 0.7rem;">Organizer</small>
+                        <small style="color: white; text-transform: uppercase; font-weight: bold; font-size: 0.7rem;">Reserved By</small>
                         <div style="color: white;">${info.event.extendedProps.fullname}</div>
                     </div>
                 </div>
@@ -469,12 +469,11 @@
 </script>
 
 
-<script src="../assets/js/chart.js"></script>
-<script src="../assets/js/cool_alert.js"></script>
-<script src="../assets/js/box_icons.js"></script>
-<script src="../assets/js/script.js"></script>
-<script src="../assets/js/boostrap.js"></script>
-<script src="../assets/js/calendar.io.js"></script>
-<?php include '../chart.php' ?>
+
+  <script src="../assets/js/cool_alert.js"></script>
+  <script src="../assets/js/box_icons.js"></script>
+  <script src="../assets/js/script.js"></script>
+  <script src="../assets/js/boostrap.js"></script>
+  <script src="../assets/js/calendar.io.js"></script>
 </body>
 </html>

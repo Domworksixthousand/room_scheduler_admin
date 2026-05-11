@@ -21,7 +21,27 @@
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
   </head>
   <body>
-<?php include '../loading_animation.php'; ?>
+<?php
+   include '../loading_animation.php'; 
+    if(isset($_GET['filter'])){
+        $filter = $_GET['filter']; 
+        echo '<script>
+          document.addEventListener("DOMContentLoaded", function(){
+              const filterOptions = document.querySelector(".filter_options");
+              if(filterOptions) {
+        
+             
+                  const checkbox = document.getElementById("'.$filter.'");
+                  if(checkbox) {
+                      checkbox.checked = true;
+       
+                      $(checkbox).trigger("change");
+                  }
+              }
+          });
+        </script>';
+    }
+  ?>
 <!-- Navbar -->
 <nav class="site-nav">
     <button class="sidebar-toggle">
@@ -91,47 +111,42 @@
         </div>
         <section class="reservation_superadmin_section">
             <div class="container">
-                <div class="inner_con">
-                <div class="d-flex gap-2 mb-4">
-                    <input type="search" id="superadmin_input_reservation" class="form-control" placeholder="Search Floor Name or Date">
-                    <a href="reservation_add.php" class="btn btn_add "> Add <i class="bx bx-plus-circle  fs-5"></i></a>
-                </div>  
-                <div class="overflow-auto">
-                    <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Meeting Title</th>
-                            <th>Employee</th>
-                            <th>Room Name</th>
-                            <th>Floor Name</th>
-                            <th>Status</th>
-                            <th>Cancelled At</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="superadmin_reservation_body">
-                        <!-- floors -->
-                    </tbody>
-                    </table>
+            <h2 class="text_header">Reservations </h2>
+                <div class="upper_search d-flex flex-column flex-sm-row gap-2 mb-3">
+                    <div class="input-group flex-nowrap">
+                      <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                      <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Date">
+                    </div>
+                    <div class="input-group flex-nowrap">
+                      <span class="input-group-text" id="addon-wrapping"><i class="bx bx-calendar"></i></span>
+                      <input type="date" id="date_reservation" class="form-control" placeholder="Search Floor Name or Date">
+                    </div>
                 </div>
-                <div class="d-flex justify-content-end align-items-end">
-                    <nav aria-label="Page navigation">
-                    <ul class="pagination" id="superadmin_pagination_reservation">
-                        <!--data-->
-                    </ul>
-                    </nav>
+                  <div class="filter_options mb-3">
+                  <ul>
+                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="ongoing">  <label for="ongoing" class='clickable-label'> <i class='bx bx-calendar-event'></i> On&nbsp;Going</label></li>
+                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="upcoming"> <label for="upcoming" class='clickable-label'><i class='bx bx-time-five'></i> Upcoming</label></li>
+                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="done"> <label for="done" class='clickable-label'><i class='bx bx-check-circle'></i> Done</label></li>
+                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="cancelled"> <label for="cancelled" class='clickable-label'><i class='bx bx-block'></i> Cancelled</label></li>
+                  </ul>
                 </div>
-                </div>
-          </div>
+              <div class="row" id="reservation_body">
+                <!--data-->
+              </div>
+              <div class="d-flex justify-content-end align-items-end">
+              <nav aria-label="Page navigation">
+                <ul class="pagination" id="pagination_reservation">
+                  <!--data-->
+                </ul>
+              </nav>
+            </div>
+            </div>
         </section>
     </div>
 </div>
 
    
     <script src="../assets/js/jquery.js"></script>
-    <script src="../assets/js/chart.js"></script>
     <script src="../assets/js/cool_alert.js"></script>
     <script src="../assets/js/box_icons.js"></script>
     <script src="../assets/js/script.js"></script>

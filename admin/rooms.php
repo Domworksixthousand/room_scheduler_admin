@@ -26,7 +26,7 @@
           document.addEventListener("DOMContentLoaded", function(){
               const filterOptions = document.querySelector(".filter_options");
               if(filterOptions) {
-                  filterOptions.style.display = "block";
+        
              
                   const checkbox = document.getElementById("'.$filter.'");
                   if(checkbox) {
@@ -42,7 +42,7 @@
 
 
 
-
+    <!--sidebar ini-->
     <div class="sidebar close">
       <div class="logo-details">
         <img src="../assets/images/fs_logo.jpg" alt="Logo">
@@ -92,6 +92,8 @@
       </ul>
     </div>
 
+
+    <!--main contetent-->
     <div class="main_content">
       <div class="header-content ">
         <span class="menu_toggle"><i class="bx bx-menu-alt-left"></i></span> 
@@ -109,42 +111,14 @@
               </div>
               <div class="button_dec">
                 <a href="room_add.php" class="btn btn_add">Add <i class="bx bx-plus-circle fs-5"></i></a>
-                <button type="button" id="filter_btn" class="btn btn_add">Filter <i class="bx bx-slider fs-5"></i></button>
               </div>
             </div>
-            <div class="filter_options">
-              <div class="mb-4">
-                <h6 class="fw-bold mb-3">Floors</h6>
-                <ul class="d-flex gap-3 p-0">
-                  <?php
-                  $floor_sql = "SELECT * FROM floors";
-                  $floor_result = $conn2->query($floor_sql);
-                  if ($floor_result->num_rows > 0) {
-
-                while ($floor_row = $floor_result->fetch_assoc()) {
-                    echo "<li class='filter-item'> 
-                        <input type='checkbox' 
-                              class='hidden-checkbox' 
-                              value='" . $floor_row['floor_id'] . "'
-                              id='floor_" . $floor_row['floor_id'] . "'> 
-                        <label class='clickable-label' for='floor_" . $floor_row['floor_id'] . "'>
-                            <i class='bx bx-layer'></i> " . $floor_row['floor_name'] . "
-                        </label>
-                    </li>";
-                }                                                     
-                    }
-                
-                  ?>
+            <div class="filter_options mb-3">
+                <ul>
+                  <li class='filter-item '><input type="checkbox" ' class='hidden-checkbox' id="available">  <label for="available" class='clickable-label  m-0'> <i class='bx bx-check-circle'></i> Available</label></li>
+                  <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied"> <label for="partially_occupied" class='clickable-label  m-0'><i class='bx bx-time-five'></i> Partially&nbsp;Occupied</label></li>
+                  <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> <label for="fully_occupied" class='clickable-label  m-0'><i class='bx bx-x-circle'></i> Fully&nbsp;Occupied</label></li>
                 </ul>
-              </div>
-              <div class="mb-3">
-                <h6 class="fw-bold mb-3">Availability</h6>
-                <ul class="d-flex gap-3 p-0">
-                  <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="available">  <label for="available" class='clickable-label'> <i class='bx bx-check-circle'></i> Available</label></li>
-                  <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied"> <label for="partially_occupied" class='clickable-label'><i class='bx bx-time-five'></i> Partially&nbsp;Occupied</label></li>
-                  <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> <label for="fully_occupied" class='clickable-label'><i class='bx bx-x-circle'></i> Fully&nbsp;Occupied</label></li>
-                </ul>
-              </div>
             </div>
               <div class="row" id="room_body">
                 

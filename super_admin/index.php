@@ -325,7 +325,7 @@
                             $done_count = $row['total_done'];
                         }
                         ?>
-                        <h2 class="fw-bold text-"><?php echo $done_count; ?></h2>
+                        <h2 class="fw-bold text-success"><?php echo $done_count; ?></h2>
                         <p class="text-secondary">Done Booked Today</p>
                       </div>
                   </div>

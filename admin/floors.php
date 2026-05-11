@@ -24,7 +24,7 @@
  ?>
 
 
-
+ <!--sidebar ini -->
    <div class="sidebar close">
       <div class="logo-details">
         <img src="../assets/images/fs_logo.jpg" alt="Logo">
@@ -75,7 +75,7 @@
     </div>
 
 
-    
+    <!--main content-->
     <div class="main_content">
       <div class="header-content">
         <span class="menu_toggle"><i class="bx bx-menu-alt-left"></i></span>

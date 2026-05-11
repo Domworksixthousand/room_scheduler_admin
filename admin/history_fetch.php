@@ -34,15 +34,19 @@ if($result->num_rows > 0) {
         $status_class = ($row['status'] == 'Occupied') ? 'bg-primary' : (($row['status'] == 'Done') ? 'bg-success' : 'bg-danger');
         
         echo "<tr>
-                <td><small>{$row['start_date']} to {$row['end_date']}</small></td>
-                <td><small>" . date('h:i A', strtotime($row['start_time'] ?? '')) . " to " . date('h:i A', strtotime($row['end_time'] ?? '')) . "</small></td>
-                <td>" . htmlspecialchars($row['meeting_title']) . "</td>
-                <td>" . htmlspecialchars($row['fullname']) . "</td>
-                <td>{$row['room_name']}</td>
-                <td>{$row['floor_name']}</td>
-                <td>" . ($row['cancelled_at'] ? htmlspecialchars($row['cancelled_at']) : 'Not cancelled') . "</td>
-                <td><span class='badge $status_class'>{$row['status']}</span></td>
-              </tr>";
+            <td>
+                <p class='small mb-1 text-center'>
+                     " . date('M d, Y', strtotime($row['start_date'])) . "
+                </p>
+            </td>
+            <td><small>" . date('h:i A', strtotime($row['start_time'] ?? '')) . " to " . date('h:i A', strtotime($row['end_time'] ?? '')) . "</small></td>
+            <td>" . htmlspecialchars($row['meeting_title']) . "</td>
+            <td>" . htmlspecialchars($row['fullname']) . "</td>
+            <td>" . htmlspecialchars($row['room_name']) . "</td>
+            <td>" . htmlspecialchars($row['floor_name']) . "</td>
+            <td>" . ($row['cancelled_at'] ? htmlspecialchars($row['cancelled_at']) : 'Not cancelled') . "</td>
+            <td><span class='badge $status_class'>" . htmlspecialchars($row['status']) . "</span></td>
+        </tr>";
     }
 } else {
     echo "<tr><td colspan='8' class='text-center py-4 text-muted'>No results found.</td></tr>";

@@ -92,17 +92,16 @@ while ($row = $all_results->fetch_assoc()) {
     // - May gumagamit sa mismong oras na ito (e.g. 6pm to 12am at ngayon ay 8pm)
     // - O kaya naman ay puno na ang total minutes na in-allow mo (e.g. 540 mins)
     if ($total_booked_minutes >= 900) {
-        // Puno na ang schedule para sa buong araw (9 hours total)
+
         $current_label = "Fully Occupied";
     } else if ($is_currently_occupied) {
-        // May gumagamit ngayon, pero may vacant slots pa sa ibang oras
+    
         $current_label = "Partially Occupied";
     } //else if ($total_booked_minutes > 0) {
         // Walang gumagamit ngayon, pero may booking sa ibang oras ng araw na ito
       //  $current_label = "Partially Occupied";
     //} 
     else {
-        // Walang booking sa buong araw
         $current_label = "Available";
     }
 
@@ -121,7 +120,7 @@ $display_rooms = array_slice($filtered_rooms, $offset, $items_per_page);
 if (!empty($display_rooms)) {
     foreach ($display_rooms as $row) {
         $status_label = $row['calc_label'];
-        $badge_class = ($status_label == "Fully Occupied") ? "bg-danger p-2" : (($status_label == "Partially Occupied") ? "bg-warning text-light p-2" : "bg-success p-2");
+         $badge_class = ($status_label == "Fully Occupied") ? "bg-glasmorphism text-light border border-danger border-2  fw-bold p-2" : (($status_label == "Partially Occupied") ? "bg-glasmorphism text-light border border-warning border-2   p-2" : "bg-glasmorphism text-light border border-success border-2 fw-bold p-2");
         $desc = htmlspecialchars($row['description'] ?? '');
         $room_name = htmlspecialchars($row['room_name'] ?? '');
         $short_desc = (strlen($desc) > 25 ? substr($desc, 0, 25) . '...' : $desc);

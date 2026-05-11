@@ -34,7 +34,11 @@ if($result->num_rows > 0) {
         $status_class = ($row['status'] == 'Occupied') ? 'bg-primary' : (($row['status'] == 'Done') ? 'bg-success' : 'bg-danger');
         
         echo "<tr>
-                <td><small>{$row['start_date']} to {$row['end_date']}</small></td>
+                 <td>
+                <p class='small mb-1 text-center'>
+                     " . date('M d, Y', strtotime($row['start_date'])) . "
+                </p>
+            </td>
                 <td><small>" . date('h:i A', strtotime($row['start_time'] ?? '')) . " to " . date('h:i A', strtotime($row['end_time'] ?? '')) . "</small></td>
                 <td>" . htmlspecialchars($row['meeting_title']) . "</td>
                 <td>" . htmlspecialchars($row['fullname']) . "</td>

@@ -92,7 +92,10 @@
              <div class="container">
             <div class="inner_con"> 
               <div class="d-flex gap-2 mb-4">
-                <input type="search" class="form-control" id="input_superadmin_history" placeholder="Search Date,Meeting Title,Room Name...">
+                <div class="input-group flex-nowrap">
+                  <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                  <input type="search" class="form-control " id="input_history" placeholder="Search Date,Meeting Title,Room Name..." aria-label="Username" aria-describedby="addon-wrapping">
+                </div>
               </div>
 
               <div class="overflow-auto">
@@ -130,11 +133,9 @@
 </div>
 
     <script src="../assets/js/jquery.js"></script>
-    <script src="../assets/js/chart.js"></script>
     <script src="../assets/js/cool_alert.js"></script>
     <script src="../assets/js/box_icons.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/boostrap.js"></script>
-    <?php include '../chart.php'; ?>  
   </body>
 </html>

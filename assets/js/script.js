@@ -31,15 +31,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-//filter display
- document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("filter_btn").addEventListener("click", function() {
-      const filterOptions = document.querySelector(".filter_options");
-      filterOptions.style.display = filterOptions.style.display === "block" ? "none" : "block";
-    });
-  });
-
-
 
 
 //modal show

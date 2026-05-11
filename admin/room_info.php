@@ -146,7 +146,7 @@
                                             <li class="list-group-item border-0 py-3">
                                                 <div class="d-flex align-items-center mb-1">
                                                     <i class='bx bx-info-circle me-3 text-secondary fs-5'></i>
-                                                    <span class="text-muted small">Description:</span>
+                                                    <span class="text-muted small">Description / Amenities:</span>
                                                 </div>
                                                 <p class="text-secondary mb-0 ps-5 small leading-relaxed">
                                                     <?php echo htmlspecialchars($description); ?>

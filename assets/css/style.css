@@ -37,6 +37,16 @@ body{
     background: #F2F2F2 !important;
 }
 
+.bg-glasmorphism{
+    background: rgba(255, 255, 255, 0.14);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(8.9px);
+-webkit-backdrop-filter: blur(8.9px);
+}
+
+
+
 .header-content{
     background:#0F1595;
     color:white;
@@ -262,39 +272,52 @@ body{
 
 .room_admin_section li,
 .reservation_admin_section li,
-.room_superadmin_section li{
+.room_superadmin_section li,
+.reservation_superadmin_section li{
     list-style:none;
     display:flex;
 }
 
 .room_admin_section li label,
 .reservation_admin_section li label,
-.room_superadmin_section li label{
+.room_superadmin_section li label,
+.reservation_superadmin_section li label{
   margin-left:5px;
 }
 
 .room_admin_section ul,
 .reservation_admin_section ul,
-.room_superadmin_section  ul{
+.room_superadmin_section  ul,
+.reservation_superadmin_section  ul{
   overflow-x:auto;
 }
 
-.room_admin_section .filter_options,
-.reservation_admin_section .filter_options,
-.room_superadmin_section .filter_options{
-  background:#ffffff;
-  padding: 30px 20px 20px 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  display:none;
-  transition-duration: 300ms;
-  transition-timing-function: ease-in-out;
-  border-top:10px solid #0F1595;
+ .room_admin_section .filter_options ul,
+ .reservation_admin_section  .filter_options ul,
+ .room_superadmin_section .filter_options ul,
+ .reservation_superadmin_section .filter_options ul {
+    background:white;
+    border-radius: 10px;
+    display: flex !important;
+    gap:0;
+    padding:0;
+    margin:0;
+    width: fit-content;
+    margin:0;
+}
+
+.room_admin_section .filter_options label,
+.reservation_admin_section .filter_options label,
+.room_superadmin_section .filter_options label,
+.reservation_superadmin_section .filter_options label {
+    font-size: 0.9rem !important;
 }
 
 .room_admin_section .floor-item,
 .reservation_admin_section .floor-item,
-.room_superadmin_section  .floor-item{
+.room_superadmin_section  .floor-item,
+.room_superadmin_section .floor-item,
+.reservation_superadmin_section .floor-item{
     display: flex;        
     align-items: center;  
     gap: 8px;              
@@ -304,7 +327,9 @@ body{
 
 .room_admin_section .floor-item label,
 .reservation_admin_section  .floor-item label,
-.room_superadmin_section  .floor-item label{
+.room_superadmin_section  .floor-item label,
+.room_superadmin_section .floor-item label,
+.reservation_superadmin_section  .floor-item label{
     display: inline;    
     margin: 0;
     cursor: pointer;
@@ -312,49 +337,61 @@ body{
 
 .room_admin_section .hidden-checkbox,
 .reservation_admin_section .hidden-checkbox,
-.room_superadmin_section .hidden-checkbox{
+.room_superadmin_section .hidden-checkbox,
+.room_superadmin_section .hidden-checkbox,
+.reservation_superadmin_section  .hidden-checkbox{
     display: none;
 }
 
 .room_admin_section  .clickable-label,
 .reservation_admin_section .clickable-label,
-.room_superadmin_section   .clickable-label{
+.room_superadmin_section   .clickable-label,
+.room_superadmin_section .clickable-label,
+.reservation_superadmin_section   .clickable-label{
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 8px 16px;
-    border: 1px solid #ddd;
-    border-radius: 20px; 
+    color:#727985;
+    border-radius: 0; 
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: #f8f9fa;
     user-select: none;
+    margin:0;
 }
 
 .room_admin_section  .clickable-label:hover,
 .reservation_admin_section  .clickable-label:hover,
-.room_superadmin_section  .clickable-label:hover{
+.room_superadmin_section  .clickable-label:hover,
+.room_superadmin_section .clickable-label:hover,
+.reservation_superadmin_section  .clickable-label:hover{
     background-color: #e9ecef;
     border-color: #ccc;
 }
 
 .room_admin_section  .hidden-checkbox:checked + .clickable-label,
 .reservation_admin_section  .hidden-checkbox:checked + .clickable-label,
-.room_superadmin_section .hidden-checkbox:checked + .clickable-label {
+.room_superadmin_section .hidden-checkbox:checked + .clickable-label,
+.room_superadmin_section  .hidden-checkbox:checked + .clickable-label,
+.reservation_superadmin_section .hidden-checkbox:checked + .clickable-label{
     background-color: #0c127d;
     color: white;
-
+    
 }
 .room_admin_section  .room_admin_section  .card-title,
 .reservation_admin_section .room_admin_section  .card-title,
-.room_superadmin_section  .room_admin_section  .card-title {
+.room_superadmin_section  .room_admin_section  .card-title,
+.room_superadmin_section  .room_admin_section  .card-title,
+.reservation_superadmin_section .room_admin_section  .card-title {
   font-weight: 900;
   font-size:1.3rem;
 }
 
 .room_admin_section .card:hover .card-title,
 .reservation_admin_section .card:hover .card-title,
-.room_superadmin_section   .card:hover .card-title{
+.room_superadmin_section   .card:hover .card-title,
+.room_superadmin_section  .card:hover .card-title,
+.reservation_superadmin_section  .card:hover .card-title {
     color:#0c127d;
 }
 
@@ -708,7 +745,7 @@ body{
 .reservation_admin_section .upper_search{
     display: flex;
     gap:10px;
-    padding:50px 0 30px 0;
+    padding:50px 0 20px 0;
 }
 
 .reservation_admin_section .button_dec{
@@ -848,6 +885,8 @@ body{
 .reservation_admin_section .btn_add,
 .room_superadmin_section .btn_add{
     display: flex !important;
+    align-items: center;
+    justify-content: center;
     gap:8px !important;
     background-color: #0F1595 !important;
     color:white !important;
@@ -916,6 +955,10 @@ body{
     background: white;
     padding: 26px;
     border-radius: 16px;
+}
+
+.room_info_section .fc-button-group button{
+    margin-right:5px;
 }
 
 .room_add_section input,
@@ -1065,6 +1108,16 @@ body{
     padding:30px;
     border-radius:18px;
 }
+
+.graph_admin_section .fc-button-group{
+    display: flex;
+    gap:5px;
+}
+
+.graph_admin_section .fc-toolbar-chunk{
+    display: flex;
+    gap:5px;
+}
 /**/
 
 @media(max-width:991px){
@@ -1077,7 +1130,7 @@ body{
         display: flex;
         flex-direction: column;
         gap:10px;
-     }
+    }
 }
 
 @media(max-width:761px){
@@ -1097,8 +1150,87 @@ body{
         align-items:center;
     }
 
- 
+    .room_admin_section .filter_options,
+    .reservation_admin_section .filter_options,
+    .room_superadmin_section  .filter_options{
+        overflow-x: scroll;
+    }
 
-  
 }
 
+@media(max-width:500px){
+    .dashboard_admin_section .left_first_row .box,
+    .dashboard_admin_section .right_first_row .box,
+    .dashboard_admin_section .second_row_first .box,
+    .dashboard_admin_section .left_third_row .box,
+    .dashboard_admin_section .right_third_row .box,
+    .dashboard_admin_section .middle_first_row .box,
+    .dashboard_admin_section .second_row_second .box,
+    .dashboard_admin_section .second_row_fourt .box,
+    .dashboard_superadmin_section .left_third_row .box,
+    .dashboard_superadmin_section  .left_first_row .box,
+    .dashboard_superadmin_section .right_first_row .box,
+    .dashboard_superadmin_section .middle_first_row .box,
+    .dashboard_superadmin_section .second_row_first .box,
+    .dashboard_superadmin_section .second_row_second .box,
+    .dashboard_superadmin_section .second_row_fourt .box
+    {
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+    } 
+
+     .dashboard_admin_section .left_first_row .details,
+    .dashboard_admin_section .right_first_row .details,
+    .dashboard_admin_section .second_row_first .details,
+    .dashboard_admin_section .left_third_row .details,
+    .dashboard_admin_section .right_third_row .details,
+    .dashboard_admin_section .middle_first_row .details,
+    .dashboard_admin_section .second_row_second .details,
+    .dashboard_admin_section .second_row_fourt .details,
+    .dashboard_superadmin_section .left_third_row .details,
+    .dashboard_superadmin_section  .left_first_row .details,
+    .dashboard_superadmin_section .right_first_row .details,
+    .dashboard_superadmin_section .middle_first_row .details,
+    .dashboard_superadmin_section .second_row_first .details,
+    .dashboard_superadmin_section .second_row_second .details,
+    .dashboard_superadmin_section .second_row_fourt .details
+    {
+        display: flex;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+    } 
+
+    .graph_admin_section .fc-button-group,
+    .room_info_section  .fc-button-group {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .graph_admin_section .fc-button-group button,
+    .room_info_section  .fc-button-group button{
+        margin-bottom:5px;
+        width:100% !important;
+        gap:0;
+    }
+
+    
+    .graph_admin_section .fc-toolbar-chunk,
+    .room_info_section .fc-toolbar-chunk{
+       flex-direction: column;
+       width:100%;
+    }
+
+    .graph_admin_section .fc-today-button,
+    .room_info_section  .fc-today-button{
+        margin:0 !important;
+        width:100%;
+    }
+
+    .graph_admin_section .fc-toolbar-title,
+    .room_info_section .fc-toolbar-title{
+        text-align: center;
+    }
+
+}

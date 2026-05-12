@@ -101,24 +101,26 @@
         <section class="reservation_admin_section">
             <div class="container">
             <h2 class="text_header">Reservations </h2>
-                <div class="upper_search">
-                    <div class="input-group flex-nowrap">
-                      <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
-                      <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Date">
-                    </div>
-                    <div class="input-group flex-nowrap">
-                      <span class="input-group-text" id="addon-wrapping"><i class="bx bx-calendar"></i></span>
-                      <input type="date" id="date_reservation" class="form-control" placeholder="Search Floor Name or Date">
-                    </div>
-                </div>
-                <div class="filter_options mb-3">
-                  <ul>
-                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="ongoing">  <label for="ongoing" class='clickable-label'> <i class='bx bx-calendar-event'></i> On&nbsp;Going</label></li>
-                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="upcoming"> <label for="upcoming" class='clickable-label'><i class='bx bx-time-five'></i> Upcoming</label></li>
-                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="done"> <label for="done" class='clickable-label'><i class='bx bx-check-circle'></i> Done</label></li>
-                    <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="cancelled"> <label for="cancelled" class='clickable-label'><i class='bx bx-block'></i> Cancelled</label></li>
-                  </ul>
-                </div>
+               <div class="card p-2 mb-3 ">
+                   <div class="upper_search p-0">
+                      <div class="input-group flex-nowrap">
+                        <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                        <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Date">
+                      </div>
+                      <div class="input-group flex-nowrap">
+                        <span class="input-group-text" id="addon-wrapping"><i class="bx bx-calendar"></i></span>
+                        <input type="date" id="date_reservation" class="form-control" placeholder="Search Floor Name or Date">
+                      </div>
+                  </div>
+                  <div class="filter_options mt-3">
+                    <ul>
+                      <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="ongoing">  <label for="ongoing" class='clickable-label'> <i class='bx bx-calendar-event'></i> On&nbsp;Going</label></li>
+                      <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="upcoming"> <label for="upcoming" class='clickable-label'><i class='bx bx-time-five'></i> Upcoming</label></li>
+                      <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="done"> <label for="done" class='clickable-label'><i class='bx bx-check-circle'></i> Done</label></li>
+                      <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="cancelled"> <label for="cancelled" class='clickable-label'><i class='bx bx-block'></i> Cancelled</label></li>
+                    </ul>
+                  </div>
+               </div>
               <div class="row" id="reservation_body">
                 <!--data-->
               </div>
@@ -134,142 +136,6 @@
         </section>
     </div>
 
-    <style>
-    .action_butt{
-      display: flex;
-      justify-content: center;
-      gap:5px;
-      padding:15px;
-    }
-  .reservation_admin_section .btn_cancelled{
-    background:#b30000;
-    color:white;
-    width:100%;
-        font-weight: 900;
-    
-    border-radius: 10px;
-  }
-    .reservation_admin_section .btn_view{
-       background: var(--primary-navy) !important;
-    color:white;
-    width:100%;
-        font-weight: 900;
-
-    border-radius: 10px;
-    }
- .card{
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s ease;
-    border-radius: 13px;
-}
-
-.card:hover{
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-    
-}
-
- .card img{
-    height: 200px;
-    object-fit: cover;
-    border-top-left-radius: 13px;
-    border-top-right-radius: 13px;
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-}
-
- .card img:hover{
-    transform: scale(1.1);
-}
-
- .floor_name{
-  font-size: 12px;
-}
-
- .buttton_actions {
-  display: flex;
-  gap:10px;
-  position: absolute;
-  top: 50px;
-  left: -50px;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 5px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  transition: all 0.3s ease;
-}
-
- .buttton_actions a {
-    transition: all 0.3s ease;
-    opacity: 0; 
-    transform: translateX(-20px);
-}
-
- .card:hover .buttton_actions {
-    top: 50px;
-    left: 0px;
-}
-
- .card:hover .buttton_actions a {
-    opacity: 1;
-    transform: translateX(0);
-}
-
- .card:hover .buttton_actions a:nth-child(1) {
-    transition-delay: 0.1s;
-}
-
- .card:hover .buttton_actions a:nth-child(2) {
-    transition-delay: 0.2s;
-}
-
- .card:hover .buttton_actions a:nth-child(3) {
-    transition-delay: 0.3s;
-}
-
- .card .btn_reserve{
-  font-weight:900;
-  padding:10px;
-  border-radius: 10px;
-  color:white;
-  transition-duration: 300ms;
-  transition-timing-function: ease-in-out;
- background: #0F1595;
-}
-
- .card .btn_reserve:hover{
- background: #141cc3;
-}
-
-.room_admin_section .floor_name {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
-
-.card-text {
-  font-size:1rem;
-}
-
-@media(max-width:761px){
-  .upper_search{
-    display:flex;
-    flex-direction: column;
-  }
-   .upper_search button{
-    width:100%;
-    
-   }
-}
-    </style>
 
     <script src="../assets/js/jquery.js"></script>
     <script src="../assets/js/cool_alert.js"></script>

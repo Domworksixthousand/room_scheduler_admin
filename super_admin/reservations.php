@@ -42,6 +42,8 @@
         </script>';
     }
   ?>
+
+
 <!-- Navbar -->
 <nav class="site-nav">
     <button class="sidebar-toggle">
@@ -111,8 +113,8 @@
         </div>
         <section class="reservation_superadmin_section">
             <div class="container">
-            <h2 class="text_header">Reservations </h2>
-                <div class="upper_search d-flex flex-column flex-sm-row gap-2 mb-3">
+                <div class="card  p-2 mb-3" >
+                    <div class="upper_search d-flex flex-column flex-sm-row gap-2 mb-3">
                     <div class="input-group flex-nowrap">
                       <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
                       <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Date">
@@ -122,13 +124,14 @@
                       <input type="date" id="date_reservation" class="form-control" placeholder="Search Floor Name or Date">
                     </div>
                 </div>
-                  <div class="filter_options mb-3">
-                  <ul>
+                <div class="filter_options " >
+                  <ul >
                     <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="ongoing">  <label for="ongoing" class='clickable-label'> <i class='bx bx-calendar-event'></i> On&nbsp;Going</label></li>
                     <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="upcoming"> <label for="upcoming" class='clickable-label'><i class='bx bx-time-five'></i> Upcoming</label></li>
                     <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="done"> <label for="done" class='clickable-label'><i class='bx bx-check-circle'></i> Done</label></li>
                     <li class='filter-item'><input type="checkbox" ' class='hidden-checkbox' id="cancelled"> <label for="cancelled" class='clickable-label'><i class='bx bx-block'></i> Cancelled</label></li>
                   </ul>
+                </div>
                 </div>
               <div class="row" id="reservation_body">
                 <!--data-->
@@ -154,3 +157,4 @@
     <?php include '../alert.php'; ?>
   </body>
 </html>
+

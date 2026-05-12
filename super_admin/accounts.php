@@ -89,10 +89,15 @@
         </div>
         <section class="accounts_superadmin_section">
            <div class="container">
-            <div class="d-flex gap-2">
-                <input type="search" class="form-control" id="myInput" placeholder="Search">
-                <a href="account_add.php" class="btn btn_add"> Add <img src="../assets/images/add_user_icon.png" alt=""></a>
-            </div>
+           <div class="card  p-2">
+                 <div class="d-flex gap-2">
+                    <div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                        <input type="search" class="form-control" id="myInput" placeholder="Search">
+                    </div>
+                    <a href="account_add.php" class="btn btn_add"> Add <img src="../assets/images/add_user_icon.png" alt=""></a>
+                </div>
+           </div>
             <div class="inner_con">
                 <table class="table">
                     <thead>

@@ -167,15 +167,18 @@ if(isset($_POST['sigout_admin'])){
         }
     }
 
+
     unset($_SESSION['admin_login']);
 
     // Destroy session
     session_destroy();
 
+
     // Redirect
     header("location:index.php");
     exit();
 }
+
 
 
 

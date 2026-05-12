@@ -104,22 +104,24 @@
         <div class="container">
           <h2 class="text_header">Rooms</h2>
           <div class="inner_con">
-            <div class="upper_search">
-              <div class="input-group flex-nowrap">
-                <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
-                <input type="search" class="form-control "  id="input_room"  placeholder="Search rooms, serials, or floors..." aria-label="Username" aria-describedby="addon-wrapping">
+              <div class="card p-2 mb-3">
+                  <div class="upper_search">
+                    <div class="input-group flex-nowrap">
+                      <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                      <input type="search" class="form-control "  id="input_room"  placeholder="Search rooms, serials, or floors..." aria-label="Username" aria-describedby="addon-wrapping">
+                    </div>
+                    <div class="button_dec">
+                      <a href="room_add.php" class="btn btn_add">Add <i class="bx bx-plus-circle fs-5"></i></a>
+                    </div>
+                  </div>
+                  <div class="filter_options ">
+                      <ul>
+                        <li class='filter-item '><input type="checkbox" ' class='hidden-checkbox' id="available">  <label for="available" class='clickable-label  m-0'> <i class='bx bx-check-circle'></i> Available</label></li>
+                        <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied"> <label for="partially_occupied" class='clickable-label  m-0'><i class='bx bx-time-five'></i> Partially&nbsp;Occupied</label></li>
+                        <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> <label for="fully_occupied" class='clickable-label  m-0'><i class='bx bx-x-circle'></i> Fully&nbsp;Occupied</label></li>
+                      </ul>
+                  </div>
               </div>
-              <div class="button_dec">
-                <a href="room_add.php" class="btn btn_add">Add <i class="bx bx-plus-circle fs-5"></i></a>
-              </div>
-            </div>
-            <div class="filter_options mb-3">
-                <ul>
-                  <li class='filter-item '><input type="checkbox" ' class='hidden-checkbox' id="available">  <label for="available" class='clickable-label  m-0'> <i class='bx bx-check-circle'></i> Available</label></li>
-                  <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied"> <label for="partially_occupied" class='clickable-label  m-0'><i class='bx bx-time-five'></i> Partially&nbsp;Occupied</label></li>
-                  <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> <label for="fully_occupied" class='clickable-label  m-0'><i class='bx bx-x-circle'></i> Fully&nbsp;Occupied</label></li>
-                </ul>
-            </div>
               <div class="row" id="room_body">
                 
                 <!-- rooms -->

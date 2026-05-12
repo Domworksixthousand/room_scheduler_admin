@@ -871,6 +871,10 @@ backdrop-filter: blur(8.9px);
     font-weight: bold;
 }
 
+.reservation_admin_section .text_header{
+    margin-bottom: 60px;
+}
+
 .dashboard_admin_section .inner_con,
 .room_admin_section .inner_con,
 .floor_admin_section .inner_con,
@@ -1118,6 +1122,150 @@ backdrop-filter: blur(8.9px);
     display: flex;
     gap:5px;
 }
+
+.reservation_admin_section .action_butt,
+.reservation_superadmin_section .action_butt{
+    display: flex;
+    justify-content: center;
+    gap:5px;
+    padding:15px;
+}
+
+.reservation_admin_section .btn_cancelled,
+.reservation_superadmin_section .btn_cancelled  {
+    background:#b30000;
+    color:white;
+    width:100%;
+    font-weight: 900;
+    border-radius: 10px;
+}
+
+.reservation_admin_section .btn_cancelled:hover,
+.reservation_superadmin_section .btn_cancelled:hover{
+    background-color: #cd0000;
+    color:white;
+}
+
+.reservation_admin_section .btn_view,
+.reservation_superadmin_section  .btn_view {
+    background: var(--primary-navy) !important;
+    color:white;
+    width:100%;
+    font-weight: 900;
+    border-radius: 10px;
+}
+
+.reservation_superadmin_section .btn_view:hover,
+.reservation_admin_section .btn_view{
+    color:white !important;
+    background-color: #00009a !important;
+}
+
+.reservation_admin_section .card,
+.reservation_superadmin_section   .card{
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    border-radius: 13px;
+}
+
+.reservation_admin_section .card:hover,
+.reservation_superadmin_section .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.reservation_admin_section .card img,
+.reservation_superadmin_section .card img{
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 13px;
+    border-top-right-radius: 13px;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+}
+
+.reservation_admin_section .card img:hover,
+.reservation_superadmin_section  .card img:hover {
+    transform: scale(1.1);
+}
+
+.reservation_admin_section .floor_name,
+.reservation_superadmin_section   .floor_name{
+    font-size: 12px;
+}
+
+.reservation_admin_section .buttton_actions,
+.reservation_superadmin_section .buttton_actions  {
+    display: flex;
+    gap:10px;
+    position: absolute;
+    top: 50px;
+    left: -50px;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.reservation_admin_section .buttton_actions a,
+.reservation_superadmin_section  .buttton_actions a{
+    transition: all 0.3s ease;
+    opacity: 0; 
+    transform: translateX(-20px);
+}
+
+.reservation_admin_section .card:hover .buttton_actions,
+.reservation_superadmin_section  .card:hover .buttton_actions{
+    top: 50px;
+    left: 0px;
+}
+
+.reservation_admin_section .card:hover .buttton_actions a,
+.reservation_superadmin_section  .card:hover .buttton_actions a {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.reservation_admin_section .card:hover .buttton_actions a:nth-child(1),
+.reservation_superadmin_section  .card:hover .buttton_actions a:nth-child(1)  {
+    transition-delay: 0.1s;
+}
+
+.reservation_admin_section .card:hover .buttton_actions a:nth-child(2),
+.reservation_superadmin_section .card:hover .buttton_actions a:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.reservation_admin_section .card:hover .buttton_actions a:nth-child(3),
+.reservation_superadmin_section .card:hover .buttton_actions a:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+.reservation_admin_section .card .btn_reserve,
+.reservation_superadmin_section   .card .btn_reserve{
+    font-weight:900;
+    padding:10px;
+    border-radius: 10px;
+    color:white;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    background: #0F1595;
+}
+
+.reservation_admin_section .card .btn_reserve:hover,
+.reservation_superadmin_section .card .btn_reserve:hover{
+    background: #141cc3;
+}
+
+.reservation_admin_section .card-text,
+.reservation_superadmin_section .card-text {
+    font-size:1rem;
+}
+
 /**/
 
 @media(max-width:991px){
@@ -1152,8 +1300,20 @@ backdrop-filter: blur(8.9px);
 
     .room_admin_section .filter_options,
     .reservation_admin_section .filter_options,
-    .room_superadmin_section  .filter_options{
-        overflow-x: scroll;
+    .room_superadmin_section  .filter_options,
+    .reservation_superadmin_section .filter_options{
+        overflow-x: scroll !important;
+    }
+
+    .reservation_admin_section .upper_search,
+    .reservation_superadmin_section  .upper_search{
+        display:flex;
+        flex-direction: column;
+    }
+
+    .reservation_admin_section .upper_search button,
+    .reservation_superadmin_section  .upper_search button{
+        width:100%;
     }
 
 }
@@ -1234,3 +1394,17 @@ backdrop-filter: blur(8.9px);
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -85,13 +85,15 @@
         <div class="container">
           <h2 class="text_header">Floors</h2>
           <div class="inner_con">
-              <div class="d-flex gap-2 mb-4">
-                <div class="input-group flex-nowrap">
-                  <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
-                  <input type="search" class="form-control " id="input_floor" placeholder="Search Floor Name or Number of Floors" aria-label="Username" aria-describedby="addon-wrapping">
-                </div>
-                <a href="floor_add.php" class="btn btn_add "> Add <i class="bx bx-plus-circle  fs-5"></i></a>
-              </div>  
+              <div class="card p-2 mb-3">
+                  <div class="d-flex gap-2 ">
+                    <div class="input-group flex-nowrap">
+                      <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                      <input type="search" class="form-control " id="input_floor" placeholder="Search Floor Name or Number of Floors" aria-label="Username" aria-describedby="addon-wrapping">
+                    </div>
+                    <a href="floor_add.php" class="btn btn_add "> Add <i class="bx bx-plus-circle  fs-5"></i></a>
+                </div> 
+              </div> 
               <div class="overflow-auto">
                 <table class="table">
                   <thead>

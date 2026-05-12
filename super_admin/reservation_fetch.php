@@ -129,7 +129,7 @@ if ($total_rows > 0) {
                         </p>
                     </div>
                     <div class="action_butt mt-auto d-flex">
-                        <a href="room_info.php?room_id='.$row['room_id'].'&location_back=reservations.php" class="btn btn_view w-100 d-flex align-items-center justify-content-center gap-1">
+                        <a href="room_info.php?room_id='.$row['room_id'].'&location_back=reservations.php" class="btn btn_view w-100 d-flex align-items-center  justify-content-center gap-1">
                             <i class="bx bx-info-circle"></i> Info
                         </a>';
         

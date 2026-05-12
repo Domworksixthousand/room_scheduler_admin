@@ -88,10 +88,12 @@
           <div class="container">
             <h2 class="text_header">History </h2>
             <div class="inner_con"> 
-              <div class="d-flex gap-2 mb-4">
-                <div class="input-group flex-nowrap">
-                  <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
-                  <input type="search" class="form-control " id="input_history" placeholder="Search Date,Meeting Title,Room Name..." aria-label="Username" aria-describedby="addon-wrapping">
+              <div class="card p-2 mb-3">
+                  <div class="d-flex gap-2">
+                    <div class="input-group flex-nowrap">
+                      <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
+                      <input type="search" class="form-control " id="input_history" placeholder="Search Date,Meeting Title,Room Name..." aria-label="Username" aria-describedby="addon-wrapping">
+                    </div>
                 </div>
               </div>
 

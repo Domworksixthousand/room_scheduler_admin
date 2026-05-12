@@ -313,17 +313,17 @@
                       <img src="../assets/images/calendar_check_icon.png" alt="">
                       <div class="details">
                           <?php
-                        $stmt = $conn2->prepare("SELECT COUNT(*) AS total_done FROM booking WHERE end_time < ?  AND start_date = ?");
+                            $stmt = $conn2->prepare("SELECT COUNT(*) AS total_done FROM booking WHERE end_time < ?  AND start_date = ?");
 
-                        $stmt->bind_param("ss", $timetoday2, $datetoday);
-                        $stmt->execute();
+                            $stmt->bind_param("ss", $timetoday2, $datetoday);
+                            $stmt->execute();
 
-                        $result = $stmt->get_result();
-                        $ongoing_count = 0;
+                            $result = $stmt->get_result();
+                            $ongoing_count = 0;
 
-                        if ($row = $result->fetch_assoc()) {
-                            $done_count = $row['total_done'];
-                        }
+                            if ($row = $result->fetch_assoc()) {
+                                $done_count = $row['total_done'];
+                            }
                         ?>
                         <h2 class="fw-bold text-success"><?php echo $done_count; ?></h2>
                         <p class="text-secondary">Done Booked Today</p>

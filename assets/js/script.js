@@ -11,6 +11,14 @@ window.addEventListener("load", function() {
     }, 600);
 });
 
+ /*sending book animation */
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('postForm').addEventListener('submit', ()=> {
+        document.getElementById('loadingOverlay').style.display = 'block';
+        document.getElementById('loadingOverlay').style.marginLeft = '5px';
+    });
+});
+
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('imageInput').addEventListener('change', function() {
     const file = this.files[0];
@@ -772,6 +780,69 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
+ 
+
+//search dropdown
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput1 = document.getElementById("empSearchmeeting");
+    const dropdown1 = document.getElementById("empDropdown_meeting");
+    const items1 = document.querySelectorAll(".emp-item_meeting");
+    
+    // Fix: Match the ID from your HTML hidden input
+    const hiddenInput1 = document.getElementById("meeting_title");
+
+    function normalize(str) {
+        return str.toLowerCase().replace(/\s+/g, ' ').trim();
+    }
+
+    searchInput1.addEventListener("focus", () => {
+        dropdown1.classList.remove("d-none");
+    });
+
+    searchInput1.addEventListener("input", function () { // 'input' is usually better than 'keyup'
+        let search = normalize(this.value);
+        let hasMatches = false;
+
+        items1.forEach(item => {
+            // Fix: Use 'item' instead of 'items1'
+            let text = normalize(item.textContent);
+            let searchWords = search.split(" ");
+            let match = searchWords.every(word => text.includes(word));
+
+            item.style.setProperty('display', match ? "" : "none", 'important');
+            if (match) hasMatches = true;
+        });
+
+        // Hide dropdown if no results, show if there are
+        if (search === "" || hasMatches) {
+            dropdown1.classList.remove("d-none");
+        }
+    });
+
+    // Select Item logic
+    items1.forEach(item => {
+        item.addEventListener("click", function () { // Fix: Use 'item'
+            let name = this.getAttribute("data-name");
+
+            searchInput1.value = name;
+            hiddenInput1.value = name;
+
+            dropdown1.classList.add("d-none");
+        });
+    });
+
+    // Close when clicking outside
+    document.addEventListener("click", function (e) {
+        // Fix: Changed 'dropdown' to 'dropdown1'
+        if (!searchInput1.contains(e.target) && !dropdown1.contains(e.target)) {
+            dropdown1.classList.add("d-none");
+        }
+    });
+});
+
+
+ 
 
 //superadmin
 /*

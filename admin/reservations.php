@@ -21,7 +21,7 @@
       include '../loading_animation.php';
 
     if(isset($_GET['filter'])){
-        $filter = $_GET['filter']; // e.g., "ongoing"
+        $filter = $_GET['filter']; 
         echo '<script>
           document.addEventListener("DOMContentLoaded", function(){
               const filterOptions = document.querySelector(".filter_options");

@@ -24,6 +24,7 @@
   <body>
 <?php
  include '../loading_animation.php'; 
+ include '../alert.php';
   if(isset($_GET['filter'])){
         $filter = $_GET['filter']; 
         echo '<script>
@@ -158,6 +159,7 @@
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/calendar.io.js"></script>
+    
 </body>
 </html>
 

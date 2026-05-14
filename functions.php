@@ -557,14 +557,14 @@ if(isset($_POST['reservation_save'])){
     $end_date = htmlspecialchars($_POST['end_date'] ?? '');
     $start_time_data = date("H:i:s", strtotime($_POST['start_time'] ?? '00:00'));
     $end_time_data = date("H:i:s", strtotime($_POST['end_time'] ?? '00:00'));
-   
-    $meeting_title = htmlspecialchars($_POST['meeting_title'] ?? '');
-    $employee_name = htmlspecialchars($_POST['employee_name'] ?? '');
+    $meeting_title1 = htmlspecialchars($_POST['meeting_title1'] ?? '');
+    $meeting_title = htmlspecialchars(!empty($_POST['meeting_title']) ? $_POST['meeting_title'] : $meeting_title1);
+    $employee_name1 = htmlspecialchars($_POST['employee_name1'] ?? '');
+    $employee_name = htmlspecialchars(!empty($_POST['employee_name']) ? $_POST['employee_name'] : $employee_name1);
     $custom_start = $_POST['custom_start'] ?? [];
     $custom_end = $_POST['custom_end'] ?? [];
     $checkbox = $_POST['checkbox'] ?? 'no';
     $room_id = htmlspecialchars($_POST['room_id'] ?? '');
-
 
     $get_serial_number = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_id` = ?");
     $get_serial_number->bind_param("s", $room_id);
@@ -586,7 +586,6 @@ if(isset($_POST['reservation_save'])){
     $_SESSION['checkbox_admin'] = $checkbox;
 
 
-
     $folder = ($_SESSION['admin_login']) ? 'admin' : 'super_admin';
 
     $_SESSION['booked_details_admin'] = [];
@@ -605,13 +604,7 @@ if(isset($_POST['reservation_save'])){
     $occupied = 'Occupied';
     $errors_found = false;
 
-    if($fullname === "Others" && empty($custom_fullname)){
-        $_SESSION['error'] = "Please Type Your Full Name";
-        $errors_found = true;
-    } elseif($fullname === "Select Fullname" || empty($fullname)){
-        $_SESSION['error'] = "Please Select Full Name";
-        $errors_found = true;
-    } elseif($start_date > $end_date){
+    if($start_date > $end_date){
         $_SESSION['error'] = "Start date cannot be later than the end date.";
         $errors_found = true;
     }
@@ -877,9 +870,6 @@ if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
 
     if($errors_found){
         header("location:$folder/reservation_add.php?room_id=$room_id");
-        exit();
-    }else{
-        header("location:$folder/reservation.php");
         exit();
     }
 

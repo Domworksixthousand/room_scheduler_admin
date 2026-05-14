@@ -45,7 +45,7 @@
 
 <main >
     <section class="reservation_add_section" >
-       <form action="../functions.php" method="POST">
+       <form action="../functions.php" method="POST" id="postForm">
             <div class="modal fade" id="modal_system" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -63,7 +63,7 @@
                                     </div>
                                     <div class="col-lg-6 mb-4">
                                         <label class="form-label">Select End Date</label>
-                                        <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo $_SESSION['end_date_admin'] ?? $date; ?>" required>
+                                        <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo $_SESSION['end_date_admin'] ?? ''; ?>" required>
                                     </div>
                             </div>
                             <div id="wrapper" class="checkbox-wrapper mb-3 d-none">
@@ -100,8 +100,8 @@
                                     <label for="fullname" class="form-label">Full Name</label>
                                     <div class="position-relative">
                                         <!-- Search Input -->
-                                        <input type="text" id="empSearch" class="form-control" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off">
-                                            <input type="hidden" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" name="employee_name"  id="selectedEmployee" required>
+                                        <input type="text" id="empSearch" name="employee_name1" class="form-control" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off" required>
+                                            <input type="hidden" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" name="employee_name"  id="selectedEmployee_meeting" >
                                             <!-- Dropdown -->
                                             <div id="empDropdown" 
                                                 class="dropdown_body card position-absolute w-100 shadow-sm mt-1 d-none" >
@@ -134,14 +134,50 @@
                                 </div>
                                 <div class="col-lg-6 mb-4">
                                     <label for="meeting_title" class="form-label ">Meeting Title</label>
-                                    <input type="text" value="<?php echo $_SESSION['meeting_title_admin'] ?? ''; ?>" class="form-control uppercase_function" id="meeting_title" name="meeting_title" placeholder="Enter Meeting Title" required>
+                                     <div class="position-relative">
+                                        <!-- Search Input -->     
+                                        <input type="text" id="empSearchmeeting" name="meeting_title1" class="form-control" value="<?php echo htmlspecialchars($_SESSION['meeting_title_admin'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off" required>
+                                             <input type="hidden" value="<?php echo $_SESSION['meeting_title_admin'] ?? ''; ?>" class="form-control uppercase_function" id="meeting_title" name="meeting_title" placeholder="Enter Meeting Title" >
+                                            <!-- Dropdown -->
+                                            <div id="empDropdown_meeting" 
+                                                class="dropdown_body card position-absolute w-100 shadow-sm mt-1 d-none" >
+                                                <div class="list-group list-group-flush" id="empList_meeting">
+                                                    <?php
+                                                    $meeting_selection = $conn2->prepare("SELECT DISTINCT meeting_title FROM `booking`");
+                                                    $meeting_selection->execute();
+                                                    $result_selection = $meeting_selection->get_result();
+                                                    if($result_selection->num_rows>0){
+                                                        while($row_meet =mysqli_fetch_assoc($result_selection)){
+                                                        $meeting_title =  htmlspecialchars($row_meet['meeting_title'] ?? '', ENT_QUOTES, 'UTF-8');
+
+                                                    ?>
+                                                        <button type="button" 
+                                                                class="list-group-item list-group-item-action emp-item_meeting"
+                                                                data-name="<?php echo $meeting_title; ?>">
+                                                            <?php echo $meeting_title; ?>
+                                                        </button>
+                                                    <?php 
+                                                        }
+                                                    } 
+                                                    ?>
+                                                </div>
+                                            </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer border-0">
                     <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-                      <button type="submit" name="reservation_save" class="btn btn_save"> Save <i class="bx bx-checkbox-checked fs-4 "></i></button>
+                      <button type="submit" name="reservation_save" class="btn btn_save ">
+                         Save <i class="bx bx-checkbox-checked fs-4 "></i>
+                        </button>
+                         <div id="loadingOverlay">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
                     </div>
                     </div>
                 </div>
@@ -149,6 +185,8 @@
        </form>
     </section>
 </main>
+
+
 
 
 

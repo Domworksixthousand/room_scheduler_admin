@@ -154,6 +154,7 @@
     <script src="../assets/js/box_icons.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/boostrap.js"></script>
+    <script src="../assets/js/calendar.io.js"></script>
     <?php include '../alert.php'; ?>
   </body>
 </html>

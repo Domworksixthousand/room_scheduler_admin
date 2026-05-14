@@ -1,8 +1,4 @@
 
-<?php 
-    include 'config.php'; 
-    include 'remember_token.php';
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +11,11 @@
     <title>Farmstation.ph</title>
 </head>
 <body>
-<?php include 'loading_animation.php'; ?>
+<?php
+    include 'config.php'; 
+    include 'remember_token.php';
+    include 'loading_animation.php';
+?>
 
 <!--wmic bios get serialnumber
 SerialNumber

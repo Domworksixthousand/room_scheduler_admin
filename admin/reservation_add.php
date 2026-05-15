@@ -41,8 +41,6 @@
     ?>
 
     
-
-
 <main >
     <section class="reservation_add_section" >
        <form action="../functions.php" method="POST" id="postForm">
@@ -63,7 +61,7 @@
                                     </div>
                                     <div class="col-lg-6 mb-4">
                                         <label class="form-label">Select End Date</label>
-                                        <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo $_SESSION['end_date_admin'] ?? ''; ?>" required>
+                                        <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo $_SESSION['end_date_admin'] ?? $date; ?>" required>
                                     </div>
                             </div>
                             <div id="wrapper" class="checkbox-wrapper mb-3 d-none">

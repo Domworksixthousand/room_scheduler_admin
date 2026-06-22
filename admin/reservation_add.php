@@ -98,7 +98,7 @@
                                     <label for="fullname" class="form-label">Full Name</label>
                                     <div class="position-relative">
                                         <!-- Search Input -->
-                                        <input type="text" id="empSearch" name="employee_name1" class="form-control" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off" required>
+                                        <input type="text" id="empSearch" name="employee_name1" class="form-control upper_function" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off" required>
                                             <input type="hidden" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" name="employee_name"  id="selectedEmployee_meeting" >
                                             <!-- Dropdown -->
                                             <div id="empDropdown" 
@@ -134,7 +134,7 @@
                                     <label for="meeting_title" class="form-label ">Meeting Title</label>
                                      <div class="position-relative">
                                         <!-- Search Input -->     
-                                        <input type="text" id="empSearchmeeting" name="meeting_title1" class="form-control" value="<?php echo htmlspecialchars($_SESSION['meeting_title_admin'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off" required>
+                                        <input type="text" id="empSearchmeeting" name="meeting_title1" class="form-control upper_function" value="<?php echo htmlspecialchars($_SESSION['meeting_title_admin'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off" required>
                                              <input type="hidden" value="<?php echo $_SESSION['meeting_title_admin'] ?? ''; ?>" class="form-control uppercase_function" id="meeting_title" name="meeting_title" placeholder="Enter Meeting Title" >
                                             <!-- Dropdown -->
                                             <div id="empDropdown_meeting" 
@@ -200,7 +200,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const container = document.getElementById("custom_container");
     const labelText = document.querySelector(".label-text");
 
-
     const sessionBookedDetails = <?php echo isset($_SESSION['booked_details_admin']) ? json_encode($_SESSION['booked_details_admin']) : '[]'; ?>;
     const sessionCheckbox = "<?php echo $_SESSION['checkbox_admin'] ?? ''; ?>";
 
@@ -220,50 +219,83 @@ document.addEventListener("DOMContentLoaded", function() {
         container.innerHTML = "";
     }
 
-    checkbox.addEventListener("change", function() {
+  
+    function generateTimeSlots() {
         const startVal = startDateInput.value;
         const endVal = endDateInput.value;
 
-        if (this.checked) {
-            if (!startVal || !endVal) {
-                this.checked = false;
-                return;
+      
+        if (!startVal || !endVal || !checkbox.checked) {
+            return;
+        }
+
+        const start = new Date(startVal);
+        const end = new Date(endVal);
+
+  
+        if (end < start) {
+            container.innerHTML = "<p class='text-danger small fw-bold'>End date cannot be earlier than start date.</p>";
+            return;
+        }
+
+        labelText.innerHTML = "Use same time for all dates";
+        not_custom.style.display = "none";
+        custom_section.style.display = "block";
+        container.innerHTML = "";
+
+        let current = new Date(start);
+        while (current <= end) {
+            let y = current.getFullYear();
+            let m = String(current.getMonth() + 1).padStart(2, '0');
+            let d = String(current.getDate()).padStart(2, '0');
+            let dateStr = `${y}-${m}-${d}`;
+
+            let displayDate = current.toLocaleDateString('en-US', { 
+                weekday: 'short', month: 'short', day: 'numeric' 
+            });
+
+            let sStart = "";
+            let sEnd = "";
+            
+            const foundMatch = sessionBookedDetails.find(item => item.date === dateStr);
+            if (foundMatch) {
+                sStart = convertTo24h(foundMatch.start);
+                sEnd = convertTo24h(foundMatch.end);
             }
 
+            createTimeSlot(dateStr, displayDate, sStart, sEnd);
+            current.setDate(current.getDate() + 1);
+        }
+    }
+
+  
+    function checkDateRange() {
+        const startVal = startDateInput.value;
+        const endVal = endDateInput.value;
+
+        if (startVal && endVal) {
             const start = new Date(startVal);
             const end = new Date(endVal);
 
-            labelText.innerHTML = "Use same time for all dates";
-            not_custom.style.display = "none";
-            custom_section.style.display = "block";
-            container.innerHTML = ""; 
-
-            let current = new Date(start);
-            while (current <= end) {
-                let y = current.getFullYear();
-                let m = String(current.getMonth() + 1).padStart(2, '0');
-                let d = String(current.getDate()).padStart(2, '0');
-                let dateStr = `${y}-${m}-${d}`;
-
-                let displayDate = current.toLocaleDateString('en-US', { 
-                    weekday: 'short', month: 'short', day: 'numeric' 
-                });
-
-                // 2. SEARCH the array for the matching date
-                let sStart = "";
-                let sEnd = "";
-                
-                const foundMatch = sessionBookedDetails.find(item => item.date === dateStr);
-                
-                if (foundMatch) {
-                    // Convert AM/PM from session to 24h for the input value
-                    sStart = convertTo24h(foundMatch.start);
-                    sEnd = convertTo24h(foundMatch.end);
+            if (end >= start) {
+                wrapper.classList.remove('d-none'); 
+                if (checkbox.checked) {
+                    generateTimeSlots(); 
                 }
-
-                createTimeSlot(dateStr, displayDate, sStart, sEnd);
-                current.setDate(current.getDate() + 1);
+            } else {
+                wrapper.classList.add('d-none');
+                resetToSingleMode();
+                checkbox.checked = false;
             }
+        }
+    }
+
+    startDateInput.addEventListener("change", checkDateRange);
+    endDateInput.addEventListener("change", checkDateRange);
+
+    checkbox.addEventListener("change", function() {
+        if (this.checked) {
+            generateTimeSlots();
         } else {
             resetToSingleMode();
         }
@@ -295,11 +327,11 @@ document.addEventListener("DOMContentLoaded", function() {
         container.appendChild(div);
     }
 
-    // Auto-trigger if session is active
+
     if (sessionCheckbox === "yes" && startDateInput.value && endDateInput.value) {
         wrapper.classList.remove("d-none");
         checkbox.checked = true;
-        checkbox.dispatchEvent(new Event('change'));
+        generateTimeSlots();
     }
 });
 </script>

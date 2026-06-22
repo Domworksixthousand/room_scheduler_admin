@@ -454,10 +454,11 @@
 
     calendar.render();
 
+      if(modalEl){
         modalEl.addEventListener('shown.bs.modal', function () {
-            calendar.updateSize();
+          
         });
-
+      }
 
         const calendarTabTrigger = document.querySelector('#profile-tab');
         if (calendarTabTrigger) {
@@ -475,6 +476,7 @@
   <script src="../assets/js/script.js"></script>
   <script src="../assets/js/boostrap.js"></script>
   <script src="../assets/js/calendar.io.js"></script>
+  <script src="../assets/js/jquery.js"></script>
   <?php
     include '../alert.php';
   ?>

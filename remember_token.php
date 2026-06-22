@@ -3,7 +3,7 @@
 if(isset($_COOKIE['remember_token'])){
     $token = $_COOKIE['remember_token'];
 
-    // Step 1: Find token in accounts
+    // Find token in accounts
     $stmt1 = $conn2->prepare("SELECT * FROM accounts WHERE remember_token = ?");
     $stmt1->bind_param("s", $token);
     $stmt1->execute();

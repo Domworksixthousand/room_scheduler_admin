@@ -25,7 +25,7 @@ if ($conn1->connect_error) {
 }
 
 
-$conn2 = mysqli_connect("localhost","root","","room_sched_db");
+$conn2 = mysqli_connect("localhost","root","","room_sched_db","3307");
 if ($conn2->connect_error) {
     error_log("Database connection2 failed: " . $conn2->connect_error);
     die("We are experiencing technical difficulties. Please try again later.");

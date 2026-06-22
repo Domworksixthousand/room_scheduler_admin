@@ -48,9 +48,8 @@ if(isset($_POST['delete_account'])){
 
 
 if(isset($_POST['login'])){
-    $employee_id = htmlspecialchars($_POST['employee_id'] ?? '');
-    $password = htmlspecialchars($_POST['password'] ?? '');
-
+    $employee_id = mysqli_real_escape_string($conn1,$_POST['employee_id'] ?? '');
+    $password = mysqli_real_escape_string($conn1,$_POST['password'] ?? '');
 
     #check kun tama an employee id and password
     $check = $conn1->prepare("SELECT * FROM employeesystemcredential WHERE Employee_ID = ? AND Password = ?");
@@ -183,8 +182,8 @@ if(isset($_POST['sigout_admin'])){
 
 
 if(isset($_POST['floors_save'])){
-    $floor_name = htmlspecialchars($_POST['floor_name'] ?? '');
-    $number_of_rooms = htmlspecialchars($_POST['number_of_rooms'] ?? '');
+    $floor_name = mysqli_real_escape_string($conn2,$_POST['floor_name'] ?? '');
+    $number_of_rooms = mysqli_real_escape_string($conn2,$_POST['number_of_rooms'] ?? '');
     $floor_id = "floor" . rand() . uniqid();
     $_SESSION['floor_name'] = $floor_name;
     $_SESSION['number_of_rooms'] = $number_of_rooms;
@@ -253,9 +252,9 @@ if(isset($_POST['delete_floor'])){
 
 
 if(isset($_POST['floors_update'])){
-    $floor_id = htmlspecialchars($_POST['floor_id'] ?? '');
-    $floor_name = htmlspecialchars($_POST['floor_name'] ?? '');
-    $number_of_rooms = htmlspecialchars($_POST['number_of_rooms'] ?? '');
+    $floor_id = mysqli_real_escape_string($conn2,$_POST['floor_id'] ?? '');
+    $floor_name = mysqli_real_escape_string($conn2,$_POST['floor_name'] ?? '');
+    $number_of_rooms = mysqli_real_escape_string($conn2,$_POST['number_of_rooms'] ?? '');
 
     $check = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_name` = ? AND `floor_id` != ?");
     $check->bind_param("ss",$floor_name,$floor_id);
@@ -278,11 +277,11 @@ if(isset($_POST['floors_update'])){
 
 if(isset($_POST['room_save'])){
  
-    $room_name     = htmlspecialchars($_POST['room_name'] ?? '');
-    $serial_number = htmlspecialchars($_POST['serial_number'] ?? '');
-    $floor         = htmlspecialchars($_POST['floor'] ?? '');
-    $capacity      = htmlspecialchars($_POST['capacity'] ?? '');
-    $description   = htmlspecialchars($_POST['description'] ?? '');
+    $room_name     = mysqli_real_escape_string($conn2,$_POST['room_name'] ?? '');
+    $serial_number = mysqli_real_escape_string($conn2,$_POST['serial_number'] ?? '');
+    $floor         = mysqli_real_escape_string($conn2,$_POST['floor'] ?? '');
+    $capacity      = mysqli_real_escape_string($conn2,$_POST['capacity'] ?? '');
+    $description   = mysqli_real_escape_string($conn2,$_POST['description'] ?? '');
     
 
     $_SESSION['room_name']     = $room_name;
@@ -369,12 +368,12 @@ if(isset($_POST['room_save'])){
 }
 
 if(isset($_POST['room_update'])){
-    $room_id = htmlspecialchars($_POST['room_id'] ?? '');
-    $room_name = htmlspecialchars($_POST['room_name'] ?? '');
-    $serial_number = htmlspecialchars($_POST['serial_number'] ?? '');
-    $floor = htmlspecialchars($_POST['floor'] ?? '');
-    $capacity = htmlspecialchars($_POST['capacity'] ?? '');
-    $description = htmlspecialchars($_POST['description'] ?? '');
+    $room_id = mysqli_real_escape_string($conn2,$_POST['room_id'] ?? '');
+    $room_name = mysqli_real_escape_string($conn2,$_POST['room_name'] ?? '');
+    $serial_number = mysqli_real_escape_string($conn2,$_POST['serial_number'] ?? '');
+    $floor = mysqli_real_escape_string($conn2,$_POST['floor'] ?? '');
+    $capacity = mysqli_real_escape_string($conn2,$_POST['capacity'] ?? '');
+    $description = mysqli_real_escape_string($conn2,$_POST['description'] ?? '');
     $image     = $_FILES['image']['name'] ?? ''; 
     $image_tmp = $_FILES['image']['tmp_name'] ?? ''; 
     $extension = strtolower(pathinfo($image, PATHINFO_EXTENSION));
@@ -553,18 +552,18 @@ if(isset($_POST['sigout_superadmin'])){
 
 if(isset($_POST['reservation_save'])){
     
-    $start_date = htmlspecialchars($_POST['start_date'] ?? '');
-    $end_date = htmlspecialchars($_POST['end_date'] ?? '');
+    $start_date = mysqli_real_escape_string($conn2,$_POST['start_date'] ?? '');
+    $end_date = mysqli_real_escape_string($conn2,$_POST['end_date'] ?? '');
     $start_time_data = date("H:i:s", strtotime($_POST['start_time'] ?? '00:00'));
     $end_time_data = date("H:i:s", strtotime($_POST['end_time'] ?? '00:00'));
-    $meeting_title1 = htmlspecialchars($_POST['meeting_title1'] ?? '');
-    $meeting_title = htmlspecialchars(!empty($_POST['meeting_title']) ? $_POST['meeting_title'] : $meeting_title1);
-    $employee_name1 = htmlspecialchars($_POST['employee_name1'] ?? '');
-    $employee_name = htmlspecialchars(!empty($_POST['employee_name']) ? $_POST['employee_name'] : $employee_name1);
+    $raw_meeting = !empty($_POST['meeting_title']) ? $_POST['meeting_title'] : ($_POST['meeting_title1'] ?? '');
+    $meeting_title = mysqli_real_escape_string($conn2, $raw_meeting);
+    $raw_employee = !empty($_POST['employee_name']) ? $_POST['employee_name'] : ($_POST['employee_name1'] ?? '');
+    $employee_name = mysqli_real_escape_string($conn2, $raw_employee);
     $custom_start = $_POST['custom_start'] ?? [];
     $custom_end = $_POST['custom_end'] ?? [];
     $checkbox = $_POST['checkbox'] ?? 'no';
-    $room_id = htmlspecialchars($_POST['room_id'] ?? '');
+    $room_id = mysqli_real_escape_string($conn2,$_POST['room_id'] ?? '');
 
     $get_serial_number = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_id` = ?");
     $get_serial_number->bind_param("s", $room_id);

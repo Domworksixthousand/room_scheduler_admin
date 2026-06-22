@@ -108,7 +108,7 @@
                   <div class="upper_search">
                     <div class="input-group flex-nowrap">
                       <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
-                      <input type="search" class="form-control "  id="input_room"  placeholder="Search rooms, serials, or floors..." aria-label="Username" aria-describedby="addon-wrapping">
+                      <input type="search" class="form-control "  id="input_room"  placeholder="Search rooms, Serial Number, or floors..." aria-label="Username" aria-describedby="addon-wrapping">
                     </div>
                     <div class="button_dec">
                       <a href="room_add.php" class="btn btn_add">Add <i class="bx bx-plus-circle fs-5"></i></a>
@@ -123,16 +123,15 @@
                   </div>
               </div>
               <div class="row" id="room_body">
-                
                 <!-- rooms -->
               </div>
-            <div class="d-flex justify-content-end align-items-end">
-              <nav aria-label="Page navigation">
-                <ul class="pagination" id="pagination_links">
-                  <!--data-->
-                </ul>
-              </nav>
-            </div>
+              <div class="d-flex justify-content-end align-items-end">
+                <nav aria-label="Page navigation">
+                  <ul class="pagination" id="pagination_links">
+                    <!--data-->
+                  </ul>
+                </nav>
+              </div>
           </div>
         </div>
       </section>

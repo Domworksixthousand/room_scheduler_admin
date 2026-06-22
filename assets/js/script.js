@@ -12,55 +12,84 @@ window.addEventListener("load", function() {
 });
 
  /*sending book animation */
-    document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById('postForm').addEventListener('submit', ()=> {
-        document.getElementById('loadingOverlay').style.display = 'block';
-        document.getElementById('loadingOverlay').style.marginLeft = '5px';
-    });
+document.addEventListener("DOMContentLoaded", () => {
+
+    const postForm = document.getElementById('postForm');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+
+    if (postForm) {
+        postForm.addEventListener('submit', () => {
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'block';
+                loadingOverlay.style.marginLeft = '5px';
+            }
+        });
+    }
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById('imageInput').addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            // Update Preview
-            const preview = document.getElementById('previewImage');
-            const icon = document.getElementById('uploadIcon');
-            
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-            icon.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
+
+    const imageInput = document.getElementById('imageInput');
+
+ 
+    if (imageInput) {
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Update Preview
+                    const preview = document.getElementById('previewImage');
+                    const icon = document.getElementById('uploadIcon');
+                    
+                 
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    }
+                    if (icon) {
+                        icon.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     }
 });
-});
-
 
 
 
 //modal show
-document.addEventListener("DOMContentLoaded", ()=> {
-    let myModal = new bootstrap.Modal(document.getElementById('modal_system'));
-    myModal.show();
+document.addEventListener("DOMContentLoaded", () => {
+    const modalElement = document.getElementById('modal_system');
+    if (modalElement) {
+        let myModal = new bootstrap.Modal(modalElement);
+        myModal.show();
+    }
 });
 
 
 //show hide ppassword type
-document.addEventListener("DOMContentLoaded", ()=> {
-    document.getElementById("show_password").addEventListener("change", ()=> {
-        let show_password_text = document.getElementById("show_password_text");
-        let password = document.getElementById("password");
-        if(password.type === "password"){
-            password.type = "text";
-            show_password_text.innerText = "Hide Password";
-        }else{
-            password.type = "password";
-            show_password_text.innerText = "Show Password";
-        }
-    });
+document.addEventListener("DOMContentLoaded", () => {
+  
+    const showPasswordCheckbox = document.getElementById("show_password");
+
+   
+    if (showPasswordCheckbox) {
+        showPasswordCheckbox.addEventListener("change", function() {
+           
+            const passwordInput = document.getElementById("password"); 
+            
+            if (passwordInput) {
+                if (this.checked) {
+                    passwordInput.type = "text";  
+                } else {
+                    passwordInput.type = "password"; 
+                }
+            }
+        });
+    }
 });
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -132,24 +161,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 //uppercase first character
-document.addEventListener("DOMContentLoaded", ()=>{
-    const input = document.querySelector('.uppercase_function');
-    input.addEventListener('input', function() {
-        // Split the value by spaces
-        const words = this.value.split(' ');
+document.addEventListener("DOMContentLoaded", () => {
 
-        // Capitalize first letter of each word
-        for (let i = 0; i < words.length; i++) {
-            if (words[i].length > 0) {
-                words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+    const uppercaseInputs = document.querySelectorAll('.uppercase_function');
+
+   
+    uppercaseInputs.forEach(input => {
+
+        input.addEventListener('input', function() {
+            // Split the value by spaces
+            const words = this.value.split(' ');
+
+          
+            for (let i = 0; i < words.length; i++) {
+                if (words[i].length > 0) {
+                    words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+                }
             }
-        }
 
-        // Join back into string
-        this.value = words.join(' ');
+
+            this.value = words.join(' ');
+        });
     });
 });
-
 
 
 
@@ -164,7 +198,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
     }
     let sidebar = document.querySelector(".sidebar");
     let sidebarBtn = document.querySelector(".menu_toggle");
-    console.log(sidebarBtn);
     sidebarBtn.addEventListener("click", () => {
     sidebar.classList.toggle("close");
     });
@@ -174,17 +207,22 @@ document.addEventListener("DOMContentLoaded", ()=>{
 //only numbers allowed
 document.addEventListener("DOMContentLoaded", ()=> {
     const input = document.getElementById('number_of_rooms');
-    input.addEventListener('input', function() {
-        this.value = this.value.replace(/\D/g, '');
-    });
+    if(input){
+        input.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
+        });
+    }
+
 });
 
     //only numbers allowed
 document.addEventListener("DOMContentLoaded", ()=> {
     const capacity = document.getElementById('capacity');
-    capacity.addEventListener('input', function() {
-        this.value = this.value.replace(/\D/g, '');
-    });
+   if(capacity){
+        capacity.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
+        });
+   }
 });
 
 // search account super admin accounts.php
@@ -842,6 +880,32 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+
+// upper case function
+  // Select all inputs with the 'upper_function' class
+document.addEventListener("DOMContentLoaded", function(){
+  document.querySelectorAll('.upper_function').forEach(input => {
+    input.addEventListener('input', function() {
+      let cursorPosition = this.selectionStart; 
+      let words = this.value.split(' ');
+
+      let formattedWords = words.map(word => {
+        if (word.length === 0) return '';
+        
+        // First character to Upper Case, the rest to Lower Case
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      });
+
+      // Join the words back together with spaces
+      this.value = formattedWords.join(' ');
+      
+      // Restore the cursor position so the typing flow isn't disrupted
+      this.setSelectionRange(cursorPosition, cursorPosition);
+    });
+  });
+});
+
+  //stop
  
 
 //superadmin

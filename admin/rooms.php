@@ -116,9 +116,19 @@
                   </div>
                   <div class="filter_options ">
                       <ul>
-                        <li class='filter-item '><input type="checkbox" ' class='hidden-checkbox' id="available">  <label for="available" class='clickable-label  m-0'> <i class='bx bx-check-circle'></i> Available</label></li>
-                        <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied"> <label for="partially_occupied" class='clickable-label  m-0'><i class='bx bx-time-five'></i> Partially&nbsp;Occupied</label></li>
-                        <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> <label for="fully_occupied" class='clickable-label  m-0'><i class='bx bx-x-circle'></i> Fully&nbsp;Occupied</label></li>
+                        <li class='filter-item'>
+                          <input type="checkbox" ' class='hidden-checkbox' id="available"> 
+                          <label for="available" class='clickable-label  m-0'> 
+                            <i class='bx bx-check-circle'></i> Available
+                          </label>
+                        </li>
+                        <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied">
+                          <label for="partially_occupied" class='clickable-label  m-0'>
+                            <i class='bx bx-time-five'></i> Partially&nbsp;Occupied</label>
+                          </li>
+                        <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="fully_occupied"> 
+                          <label for="fully_occupied" class='clickable-label  m-0'><i class='bx bx-x-circle'></i> Fully&nbsp;Occupied</label>
+                        </li>
                       </ul>
                   </div>
               </div>

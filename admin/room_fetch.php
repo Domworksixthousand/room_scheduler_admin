@@ -9,7 +9,6 @@ $selected_status = isset($_GET['status']) ? $_GET['status'] : [];//in select na 
 $offset = max(0, ($current_page - 1) * $items_per_page);
 $search_param = "%" . $search_query . "%";
 
-// 1. Simplified WHERE clause: Removed floor_id logic
 $where_clauses = ["(rooms.room_name LIKE ? OR rooms.serial_number LIKE ? OR floors.floor_name LIKE ? OR rooms.description LIKE ?)"];
 $params = [$search_param, $search_param, $search_param, $search_param];
 $types = "ssss";
@@ -17,7 +16,7 @@ $types = "ssss";
 $where_sql = implode(" AND ", $where_clauses);
 echo " <p class='fw-bold mt-2'>ROOM STATUS TODAY (".date('M d, Y').")</p>";
 
-// 2. Main Query
+
 $data_sql = "SELECT rooms.*, floors.floor_name FROM `rooms` 
              LEFT JOIN `floors` ON rooms.floor_id = floors.floor_id 
              WHERE $where_sql";
@@ -33,6 +32,7 @@ $current_time = date('H:i:s');
 
 while ($row = $all_results->fetch_assoc()) {
     $id = $row['room_id'];
+    
     $is_currently_occupied = false;
     $total_booked_minutes = 0;
 
@@ -64,7 +64,7 @@ while ($row = $all_results->fetch_assoc()) {
         }
         $total_booked_minutes += ($end_ts - $start_ts) / 60;
     }
-    $stmt_status->close();
+  
 
     // Determine Label
     if ($total_booked_minutes >= 900) {
@@ -95,21 +95,26 @@ $display_rooms = array_slice($filtered_rooms, $offset, $items_per_page);
 if (!empty($display_rooms)) {
     foreach ($display_rooms as $row) {
         $status_label = $row['calc_label'];
+        $tablet_status = $row['tablet_status'];
         $badge_class = ($status_label == "Fully Occupied") ? "bg-glasmorphism text-light border border-danger border-2  fw-bold p-2" : (($status_label == "Partially Occupied") ? "bg-glasmorphism text-light border border-warning border-2   p-2" : "bg-glasmorphism text-light border border-success border-2 fw-bold p-2");
         $desc = htmlspecialchars($row['description'] ?? '');
         $room_name = htmlspecialchars($row['room_name'] ?? '');
         $short_desc = (strlen($desc) > 25 ? substr($desc, 0, 25) . '...' : $desc);
         $room_name_short = (strlen($room_name) > 22 ? substr($room_name, 0, 22) . '...' : $room_name);
+        $tablet_style = ($tablet_status === "Active") ? "text-success" : "text-danger";
+  
         
         echo '<div class="col-lg-3 col-md-6 col-sm-12 mb-3">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="overflow-hidden position-relative">
                         <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" alt="'.$room_name.'" style="height: 180px; object-fit: cover;">
                         <span class="badge position-absolute rounded-pill top-0 end-0 m-2 '.$badge_class.'">'.$status_label.'</span>
+                        <span class="badge position-absolute rounded-pill bottom-0 end-0 m-2  bg-light ' .$tablet_style. '">'.$tablet_status.'</span>
                         <div class="buttton_actions">
+                            <a href="room_shutdown.php?room_id='.$row['room_id'].'&location_back=rooms.php" class="btn btn-danger btn-sm text-light"><i class="bx bx-block"></i></a>
                             <a href="room_delete.php?room_id='.$row['room_id'].'" class="btn btn-danger btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-trash"></i></a>
                             <a href="room_update.php?room_id='.$row['room_id'].'" class="btn btn-primary btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-edit"></i></a>
-                            <a href="room_info.php?room_id='.$row['room_id'].'&location_back=rooms.php" class="btn btn-info btn-sm text-light"><i class="bx bx-info-circle"></i></a>
+                            <a href="room_info.php?room_id='.$row['room_id'].'&location_back=rooms.php" class="btn btn-info btn-sm text-light"><i class="bx bx-info-circle"></i></a>        
                         </div>
                     </div>
                     <div class="card-body d-flex flex-column">

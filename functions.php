@@ -1,6 +1,17 @@
 <?php
     include 'config.php';
 
+if(isset($_POST['update_shutdown'])){
+    $room_id =  $_POST['room_id'];
+    $tablet_status = "Inactive";
+    $update = $conn2->prepare("UPDATE `rooms` SET `tablet_status` = ? WHERE `room_id` = ?");
+    $update->bind_param("ss", $tablet_status, $room_id);
+    $update->execute();
+
+    $_SESSION['Success'] = "Successfully Shutdown";
+    header("location:admin/rooms.php");
+    exit();
+}
 
 
 if (isset($_POST['assign_user'])) {
@@ -343,8 +354,9 @@ if(isset($_POST['room_save'])){
 
     if (file_exists($sourcePath)) {
         if (rename($sourcePath, $destinationPath)) {
-            $insert = $conn2->prepare("INSERT INTO `rooms` (`room_id`,`room_name`,`serial_number`,`floor_id`,`capacity`,`description`,`image`) VALUES (?,?,?,?,?,?,?)");
-            $insert->bind_param("sssssss", $room_id, $room_name, $serial_number, $floor, $capacity, $description, $fileName);
+            $tablet_status = "Active";
+            $insert = $conn2->prepare("INSERT INTO `rooms` (`room_id`,`room_name`,`serial_number`,`floor_id`,`capacity`,`description`,`image`,`tablet_status`) VALUES (?,?,?,?,?,?,?,?)");
+            $insert->bind_param("ssssssss", $room_id, $room_name, $serial_number, $floor, $capacity, $description, $fileName,$tablet_status);
             
             if($insert->execute()){
             

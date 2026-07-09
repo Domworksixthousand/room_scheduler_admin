@@ -148,6 +148,7 @@ backdrop-filter: blur(8.9px);
     border-radius: 13px;
 }
 
+
 .room_admin_section .card:hover,
 .room_superadmin_section .card:hover{
     transform: translateY(-5px);
@@ -179,7 +180,7 @@ backdrop-filter: blur(8.9px);
   display: flex;
   gap:10px;
   position: absolute;
-  top: 50px;
+  top: 10px !important;
   left: -50px;
   color: #fff;
   padding: 5px 10px;

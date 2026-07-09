@@ -1,44 +1,44 @@
 <?php
 
-include 'rooms.php'; 
+    include 'rooms.php'; 
 
-$img_filename = '';
-$session_prefix = '';
-
-
-if (empty($_SESSION['trash_img'])) {
-    $_SESSION['new_img_session'] = "";
-}
+    $img_filename = '';
+    $session_prefix = '';
 
 
-$has_session_img = !empty($_SESSION['trash_img']) || !empty($_SESSION['new_img_session']);
-
-if ($has_session_img) {
-
-    $trash_val = $_SESSION['trash_img'] ?? '';
-    $parts = explode('_', $trash_val);
-    $session_prefix = $parts[0] ?? ''; 
-
-  
-    if ($session_prefix === ($admin_id ?? '')) {
-        $img_filename = !empty($_SESSION['trash_img']) ? $_SESSION['trash_img'] : ($_SESSION['new_img_session'] ?? '');
+    if (empty($_SESSION['trash_img'])) {
+        $_SESSION['new_img_session'] = "";
     }
-}
 
 
-#para sa session kung exist
-if($_SESSION['floor']){
-    $get_data = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_id` = ?");
-    $get_data->bind_param("s",$_SESSION['floor']);
-    $get_data->execute();
-    $result_get = $get_data->get_result();
-    if ($result_get->num_rows > 0) {
-        while ($row_floor = mysqli_fetch_assoc($result_get)) { 
-            $floor_name_data = htmlspecialchars($row_floor['floor_name'] ?? '');         
-        
-        }   
+    $has_session_img = !empty($_SESSION['trash_img']) || !empty($_SESSION['new_img_session']);
+
+    if ($has_session_img) {
+
+        $trash_val = $_SESSION['trash_img'] ?? '';
+        $parts = explode('_', $trash_val);
+        $session_prefix = $parts[0] ?? ''; 
+
+    
+        if ($session_prefix === ($admin_id ?? '')) {
+            $img_filename = !empty($_SESSION['trash_img']) ? $_SESSION['trash_img'] : ($_SESSION['new_img_session'] ?? '');
+        }
     }
-}
+
+
+    #para sa session kung exist
+    if($_SESSION['floor']){
+        $get_data = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_id` = ?");
+        $get_data->bind_param("s",$_SESSION['floor']);
+        $get_data->execute();
+        $result_get = $get_data->get_result();
+        if ($result_get->num_rows > 0) {
+            while ($row_floor = mysqli_fetch_assoc($result_get)) { 
+                $floor_name_data = htmlspecialchars($row_floor['floor_name'] ?? '');         
+            
+            }   
+        }
+    }
 ?>
 
 

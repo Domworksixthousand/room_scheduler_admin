@@ -8,23 +8,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>History</title>
-    <link rel="stylesheet" href="../assets/css/box_icons.css">
     <link rel="shortcut icon" href="../assets/images/fs_logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
     <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
-     <link rel="stylesheet" href="../assets/css/boostrap.css">
+    <link rel="stylesheet" href="../assets/css/boostrap.css">;
+    <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
   </head>
   <body>
-<?php
-  include '../config.php'; 
-  if(!isset($_SESSION['admin_login'])){
-    echo "<script>location.href='../index.php';</script>";
-  }
-  include '../loading_animation.php';
- ?>
-
-
+  <?php
+    include '../config.php'; 
+    if(!isset($_SESSION['admin_login'])){
+      echo "<script>location.href='../index.php';</script>";
+    }
+    include '../loading_animation.php';
+  ?>
 
 
     <!--sidebar ini-->

@@ -504,12 +504,13 @@ $(document).ready(function() {
 
 
 
-
 document.addEventListener("DOMContentLoaded", () => {
     const fullnameSelect = document.getElementById("fullname");
     const customDiv = document.getElementById("custom_fullname");
 
-   
+
+    if (!fullnameSelect || !customDiv) return;
+
     function toggleCustomInput() {
         if (fullnameSelect.value === "Others") {
             customDiv.classList.remove('d-none');
@@ -518,20 +519,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-  
     toggleCustomInput();
-
-
     fullnameSelect.addEventListener("change", toggleCustomInput);
 });
-
-
 
 // prevent to input previous date
 document.addEventListener("DOMContentLoaded", ()=> {
     const dateInput = document.getElementById('start_date');
     const end_date = document.getElementById('end_date');
     const today = new Date().toISOString().split('T')[0];
+    if (!dateInput || !end_date) return;
     dateInput.setAttribute('min', today);
     end_date.setAttribute('min', today);
     dateInput.addEventListener('input', function() {
@@ -688,8 +685,10 @@ $(document).ready(function() {
         labelText.innerHTML = "Custom daily time schedule";
         container.innerHTML = "";
     }
-
-  
+    
+    if (!startDateInput || !endDateInput || !checkbox || !wrapper || !not_custom || !custom_section || !container || !labelText) {
+        return; 
+    }
     startDateInput.addEventListener("change", checkDateRange);
     endDateInput.addEventListener("change", checkDateRange);
 
@@ -775,7 +774,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const items = document.querySelectorAll(".emp-item");
     const hiddenInput = document.getElementById("selectedEmployee");
 
-    // Normalize function (important)
+    if (!searchInput || !dropdown || !hiddenInput || items.length === 0) {
+        return; 
+    }
+    
     function normalize(str) {
         return str.toLowerCase().replace(/\s+/g, ' ').trim();
     }
@@ -823,62 +825,59 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //search dropdown
 document.addEventListener("DOMContentLoaded", function () {
-    const searchInput1 = document.getElementById("empSearchmeeting");
-    const dropdown1 = document.getElementById("empDropdown_meeting");
-    const items1 = document.querySelectorAll(".emp-item_meeting");
-    
-    // Fix: Match the ID from your HTML hidden input
-    const hiddenInput1 = document.getElementById("meeting_title");
 
+    const searchInput = document.getElementById("empSearch");
+    const dropdown = document.getElementById("empDropdown");
+    const items = document.querySelectorAll(".emp-item");
+    const hiddenInput = document.getElementById("selectedEmployee");
+
+    if (!searchInput || !dropdown || !hiddenInput || items.length === 0) {
+        return; 
+    }
+
+    // Normalize function
     function normalize(str) {
         return str.toLowerCase().replace(/\s+/g, ' ').trim();
     }
 
-    searchInput1.addEventListener("focus", () => {
-        dropdown1.classList.remove("d-none");
+    searchInput.addEventListener("focus", () => {
+        dropdown.classList.remove("d-none");
     });
 
-    searchInput1.addEventListener("input", function () { // 'input' is usually better than 'keyup'
+    searchInput.addEventListener("keyup", function () {
         let search = normalize(this.value);
-        let hasMatches = false;
 
-        items1.forEach(item => {
-            // Fix: Use 'item' instead of 'items1'
+        items.forEach(item => {
             let text = normalize(item.textContent);
+
+            // Split words (for flexible search)
             let searchWords = search.split(" ");
+
             let match = searchWords.every(word => text.includes(word));
 
-            item.style.setProperty('display', match ? "" : "none", 'important');
-            if (match) hasMatches = true;
+            item.style.display = match ? "" : "none";
         });
-
-        // Hide dropdown if no results, show if there are
-        if (search === "" || hasMatches) {
-            dropdown1.classList.remove("d-none");
-        }
     });
 
-    // Select Item logic
-    items1.forEach(item => {
-        item.addEventListener("click", function () { // Fix: Use 'item'
+    // Select
+    items.forEach(item => {
+        item.addEventListener("click", function () {
             let name = this.getAttribute("data-name");
 
-            searchInput1.value = name;
-            hiddenInput1.value = name;
+            searchInput.value = name;
+            hiddenInput.value = name;
 
-            dropdown1.classList.add("d-none");
+            dropdown.classList.add("d-none");
         });
     });
 
-    // Close when clicking outside
     document.addEventListener("click", function (e) {
-        // Fix: Changed 'dropdown' to 'dropdown1'
-        if (!searchInput1.contains(e.target) && !dropdown1.contains(e.target)) {
-            dropdown1.classList.add("d-none");
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.add("d-none");
         }
     });
-});
 
+});
 
 
 // upper case function

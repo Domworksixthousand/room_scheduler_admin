@@ -91,7 +91,7 @@
                                 </div>
                             </div>
                            <div class="mb-3 ">
-                                <label class="form-label fw-bold">Upload Room Image</label>
+                                <label class="form-label fw-bold">Upload Room Image<span class="fw-light">(Recommend:1000px width and 560px height)</span></label>
                                 <div id="dropZone" class="upload-box border rounded p-4 mb-2 d-flex justify-content-center align-items-center flex-column" 
                                     style="cursor: pointer; border-style: dashed !important; background:#f0f0f0; min-height: 150px;"
                                     onclick="document.getElementById('imageInput').click();">

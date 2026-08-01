@@ -1,55 +1,50 @@
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="assets/images/fs_logo.jpg" type="image/x-icon">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/boostrap.css">
-    <title>Farmstation.ph</title>
-</head>
-<body>
-    <?php
-        include 'config.php'; 
-        include 'remember_token.php';
-        include 'loading_animation.php';
-    ?>
+<?php
+include 'config.php';
 
 
+    $_SESSION['user_id'] = "1968";
 
-    <main>
-        <section class="login_section">
-            <div class="container inner_section">
-                <form action="functions.php" method="POST">
-                    <div class="mb-3 text-center">
-                        <img src="assets/images/fs2_logo.png" alt="">
-                    </div>
-                    <div class="mb-3">
-                        <label for="user_id"  class="form-label">Employee ID</label>
-                        <input type="text" name="employee_id" id="employee_id" class="form-control input" placeholder="Enter Employee ID" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" name="password" id="password" class="form-control input" placeholder="Enter Password" required>
-                        <div class="d-flex justify-content-end align-items-center mt-2">
-                            <input type="checkbox" id="show_password" class="me-1">
-                            <label for="show_password" id="show_password_text">Show Password</label>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <button type="submit" name="login" class="btn btn_login w-100">SIGN IN</button>
-                    </div>
-                </form>
-            </div>
-        </section>
-    </main>
+  
 
-    <script src="assets/js/script.js"></script>
-    <script src="assets/js/cool_alert.js"></script>
-    <script src="assets/js/boostrap.js"></script>
-    <?php include 'alert.php'; ?>
-</body>
-</html>
+        #kuhaon an role
+        $get_role = $conn2->prepare("SELECT * FROM `accounts` WHERE `employee_id` = ?");
+        $get_role->bind_param("s",$_SESSION['user_id']);
+        $get_role->execute();
+        $result_get=$get_role->get_result();
+       if($result_get->num_rows > 0){
+            $row_role = $result_get->fetch_assoc();
+            $role = htmlspecialchars($row_role['role'] ?? '');
+        }else{
+            $_SESSION['error'] = "Invalid Username or Password";
+            header('Location: index.php');
+            exit();
+        }
 
+       
+        $remember_token = bin2hex(random_bytes(32)); // 64-character secure token
+
+        $update_token = $conn2->prepare("UPDATE accounts SET remember_token = ? WHERE employee_id = ?");
+        $update_token->bind_param("ss", $remember_token, $_SESSION['user_id']);
+        $update_token->execute();
+
+        setcookie("remember_token", $remember_token, time() + (7 * 24 * 60 * 60), "/", "", false, true); // httponly
+
+        #role destination
+        if($role === "1"){
+            $_SESSION['superadmin_login'] = $_SESSION['user_id'];
+            header('Location: super_admin');
+            exit();
+        }elseif($role === "2"){
+            $_SESSION['admin_login'] = $_SESSION['user_id'];
+            header('Location: admin');
+            exit();
+        }else{
+            $_SESSION['user_login'] = $_SESSION['user_id'];
+            header('Location: user');
+            exit();
+        }
+
+    
+?>

@@ -133,6 +133,7 @@ if (!empty($display_rooms)) {
                         <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" alt="'.$room_name.'" style="height: 180px; object-fit: cover;">
                         <span class="badge position-absolute rounded-pill top-0 end-0 m-2 '.$badge_class.'">'.$status_label.'</span>
                         <div class="buttton_actions">
+                            <a href="room_shutdown.php?room_id='.$row['room_id'].'&location_back=rooms.php" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Shutdown" class="btn btn-danger btn-sm text-light"><i class="bx bx-block"></i></a>
                             <a href="room_delete.php?room_id='.$row['room_id'].'"  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Delete" class="btn btn-danger btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-trash"></i></a>
                             <a href="room_update.php?room_id='.$row['room_id'].'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Update"  class="btn btn-primary btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-edit"></i></a>
                             <a href="room_info.php?room_id='.$row['room_id'].'&location_back=rooms.php" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Info" class="btn btn-info btn-sm text-light"><i class="bx bx-info-circle"></i></a>

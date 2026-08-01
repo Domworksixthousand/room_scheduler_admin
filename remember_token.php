@@ -14,7 +14,7 @@ if(isset($_COOKIE['remember_token'])){
         $employee_id = $row_acc['employee_id'];
         $role = $row_acc['role'];
 
-            $stmt2 = $conn1->prepare("SELECT * FROM employeesystemcredential WHERE Employee_ID = ?");
+            $stmt2 = $conn1->prepare("SELECT * FROM employeesystemcredential WHERE employee_id = ?");
             $stmt2->bind_param("s", $employee_id);
             $stmt2->execute();
             $result2 = $stmt2->get_result();

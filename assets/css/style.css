@@ -1401,6 +1401,118 @@ backdrop-filter: blur(8.9px);
 }
 
 
+.fab-section .fab-container{
+    position:fixed;
+    top:20px;
+    right:0px;
+    z-index:999;
+    display:flex;
+    flex-direction:column-reverse;
+    align-items:center;
+}
+
+.fab-section .fab-main{
+    width:50px;
+    height:50px;
+    font-size:28px;
+    cursor:pointer;
+    transition:.3s;
+    border:none;
+    border-radius:15px;
+    margin-right:20px;
+    background:#000080;
+    color:white;
+    
+}
+
+.fab-section .fab-main:hover{
+   box-shadow:0 8px 20px rgba(0,0,0,.10);
+}
+
+.fab-main i{
+    transition:.3s;
+
+}
+
+.fab-section .speed-dial .fab-item i{
+    background:#000080;
+    color:white;
+    padding:15px !important;
+    border-radius:15px;
+}
+
+.fab-section .speed-dial{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:12px;
+    margin-right:20px;
+    margin-top:30px;
+}
+
+.fab-section .speed-dial .fab-item  span{
+  font-size:1rem;
+}
+
+.fab-section .fab-item {
+    display: flex;            
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    pointer-events: none;      
+    height: 0;                
+    margin: 0;                 
+    overflow: hidden;          
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
+}
+
+.fab-item button{
+    width:50px;
+    height:50px;
+    border:none;
+    box-shadow:0 5px 15px rgba(0,0,0,.2);
+}
+
+.fab-section .fab-label{
+    background:#fff;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:500;
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+    white-space:nowrap;
+}
+
+.fab-section .speed-dial.show .fab-item {
+    opacity: 1;
+    pointer-events: auto;     
+    height: 50px;             
+    overflow: visible;       
+    transform: translateY(0);
+}
+
+.fab-section .speed-dial.show .fab-item:nth-child(1){
+    transition-delay:.05s;
+}
+
+.fab-section .speed-dial.show .fab-item:nth-child(2){
+    transition-delay:.10s;
+}
+
+.fab-section .speed-dial.show .fab-item:nth-child(3){
+    transition-delay:.15s;
+}
+
+.fab-section .speed-dial.show .fab-item:nth-child(4){
+    transition-delay:.20s;
+}
+
+.fab-section .rotate{
+    transform:rotate(45deg);
+}
+
+
 
 
 

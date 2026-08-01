@@ -42,7 +42,7 @@
 
 
 
-    <!--sidebar ini-->
+    <!--sidebar ini
     <div class="sidebar close">
       <div class="logo-details">
         <img src="../assets/images/fs_logo.jpg" alt="Logo">
@@ -83,23 +83,23 @@
           <div class="profile-details">
             <div class="profile-content"><i class="bx bx-user-circle fs-2"></i></div>
             <div class="name-job">
-              <div class="job"><?php echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
+              <div class="job"><?php //echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
               <div class="job">Admin</div>
             </div>
             <a href="logout.php?location_back=rooms.php"><i class="bx bx-log-out"></i></a>
           </div>
         </li>
       </ul>
-    </div>
+    </div>-->
 
 
     <!--main contetent-->
     <div class="main_content">
-      <div class="header-content ">
+     <!-- <div class="header-content ">;
         <span class="menu_toggle"><i class="bx bx-menu-alt-left"></i></span> 
-        <h3>Good Day <?php echo $firstname; ?>!</h3>
-      </div>
-
+        <h3>Good Day <?php // echo $firstname; ?>!</h3>
+      </div>-->
+      <?php include 'fab.php'; ?>
       <section class="room_admin_section">
         <div class="container">
           <h2 class="text_header">Rooms</h2>
@@ -110,7 +110,7 @@
                       <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
                       <input type="search" class="form-control "  id="input_room"  placeholder="Search rooms, Serial Number, or floors..." aria-label="Username" aria-describedby="addon-wrapping">
                     </div>
-                    <div class="button_dec">
+                    <div class="button_dec <?php echo $button_hide; ?>">
                       <a href="room_add.php" class="btn btn_add">Add <i class="bx bx-plus-circle fs-5"></i></a>
                     </div>
                   </div>

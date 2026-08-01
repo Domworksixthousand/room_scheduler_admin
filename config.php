@@ -24,13 +24,20 @@ if ($conn1->connect_error) {
     die("We are experiencing technical difficulties. Please try again later.");
 }
 
-
 $conn2 = mysqli_connect("localhost","root","","room_sched_db","3307");
 if ($conn2->connect_error) {
     error_log("Database connection2 failed: " . $conn2->connect_error);
     die("We are experiencing technical difficulties. Please try again later.");
 }
 
+/*
+$conn2 = mysqli_connect("10.0.0.161","usr","usrpass","room_sched_db","3306");
+if ($conn2->connect_error) {
+    error_log("Database connection2 failed: " . $conn2->connect_error);
+    die("We are experiencing technical difficulties. Please try again later.");
+}*/
+
+$button_hide = "";
 
 #get data kun available
  if(isset($_SESSION['admin_login'])){
@@ -46,6 +53,7 @@ if ($conn2->connect_error) {
         $firstname = htmlspecialchars($row_admin['FirstName'] ?? '');
         $middlename = htmlspecialchars($row_admin['MiddleName'] ?? '');
         $fullname = $lastname . ' ' . $firstname . ' ' . $middlename;
+        $button_hide = "";
     }
    }
 
@@ -56,12 +64,23 @@ if ($conn2->connect_error) {
     if($get_personal_info ->num_rows>0){
         while($row_personal = mysqli_fetch_assoc($get_personal_info)){
             $role = $row_personal['role'];
+            $button_hide = "";
         }
     }
 
  }
 
+ if(isset($_SESSION['superadmin_login'])){
+    $superadmin_login = $_SESSION['superadmin_login'];
+    $role = "1";
+    $button_hide = "";
+ }
 
+ if(isset($_SESSION['user_login'])){
+    $user = $_SESSION['user_login'];
+    $role = "3";
+    $button_hide = "d-none";
+ }
 
 
 

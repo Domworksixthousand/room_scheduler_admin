@@ -96,7 +96,7 @@ if (!empty($display_rooms)) {
     foreach ($display_rooms as $row) {
         $status_label = $row['calc_label'];
         $tablet_status = $row['tablet_status'];
-        $badge_class = ($status_label == "Fully Occupied") ? "bg-glasmorphism text-light border border-danger border-2  fw-bold p-2" : (($status_label == "Partially Occupied") ? "bg-glasmorphism text-light border border-warning border-2   p-2" : "bg-glasmorphism text-light border border-success border-2 fw-bold p-2");
+        $badge_class = ($status_label == "Fully Occupied") ? "bg-glasmorphism   text-danger border border-danger border-2  fw-bold p-2" : (($status_label == "Partially Occupied") ? "bg-glasmorphism text-warning border border-warning border-2   p-2" : "bg-glasmorphism text-success border border-success border-2 fw-bold p-2");
         $desc = htmlspecialchars($row['description'] ?? '');
         $room_name = htmlspecialchars($row['room_name'] ?? '');
         $short_desc = (strlen($desc) > 25 ? substr($desc, 0, 25) . '...' : $desc);
@@ -111,10 +111,10 @@ if (!empty($display_rooms)) {
                         <span class="badge position-absolute rounded-pill top-0 end-0 m-2 '.$badge_class.'">'.$status_label.'</span>
                         <span class="badge position-absolute rounded-pill bottom-0 end-0 m-2  bg-light ' .$tablet_style. '">'.$tablet_status.'</span>
                         <div class="buttton_actions">
-                            <a href="room_shutdown.php?room_id='.$row['room_id'].'&location_back=rooms.php" class="btn btn-danger btn-sm text-light"><i class="bx bx-block"></i></a>
-                            <a href="room_delete.php?room_id='.$row['room_id'].'" class="btn btn-danger btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-trash"></i></a>
-                            <a href="room_update.php?room_id='.$row['room_id'].'" class="btn btn-primary btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-edit"></i></a>
-                            <a href="room_info.php?room_id='.$row['room_id'].'&location_back=rooms.php" class="btn btn-info btn-sm text-light"><i class="bx bx-info-circle"></i></a>        
+                            <a href="room_shutdown.php?room_id='.$row['room_id'].'&location_back=rooms.php" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Shutdown"  class="btn btn-danger btn-sm text-light"><i class="bx bx-block"></i></a>
+                            <a href="room_delete.php?room_id='.$row['room_id'].'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Delete" class="btn btn-danger btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-trash"></i></a>
+                            <a href="room_update.php?room_id='.$row['room_id'].'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Update" class="btn btn-primary btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-edit"></i></a>
+                            <a href="room_info.php?room_id='.$row['room_id'].'&location_back=rooms.php" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Info" class="btn btn-info btn-sm text-light"><i class="bx bx-info-circle"></i></a>        
                         </div>
                     </div>
                     <div class="card-body d-flex flex-column">

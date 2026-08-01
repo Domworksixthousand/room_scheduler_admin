@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="../assets/images/fs_logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
-    <link rel="stylesheet" href="../assets/css/boostrap.css">;
+    <link rel="stylesheet" href="../assets/css/boostrap.css">
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
   </head>
   <body>
@@ -24,7 +24,7 @@
   ?>
 
 
-    <!--sidebar ini-->
+    <!--sidebar ini
     <div class="sidebar close">
       <div class="logo-details">
         <img src="../assets/images/fs_logo.jpg" alt="Logo">
@@ -65,22 +65,23 @@
           <div class="profile-details">
             <div class="profile-content"><i class="bx bx-user-circle fs-2"></i></div>
             <div class="name-job">
-              <div class="job"><?php echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
+              <div class="job"><?php //echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
               <div class="job">Admin</div>
             </div>
             <a href="logout.php?location_back=history.php"><i class="bx bx-log-out"></i></a>
           </div>
         </li>
       </ul>
-    </div>
+    </div>-->
 
 
     <!--main content ini-->
     <div class="main_content">
-        <div class="header-content">
+       <!-- <div class="header-content">;
           <span class="menu_toggle"><i class="bx bx-menu-alt-left"></i></span>
-          <h3>Good Day <?php echo $firstname; ?>!</h3>
-        </div>
+          <h3>Good Day <?php //echo $firstname; ?>!</h3>
+        </div>-->
+        <?php include 'fab.php'; ?>
         <section class="history_admin_section">
           <div class="container">
             <h2 class="text_header">History </h2>

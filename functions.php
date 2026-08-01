@@ -1,5 +1,5 @@
 <?php
-    include 'config.php';
+include 'config.php';
 
 if(isset($_POST['update_shutdown'])){
     $room_id =  $_POST['room_id'];
@@ -8,8 +8,21 @@ if(isset($_POST['update_shutdown'])){
     $update->bind_param("ss", $tablet_status, $room_id);
     $update->execute();
 
-    $_SESSION['Success'] = "Successfully Shutdown";
-    header("location:admin/rooms.php");
+
+    $_SESSION['success'] = "Successfully Shutdown";
+    header("location:$back");
+    exit();
+}
+
+if(isset($_POST['update_shutdown_superadmin'])){
+    $room_id =  $_POST['room_id'];
+    $tablet_status = "Inactive";
+    $update = $conn2->prepare("UPDATE `rooms` SET `tablet_status` = ? WHERE `room_id` = ?");
+    $update->bind_param("ss", $tablet_status, $room_id);
+    $update->execute();
+
+    $_SESSION['success'] = "Successfully Shutdown";
+    header("location:super_admin/rooms.php");
     exit();
 }
 
@@ -59,18 +72,24 @@ if(isset($_POST['delete_account'])){
 
 
 if(isset($_POST['login'])){
-    $employee_id = mysqli_real_escape_string($conn1,$_POST['employee_id'] ?? '');
+    $username = mysqli_real_escape_string($conn1,$_POST['employee_id'] ?? '');
     $password = mysqli_real_escape_string($conn1,$_POST['password'] ?? '');
+    
+
+    $_SESSION['user'] = $username;
+    $_SESSION['pass'] = $password;
 
     #check kun tama an employee id and password
-    $check = $conn1->prepare("SELECT * FROM employeesystemcredential WHERE Employee_ID = ? AND Password = ?");
+    $check = $conn1->prepare("SELECT * FROM employeesystemcredential WHERE Username = ? AND Password = ?");
     $sha1_password = sha1($password);
-    $check->bind_param("is", $employee_id, $sha1_password);
+    $check->bind_param("ss", $username, $sha1_password);
     $check->execute();
     $result = $check->get_result();
 
     if($result->num_rows > 0){
-    
+        while($row_data = mysqli_fetch_assoc($result)){
+        $employee_id = $row_data['Employee_ID'];
+
         #kuhaon an role
         $get_role = $conn2->prepare("SELECT * FROM `accounts` WHERE `employee_id` = ?");
         $get_role->bind_param("s",$employee_id);
@@ -79,6 +98,10 @@ if(isset($_POST['login'])){
        if($result_get->num_rows > 0){
             $row_role = $result_get->fetch_assoc();
             $role = htmlspecialchars($row_role['role'] ?? '');
+        }else{
+            $_SESSION['error'] = "Invalid Username or Password";
+            header('Location: index.php');
+            exit();
         }
 
        
@@ -99,14 +122,19 @@ if(isset($_POST['login'])){
             $_SESSION['admin_login'] = $employee_id;
             header('Location: admin');
             exit();
+        }elseif($role === "3"){
+            $_SESSION['user_login'] = $employee_id;
+            header('Location: user');
+            exit();
         }else{
             $_SESSION['error'] = "Invalid Role";
             header('Location: index.php');
             exit();
         }
 
+        }
     } else {
-        $_SESSION['error'] = "Invalid Employee ID or Password";
+        $_SESSION['error'] = "Invalid Username or Password";
         header('Location: index.php');
         exit();
     }
@@ -188,8 +216,6 @@ if(isset($_POST['sigout_admin'])){
     header("location:index.php");
     exit();
 }
-
-
 
 
 if(isset($_POST['floors_save'])){
@@ -389,7 +415,7 @@ if(isset($_POST['room_update'])){
     $image     = $_FILES['image']['name'] ?? ''; 
     $image_tmp = $_FILES['image']['tmp_name'] ?? ''; 
     $extension = strtolower(pathinfo($image, PATHINFO_EXTENSION));
-    $trash_filename = $admin_id . '_' . time() . '_' . $image;
+    $trash_filename = $room_name . '_' . time() . '_' . $image;
     $trash_path = 'assets/uploads/' . $trash_filename;
     $location_back = ($role === "1") ? "super_admin" : "admin";
 
@@ -458,13 +484,14 @@ if(isset($_POST['room_update'])){
     }
 
 
-   
+
 
 }
 
 if(isset($_POST['delete_room'])){
         $room_id = htmlspecialchars($_POST['room_id'] ?? '');
-        
+        $location_back = ($role === "1") ? "super_admin" : "admin";
+
         $check_if_exist = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_id` = ?");
         $check_if_exist->bind_param("s",$room_id);
         $check_if_exist->execute();
@@ -493,7 +520,7 @@ if(isset($_POST['delete_room'])){
     $delete->execute();
 
     $_SESSION['success'] = "Successfully Deleted";
-    header("location:admin/rooms.php");
+    header("location:$location_back/rooms.php");
     exit();
 }
 
@@ -507,19 +534,17 @@ if(isset($_POST['cancel_booking'])){
     $update->bind_param("sss",$status_cancelled,$cancelled_at,$booking_id);
     $update->execute();
 
-    $_SESSION['success'] = "Successfully Cancelled";
-
-    if($_SESSION['superadmin_login']){
-        header("location:super_admin/reservations.php");
-        exit();
-    }elseif($_SESSION['admin_login']){
-        header("location:admin/reservations.php");
-        exit();
-    }else{
-        header('Location: index.php');
-        exit();
+    if($role === "1"){
+        $folder = "super_admin";
+    }elseif($role === "2"){
+        $folder = "admin";
+    }elseif($role === "3"){
+        $folder = "user";
     }
-   
+
+    $_SESSION['success'] = "Successfully Cancelled";
+    header("Location: $folder/reservations.php");
+    exit();
 }
 
 
@@ -596,8 +621,13 @@ if(isset($_POST['reservation_save'])){
     $_SESSION['employee_name'] = $employee_name;
     $_SESSION['checkbox_admin'] = $checkbox;
 
-
-    $folder = ($_SESSION['admin_login']) ? 'admin' : 'super_admin';
+    if($role === "1"){
+        $folder = "super_admin";
+    }elseif($role === "2"){
+        $folder = "admin";
+    }elseif($role === "3"){
+        $folder = "user";
+    }
 
     $_SESSION['booked_details_admin'] = [];
     if (!empty($custom_start)) {

@@ -188,19 +188,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   //admin sidebar
-document.addEventListener("DOMContentLoaded", ()=>{
-    let arrow = document.querySelectorAll(".arrow");
-    for (var i = 0; i < arrow.length; i++) {
-    arrow[i].addEventListener("click", (e) => {
-        let arrowParent = e.target.parentElement.parentElement; 
-        arrowParent.classList.toggle("showMenu");
+document.addEventListener("DOMContentLoaded", () => {
+    // Dropdown toggles
+    let arrows = document.querySelectorAll(".arrow");
+    arrows.forEach(arrow => {
+        arrow.addEventListener("click", (e) => {
+            let arrowParent = e.target.parentElement.parentElement;
+            arrowParent.classList.toggle("showMenu");
+        });
     });
-    }
+
+    // Sidebar toggle (with null check)
     let sidebar = document.querySelector(".sidebar");
     let sidebarBtn = document.querySelector(".menu_toggle");
-    sidebarBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("close");
-    });
+
+    if (sidebarBtn) {
+        sidebarBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("close");
+        });
+    } 
 });
 
 
@@ -257,7 +263,8 @@ $(document).ready(function(){
             const searchTerm = $('#input_floor').val();
             currentPage = page;
 
-            $.ajax({
+            if(searchTerm){
+                $.ajax({
                 url: "floor_fetch.php",
                 method: "GET",
                 data: { search: searchTerm, page: page },
@@ -271,6 +278,7 @@ $(document).ready(function(){
                 }
             });
         }
+            }
 
         // Live search
         $('#input_floor').on('keyup', function() {
@@ -467,7 +475,8 @@ $(document).ready(function() {
         const searchTerm = $('#input_history').val();
         currentPage = page;
 
-        $.ajax({
+        if(searchTerm){
+            $.ajax({
             url: "history_fetch.php",
             method: "GET",
             data: { search: searchTerm, page: page },
@@ -482,6 +491,7 @@ $(document).ready(function() {
                 $('#history_body').html("<tr><td colspan='7' class='text-center text-danger'>Connection error.</td></tr>");
             }
         });
+        }
     };
 
     // Trigger search on typing (with 300ms delay to save server resources)
@@ -554,7 +564,8 @@ document.addEventListener("DOMContentLoaded", ()=> {
         const searchTerm = $('#input_superadmin_history').val();
         currentPage = page;
 
-        $.ajax({
+       if(searchTerm){
+         $.ajax({
             url: "history_fetch.php",
             method: "GET",
             data: { search: searchTerm, page: page },
@@ -569,6 +580,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
                 $('#superadmin_history_body').html("<tr><td colspan='7' class='text-center text-danger'>Connection error.</td></tr>");
             }
         });
+       }
     };
 
     // Trigger search on typing (with 300ms delay to save server resources)
@@ -602,6 +614,8 @@ $(document).ready(function() {
         const searchTerm = $('#superadmin_input_reservation').val();
         currentPage = page;
 
+        if(searchTerm){
+    
         $.ajax({
             url: "reservation_fetch.php",
             method: "GET",
@@ -618,6 +632,8 @@ $(document).ready(function() {
                 console.log("Error fetching data.");
             }
         });
+                
+        }
     };
 
     fetchHistory();
@@ -905,7 +921,8 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
   //stop
- 
+
+
 
 //superadmin
 /*

@@ -83,9 +83,9 @@
 </nav>
 
 <div class="container-fluid p-0">
-    <!-- Sidebar -->
+    <!-- Sidebar 
     <aside class="sidebar collapsed">
-        <!-- Sidebar header -->
+  
         <div class="sidebar-header">
             <img src="../assets/images/fs_logo.jpg" alt="" class="header-logo" />
             <button class="sidebar-toggle">
@@ -93,7 +93,7 @@
             </button>
         </div>
         <div class="sidebar-content">
-            <!-- Sidebar Menu -->
+          
             <ul class="menu-list">
                 <li class="menu-item ">
                     <a href="index.php" class="menu-link active">
@@ -133,7 +133,7 @@
                 </li>
             </ul>
         </div>
-    </aside>
+    </aside>-->
 
     <!-- Site main content -->
     <div class="main-content">

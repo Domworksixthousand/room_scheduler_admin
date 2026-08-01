@@ -75,7 +75,7 @@
     ?>
 
 
-      <!---sidebarini-->
+      <!---sidebarini
       <div class="sidebar close">
         <div class="logo-details">
           <img src="../assets/images/fs_logo.jpg"  alt="">
@@ -131,21 +131,22 @@
             <div class="profile-details">
               <div class="profile-content"><i class="bx bx-user-circle fs-2"></i></div>
               <div class="name-job">
-                <div class="job"><?php echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
+                <div class="job"><?php // echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
                 <div class="job">Admin</div>
               </div>
               <a href="logout.php?location_back=index.php"><i class="bx bx-log-out"></i></a>
             </div>
           </li>
         </ul>
-      </div>
+      </div>-->
       
       <!--maincontent ini-->
-      <div class="main_content">
-        <div class="header-content">
+      <div class="main_content ">
+        <!--<div class="header-content">;
           <span class="menu_toggle"><i class="bx bx-menu-alt-left"></i></span>
-          <h3>Good Day <?php echo $firstname; ?>!</h3>
-        </div>
+          <h3>Good Day <?php // echo $firstname; ?>!</h3>
+        </div>-->
+        <?php include 'fab.php'; ?>
         <section class="dashboard_admin_section">
           <div class="container">
             <h2 class="text_header">Dashboard </h2>
@@ -375,7 +376,7 @@
         </section>
       </div>
 
-    
+
  
 <!--para mg show an data sa calendar-->
 

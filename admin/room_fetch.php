@@ -107,7 +107,7 @@ if (!empty($display_rooms)) {
         echo '<div class="col-lg-3 col-md-6 col-sm-12 mb-3">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="overflow-hidden position-relative">
-                        <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" alt="'.$room_name.'" style="height: 180px; object-fit: cover;">
+                        <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" alt="'.$room_name.'" loading="lazy" style="height: 180px; object-fit: cover;">
                         <span class="badge position-absolute rounded-pill top-0 end-0 m-2 '.$badge_class.'">'.$status_label.'</span>
                         <span class="badge position-absolute rounded-pill bottom-0 end-0 m-2  bg-light ' .$tablet_style. '">'.$tablet_status.'</span>
                         <div class="buttton_actions">

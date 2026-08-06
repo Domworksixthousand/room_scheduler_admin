@@ -15,10 +15,19 @@
     
   <?php
     include '../config.php'; 
-    if(!isset($_SESSION['admin_login'])){
+ //go to current user page  role
+  if (isset($role)) {
+      if ($role === "1") {
+          echo "<script>location.href='../super_admin/index.php';</script>";
+          exit;
+      } elseif ($role  > "2") {
+          echo "<script>location.href='../user/index.php';</script>";
+          exit;
+      }
+  }else{
       echo "<script>location.href='../index.php';</script>";
-    }
-      include '../loading_animation.php';
+      exit;
+  }
 
     if(isset($_GET['filter'])){
         $filter = $_GET['filter']; 
@@ -144,6 +153,7 @@
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/calendar.io.js"></script>
+    <script src="../assets/js/walkthrough_tour.js"></script>;
     <?php include '../alert.php'; ?>
 </body>
 </html>

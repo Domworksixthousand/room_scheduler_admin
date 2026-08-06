@@ -9,7 +9,10 @@
         fab.addEventListener("click",()=>{
 
         dial.classList.toggle("show");
-        icon.classList.toggle("rotate");
+        if(icon){
+              icon.classList.toggle("rotate");
+        }
+    
 
         });
     });

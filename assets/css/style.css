@@ -578,7 +578,6 @@ backdrop-filter: blur(8.9px);
 }
 
 .accounts_superadmin_section .inner_con{
-    padding:30px 0;
     overflow:auto;
 }
 
@@ -641,11 +640,6 @@ backdrop-filter: blur(8.9px);
     font-weight: bold;
     border:1px solid #C50000;
 }
-
-.dashboard_superadmin_section{
-    padding: 30px  0 60px 0;
-}
-
 
 .dashboard_superadmin_section .box{
     background: var(--card-bg, #fff);
@@ -747,7 +741,8 @@ backdrop-filter: blur(8.9px);
     padding:50px 0;
 }
 
-.reservation_admin_section .upper_search{
+.reservation_admin_section .upper_search,
+.reservation_superadmin_section  .upper_search{
     display: flex;
     gap:10px;
     padding:50px 0 20px 0;
@@ -866,6 +861,8 @@ backdrop-filter: blur(8.9px);
     height:60px;
 }
   
+
+
 .dashboard_admin_section .text_header,
 .text_header,
 .floor_admin_section .text_header,
@@ -884,7 +881,13 @@ backdrop-filter: blur(8.9px);
 .room_admin_section .inner_con,
 .floor_admin_section .inner_con,
 .history_admin_section .inner_con,
-.reservation_admin_section .inner_con{
+.reservation_admin_section .inner_con,
+.dashboard_superadmin_section .inner_con,
+.accounts_superadmin_section .inner_con,
+.floor_superadmin_section .inner_con,
+.room_superadmin_section .inner_con,
+.history_superadmin_section .inner_con,
+.reservation_superadmin_section .inner_con{
     padding:50px 0;
 }
 
@@ -892,7 +895,9 @@ backdrop-filter: blur(8.9px);
 .room_admin_section .btn_add,
 .history_admin_section .btn_add,
 .reservation_admin_section .btn_add,
-.room_superadmin_section .btn_add{
+.room_superadmin_section .btn_add,
+.floor_superadmin_section .btn_add,
+.reservation_superadmin_section .btn_add{
     display: flex !important;
     align-items: center;
     justify-content: center;
@@ -905,13 +910,16 @@ backdrop-filter: blur(8.9px);
 .floor_admin_section .btn_add:hover,
 .room_admin_section .btn_add:hover,
 .history_admin_section .btn_add:hover,
-.reservation_admin_section .btn_add:hover{
+.reservation_admin_section .btn_add:hover,
+.floor_superadmin_section .btn_add:hover{
     background-color: #4549ac;
     color:white;
 }
 
 .floor_admin_section th,
-.history_admin_section th{
+.history_admin_section th,
+.floor_superadmin_section th,
+.floor_superadmin_section th{
     background-color: #0F1595 !important;
     color: white !important;
     text-align: center;
@@ -919,7 +927,9 @@ backdrop-filter: blur(8.9px);
 
 .floor_admin_section td,
 .history_admin_section td,
-.reservation_admin_section  td{
+.reservation_admin_section  td,
+.floor_superadmin_section td,
+.floor_superadmin_section td{
     text-align: center !important;
 }
 
@@ -1465,6 +1475,7 @@ backdrop-filter: blur(8.9px);
     overflow: hidden;          
     transform: translateY(20px);
     transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
+    cursor: pointer;
 }
 
 .fab-item button{
@@ -1525,3 +1536,122 @@ backdrop-filter: blur(8.9px);
 
 
 
+
+/* === Admin walkthrough tour === */
+.wt-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 9998;
+}
+
+.wt-overlay.wt-overlay-hidden {
+    background: transparent;
+    pointer-events: none;
+}
+
+.wt-highlight {
+    position: relative;
+    z-index: 9999;
+    outline: 3px solid var(--primary-navy);
+    outline-offset: 4px;
+    border-radius: 8px;
+    box-shadow: 0 0 0 6px rgba(0, 0, 128, 0.25);
+    background-color: #fff;
+}
+
+.wt-tooltip {
+    position: absolute;
+    z-index: 10000;
+    width: 300px;
+    max-width: 90vw;
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    font-family: inherit;
+}
+
+.wt-tooltip-title {
+    font-weight: 700;
+    color: var(--primary-navy);
+    margin-bottom: 6px;
+    font-size: 1.05rem;
+}
+
+.wt-tooltip-text {
+    color: #333;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 14px;
+}
+
+.wt-tooltip-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.wt-step-count {
+    font-size: 0.78rem;
+    color: #888;
+    white-space: nowrap;
+}
+
+.wt-tooltip-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.wt-btn {
+    border: 1px solid var(--primary-navy);
+    background: #fff;
+    color: var(--primary-navy);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.wt-btn.wt-primary {
+    background: var(--primary-navy);
+    color: #fff;
+}
+
+.wt-btn.wt-skip {
+    border-color: transparent;
+    color: #888;
+    padding-left: 0;
+}
+
+/* === Walkthrough guide page === */
+.walkthrough_admin_section .wg-card {
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 18px;
+    background: #fff;
+}
+
+.walkthrough_admin_section .wg-card h4 {
+    color: var(--primary-navy);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.walkthrough_admin_section .wg-card ul {
+    margin-bottom: 0;
+    padding-left: 20px;
+}
+
+.walkthrough_admin_section .wg-start-btn {
+    background: var(--primary-navy) !important;
+    border: 1px solid var(--primary-navy) !important;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: 600;
+}

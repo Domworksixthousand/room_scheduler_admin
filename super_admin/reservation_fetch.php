@@ -78,10 +78,10 @@ while ($row = $all_results->fetch_assoc()) {
 
     // Badge Colors
     $badge_color = 'bg-primary';
-    if ($current_label === "On Going") $badge_color = 'bg-glasmorphism border border-success  border-2 ';
-    if ($current_label === "Upcoming") $badge_color = 'bg-glasmorphism border border-secondary  border-2 ';
-    if ($current_label === "Cancelled") $badge_color = 'bg-glasmorphism border border-danger  border-2 ';
-   if ($current_label === "Done") $badge_color = 'bg-glasmorphism border border-info  border-2 ';
+    if ($current_label === "On Going") $badge_color = 'bg-glasmorphism border border-success text-success  border-2 ';
+    if ($current_label === "Upcoming") $badge_color = 'bg-glasmorphism border border-secondary text-secondary border-2 ';
+    if ($current_label === "Cancelled") $badge_color = 'bg-glasmorphism border border-danger text-danger  border-2 ';
+   if ($current_label === "Done") $badge_color = 'bg-glasmorphism border border-info text-info  border-2 ';
 
     // Filtering by Status (kung may pinili sa dropdown/filter)
     if (empty($selected_status) || in_array($current_label, $selected_status)) {
@@ -94,8 +94,8 @@ while ($row = $all_results->fetch_assoc()) {
 // 5. MANUAL PAGINATION
 /*
   <p class="small mb-1 text-secondary d-flex align-items-center gap-2">
-                            <i class="bx bx-calendar fs-5"></i> '. date('M d, Y', strtotime($row['start_date'])) .'
-                        </p>
+    <i class="bx bx-calendar fs-5"></i> '. date('M d, Y', strtotime($row['start_date'])) .'
+</p>
 
 */
 $total_rows = count($filtered_rooms);
@@ -115,7 +115,7 @@ if ($total_rows > 0) {
         echo '<div class="col-lg-3 col-md-6 col-sm-12 mb-3">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="overflow-hidden position-relative">
-                        <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" style="height: 160px; object-fit: cover;">
+                        <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" loading="lazy" style="height: 160px; object-fit: cover;">
                         <span class="badge position-absolute rounded-pill top-0 end-0 m-2 '.$row['dynamic_badge'].' p-2">'.$row['calc_label'].'</span>
                     </div>
                     <div class="card-body d-flex flex-column">

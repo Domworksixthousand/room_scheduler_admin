@@ -34,6 +34,12 @@
                     <i class='bx bx-calendar fs-5  '></i>
                 </div>
 
+                <div class="fab-item" onclick="location.href='walkthrough.php'"  data-bs-toggle="tooltip" data-bs-placement="left";
+                data-bs-custom-class="custom-tooltip"
+                data-bs-title="Walkthrough">
+                    <i class='bx bx-help-circle fs-5  '></i>
+                </div>
+
             </div>
 
             <!-- Main FAB -->

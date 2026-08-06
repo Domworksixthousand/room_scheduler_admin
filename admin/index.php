@@ -11,17 +11,28 @@
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
     <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
     <link rel="stylesheet" href="../assets/css/boostrap.css">
+    <script src="../assets/js/jquery.js"></script>
   </head>
   <body>
  
 
     <?php
       include '../config.php'; 
-      if(!isset($_SESSION['admin_login'])){
-        echo "<script>location.href='../index.php';</script>";
+      //go to current user page  role
+      if (isset($role)) {
+          if ($role === "1") {
+              echo "<script>location.href='../super_admin/index.php';</script>";
+              exit;
+          } elseif ($role  > "2") {
+              echo "<script>location.href='../user/index.php';</script>";
+              exit;
+          }
+      }else{
+          echo "<script>location.href='../index.php';</script>";
+          exit;
       }
-      include '../loading_animation.php';
 
+    
       
       //calendar ini
       $occupied = 'Occupied';
@@ -154,7 +165,7 @@
               <!--room box ini pogi-->
                 <div class="row">
                   <div class="col-lg-12 mb-3 left_third_row">
-                    <div class="box" onclick="location.href='rooms.php'">
+                    <div class="box" id="wt-rooms-box" onclick="location.href='rooms.php'">
                       <img src="../assets/images/meeting_icon.png" alt="Logo">
                       <div class="details">
                         <?php
@@ -169,10 +180,12 @@
 
                 <div class="row">
                   <div class="col-lg-4 mb-3 left_first_row">
-                    <div class="box" onclick="location.href='rooms.php?filter=available'">
-                      <img src="../assets/images/availble_calendar_icon.png" alt="Logo">
+                    <div class="box" id="wt-availability-box" onclick="location.href='rooms.php?filter=available'">
+                      <img src="../assets/images/availble_calendar_icon.png" loading="lazy" alt="Logo">
                       <div class="details">
+                        
                     <?php
+
                       $sql = "SELECT COUNT(*) as total_available FROM rooms 
                               WHERE room_id NOT IN (
                                   SELECT room_id FROM booking 
@@ -198,7 +211,7 @@
                   </div>
                   <div class="col-lg-4 mb-3 right_first_row">
                     <div class="box" onclick="location.href='rooms.php?filter=partially_occupied'">
-                        <img src="../assets/images/partially_room_icon.png" alt="Logo">
+                        <img src="../assets/images/partially_room_icon.png" loading="lazy" alt="Logo">
                         <div class="details">
                               <div class="details">
                                         <?php
@@ -234,7 +247,7 @@
                   </div>
                   <div class="col-lg-4 mb-3 middle_first_row">
                     <div class="box" onclick="location.href='rooms.php?filter=fully_occupied'">
-                        <img src="../assets/images/fullybooked_calendar_icon.png" alt="Logo">
+                        <img src="../assets/images/fullybooked_calendar_icon.png" loading="lazy" alt="Logo">
                         <div class="details">
                               <div class="details">
                                 <?php
@@ -272,8 +285,8 @@
 
                 <div class="row">
                   <div class="col-lg-3 col-md-6 mb-3 second_row_first" >
-                    <div class="box" onclick="location.href='reservations.php?filter=ongoing'">
-                      <img src="../assets/images/ongoing _booked_icons.png" alt="">
+                    <div class="box" id="wt-bookings-box" onclick="location.href='reservations.php?filter=ongoing'">
+                      <img src="../assets/images/ongoing _booked_icons.png " loading="lazy" alt="">
                       <div class="details">
                         <?php
                           $stmt = $conn2->prepare("SELECT COUNT(*) AS total_ongoing FROM booking WHERE start_time <= ? AND end_time >= ? AND start_date = ?");
@@ -295,7 +308,7 @@
                   </div>
                   <div class="col-lg-3 col-md-6 mb-3 second_row_second ">
                     <div class="box" onclick="location.href='reservations.php?filter=upcoming'">
-                      <img src="../assets/images/upcoming_booked_icon.png" alt="">
+                      <img src="../assets/images/upcoming_booked_icon.png" loading="lazy" alt="">
                       <div class="details">
                           <?php
                           $stmt = $conn2->prepare("SELECT COUNT(*) AS total_upcoming FROM booking WHERE start_time > ?  AND start_date = ?");
@@ -317,7 +330,7 @@
                   </div>
                   <div class="col-lg-3 col-md-6 mb-3 left_first_row">
                     <div class="box" onclick="location.href='reservations.php?filter=done'">
-                        <img src="../assets/images/calendar_check_icon.png" alt="">
+                        <img src="../assets/images/calendar_check_icon.png" loading="lazy" alt="">
                         <div class="details">
                             <?php
                           $stmt = $conn2->prepare("SELECT COUNT(*) AS total_done FROM booking WHERE end_time < ?  AND start_date = ?");
@@ -339,7 +352,7 @@
                   </div>
                   <div class="col-lg-3 col-md-6 mb-3 second_row_fourt" >
                     <div class="box" onclick="location.href='reservations.php?filter=cancelled'">
-                      <img src="../assets/images/cancel-event_cabcelled.png" alt="">
+                      <img src="../assets/images/cancel-event_cabcelled.png" loading="lazy" alt="">
                       <div class="details">
                           <?php
                           $status = 'Cancelled';
@@ -368,7 +381,7 @@
         <section class="graph_admin_section">
           <div class="container">
             <div class="inner_graph">
-              <div id="calendar-container" >
+              <div id="calendar-container" data-wt="calendar">
                   <div id="calendar"></div>
               </div>
             </div>
@@ -477,7 +490,8 @@
   <script src="../assets/js/script.js"></script>
   <script src="../assets/js/boostrap.js"></script>
   <script src="../assets/js/calendar.io.js"></script>
-  <script src="../assets/js/jquery.js"></script>
+  <script src="../assets/js/walkthrough_tour.js"></script>
+
   <?php
     include '../alert.php';
   ?>

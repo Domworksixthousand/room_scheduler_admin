@@ -1,14 +1,21 @@
 
+
 window.addEventListener("load", function() {
     const preloader = document.getElementById("preloader");
     
     // Smooth transition paalis
-    preloader.style.transition = "opacity 0.6s ease-in-out";
-    preloader.style.opacity = "0";
-    
+    if(preloader)
+    {
+        preloader.style.transition = "opacity 0.6s ease-in-out";
+        preloader.style.opacity = "0";
+
+            
     setTimeout(() => {
         preloader.style.display = "none";
     }, 600);
+    }
+
+
 });
 
  /*sending book animation */
@@ -204,7 +211,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (sidebarBtn) {
         sidebarBtn.addEventListener("click", () => {
-            sidebar.classList.toggle("close");
+            if(sidebar){
+                   sidebar.classList.toggle("close");
+            }
+   
         });
     } 
 });
@@ -255,6 +265,7 @@ $(document).ready(function(){
 
 
   // search account super admin floors.php
+  /*
 $(document).ready(function(){
       let searchTimer;
         let currentPage = 1;
@@ -301,6 +312,7 @@ $(document).ready(function(){
             if ($('#input_floor').val() === "") fetchRooms(currentPage);
         }, 1000); 
 });
+*/
 
 
 
@@ -381,20 +393,300 @@ $(document).ready(function() {
 });
 
 
+//admin/super admin history
+/*
+ $(document).ready(function() {
+    // Fetch function
+   function fetchHistory(page = 1, isRetry = false) {
+    let input = $('#input_history');
+    let searchQuery = input.val() || '';
+
+    let primaryUrl = input.data('url') || '/room_scheduler_admin/admin/history.php';
+    
+
+    let fallbackUrl = '/room_scheduler_admin/super_admin/history.php';
 
 
+    let targetUrl = isRetry ? fallbackUrl : primaryUrl;
 
+    $.ajax({
+        url: targetUrl,
+        type: 'GET',
+        data: {
+            ajax: 1,
+            page: page,
+            search: searchQuery
+        },
+        dataType: 'json',
+        success: function(response) {
+            $('#history_body').html(response.table_html);
+            $('#history_pagination').html(response.pagination_html);
+        },
+        error: function(xhr, status, error) {
+            // Kapag nag 404 at HINDI pa nakakapag-retry
+            if (xhr.status === 404 && !isRetry) {
+                console.warn("404 sa " + primaryUrl + ". Sumusubok sa fallback URL: " + fallbackUrl);
+               
+                fetchHistory(page, true);
+            } 
+        }
+    });
+}
 
+    // Initial fetch on load
+    fetchHistory(1);
 
+    // Click handler for pagination links
+    $(document).on('click', '.page-link-ajax', function(e) {
+        e.preventDefault();
+        
+        let parentLi = $(this).parent('.page-item');
+        if (parentLi.hasClass('disabled') || parentLi.hasClass('active')) {
+            return;
+        }
+
+        let selectedPage = $(this).data('page');
+        fetchHistory(selectedPage);
+    });
+
+    // Live Search with 300ms debounce
+    let timer;
+    $('#input_history').on('keyup search input', function() {
+        clearTimeout(timer);
+        timer = setTimeout(function() {
+            fetchHistory(1);
+        }, 300);
+    });
+});*/
+
+ document.addEventListener("DOMContentLoaded", function(){
+     $(document).ready(function() {
+          let currentRequest = null;
+
+          // Fetch function
+          function fetchHistory(page = 1) {
+              let input = $('#input_history');
+              let searchQuery = input.val() || '';
+
+   
+              if (currentRequest && currentRequest.readyState !== 4) {
+                  currentRequest.abort();
+              }
+
+              currentRequest = $.ajax({
+                  url: window.location.pathname, 
+                  type: 'GET',
+                  data: {
+                      ajax: 1,
+                      page: page,
+                      search: searchQuery
+                  },
+                  dataType: 'json',
+                  success: function(response) {
+                      $('#history_body').html(response.table_html);
+                      $('#history_pagination').html(response.pagination_html);
+                  },
+                  error: function(xhr, status, error) {
+                      if (status === 'abort') return;
+                      $('#history_body').html("<tr><td colspan='8' class='text-center text-danger'>Error loading data.</td></tr>");
+                  }
+              });
+          }
+
+          // Initial fetch on load
+          fetchHistory(1);
+
+          // Click handler for pagination links
+          $(document).on('click', '.page-link-ajax', function(e) {
+              e.preventDefault();
+              
+              let parentLi = $(this).parent('.page-item');
+              if (parentLi.hasClass('disabled') || parentLi.hasClass('active')) {
+                  return;
+              }
+
+              let selectedPage = $(this).data('page');
+              fetchHistory(selectedPage);
+          });
+
+          // Live Search with 300ms debounce
+          let timer;
+          $('#input_history').on('keyup search input', function() {
+              clearTimeout(timer);
+              timer = setTimeout(function() {
+                  fetchHistory(1);
+              }, 300);
+          });
+      });
+ });
+
+//floor super admin
+document.addEventListener("DOMContentLoaded", function(){
+    $(document).ready(function() {
+
+        const NO_DATA_HTML = `
+                <tr>
+                    <td colspan='3' class='text-center'>
+                        <div class='d-flex flex-column text-muted justify-content-center align-items-center py-3'>
+                            <svg xmlns='http://www.w3.org/2000/svg' width='35' height='35' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-hotel-icon lucide-hotel mb-2'>
+                                <path d='M10 22v-6.57'/>
+                                <path d='M12 11h.01'/>
+                                <path d='M12 7h.01'/>
+                                <path d='M14 15.43V22'/>
+                                <path d='M15 16a5 5 0 0 0-6 0'/>
+                                <path d='M16 11h.01'/>
+                                <path d='M16 7h.01'/>
+                                <path d='M8 11h.01'/>
+                                <path d='M8 7h.01'/>
+                                <path d='M4 2h16v20H4z' rx='2'/>
+                            </svg>
+                            <span>No Data Found</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+        function renderNoData() {
+            $('#mybody_floor').html(NO_DATA_HTML);
+            $('#pagination_links_floor').html('');
+        }
+
+        let currentRequest = null;
+
+        function fetchFloors(page = 1) {
+            let input = $('#input_floor');
+            let searchTerm = input.val() || '';
+            let targetUrl = input.data('url') || window.location.pathname;
+
+            if (currentRequest && currentRequest.readyState !== 4) {
+                currentRequest.abort();
+            }
+
+            currentRequest = $.ajax({
+                url: targetUrl,
+                method: "GET",
+                data: {
+                    ajax: 1,
+                    search: searchTerm,
+                    page: page
+                },
+                dataType: "json",
+                success: function(response) {
+                    if (response && typeof response.table_html === 'string' && response.table_html.length > 0) {
+                        $('#mybody_floor').html(response.table_html);
+                        $('#pagination_links_floor').html(response.pagination_html || '');
+                    } else {
+                        renderNoData();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Ignore aborts caused by our own currentRequest.abort() above.
+                    if (status === 'abort') {
+                        return;
+                    }
+                    
+                    // Any failure quietly shows "No Data Found"
+                    renderNoData();
+                }
+            });
+        }
+
+        fetchFloors(1);
+
+        $(document).on('click', '#pagination_links_floor .page-link-ajax', function(e) {
+            e.preventDefault();
+            let parentLi = $(this).parent('.page-item');
+
+            if (parentLi.hasClass('disabled') || parentLi.hasClass('active')) {
+                return;
+            }
+
+            let selectedPage = $(this).data('page');
+            fetchFloors(selectedPage);
+        });
+
+        let timer;
+        $('#input_floor').on('keyup search input', function() {
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                fetchFloors(1);
+            }, 300);
+        });
+
+    });
+});
+// floor admin
+document.addEventListener("DOMContentLoaded", function(){
+    $(document).ready(function() {
+        let currentRequest = null;
+
+        function fetchFloors(page = 1) {
+            let input = $('#input_floor');
+            let searchTerm = input.val() || '';
+
+            // i-abort ang lumang request kung mabilis ang pag-type ng user
+            if (currentRequest && currentRequest.readyState !== 4) {
+                currentRequest.abort();
+            }
+
+            currentRequest = $.ajax({
+                // Lagyan ng '/' sa unahan para magsimula sa root domain
+                url: "/room_scheduler_admin/admin/floors.php", 
+                method: "GET",
+                data: { 
+                    ajax: 1,
+                    search: searchTerm, 
+                    page: page 
+                },
+                dataType: "json",
+                success: function(response) {
+                    $('#mybody_floor').html(response.table_html);
+                    $('#pagination_links_floor').html(response.pagination_html);
+                },
+                error: function(xhr, status, error) {
+                    if (status === 'abort') return; 
+               
+                }
+            });
+        }
+
+        // Initial Fetch
+        fetchFloors(1);
+
+        // Live Search Handler with 300ms debounce
+        let timer;
+        $('#input_floor').on('keyup search input', function() {
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                fetchFloors(1);
+            }, 300);
+        });
+
+        // Pagination Click Handler
+        $(document).on('click', '#pagination_links_floor .page-link-ajax', function(e) {
+            e.preventDefault();
+
+            let parentLi = $(this).parent('.page-item');
+            if (parentLi.hasClass('disabled') || parentLi.hasClass('active')) {
+                return;
+            }
+
+            let selectedPage = $(this).data('page');
+            if (selectedPage) {
+                fetchFloors(selectedPage);
+            }
+        });
+    });
+});
 
 //admin reservation
 $(document).ready(function() {
     let searchTimer;
-    let currentPage = 1; // This is global to this scope
+    let currentPage = 1;
     let isTyping = false;
 
     const fetchHistory = (page = 1) => {
-        currentPage = page; // CRITICAL: Update the global currentPage
+        currentPage = page;
         const searchTerm = $('#input_reservation').val();
         const searchDate = $('#date_reservation').val();
 
@@ -448,7 +740,7 @@ $(document).ready(function() {
         isTyping = true;
         clearTimeout(searchTimer);
         searchTimer = setTimeout(() => {
-            fetchHistory(1); // Reset to page 1 on new search
+            fetchHistory(1); 
             isTyping = false;
         }, 500);
     });
@@ -466,51 +758,6 @@ $(document).ready(function() {
 
 
 
-//admin/history.php
- $(document).ready(function() {
-    let searchTimer;
-    let currentPage = 1;
-
-    const fetchHistory = (page = 1) => {
-        const searchTerm = $('#input_history').val();
-        currentPage = page;
-
-        if(searchTerm){
-            $.ajax({
-            url: "history_fetch.php",
-            method: "GET",
-            data: { search: searchTerm, page: page },
-            success: function(response) {
-
-                const [tableData, paginationData] = response.split("|||");
-                
-                $('#history_body').hide().html(tableData).fadeIn(200);
-                $('#history_paginatiom').html(paginationData);
-            },
-            error: function() {
-                $('#history_body').html("<tr><td colspan='7' class='text-center text-danger'>Connection error.</td></tr>");
-            }
-        });
-        }
-    };
-
-    // Trigger search on typing (with 300ms delay to save server resources)
-    $(document).on('keyup', '#input_history', function() {
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => fetchHistory(1), 300);
-    });
-
-    // Handle Pagination Clicks using Delegation
-    $(document).on('click', '.page-link-ajax', function(e) {
-        e.preventDefault();
-        const page = $(this).data('page');
-        fetchHistory(page);
-    });
-
-    // Initial Load
-    fetchHistory();
-
-});
 
 
 
@@ -554,6 +801,58 @@ document.addEventListener("DOMContentLoaded", ()=> {
 });
 
 
+//get admin history
+/*
+$(document).ready(function() {
+        // Fetch function
+        function fetchHistory(page = 1) {
+            let searchQuery = $('#input_history').val();
+
+            $.ajax({
+                url: 'history.php',
+                type: 'GET',
+                data: {
+                    ajax: 1,
+                    page: page,
+                    search: searchQuery
+                },
+                dataType: 'json',
+                success: function(response) {
+                    $('#history_body').html(response.table_html);
+                    $('#history_pagination').html(response.pagination_html);
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error: ", error);
+                }
+            });
+        }
+
+        // Initial fetch on load
+        fetchHistory(1);
+
+        // Click handler for pagination links
+        $(document).on('click', '.page-link-ajax', function(e) {
+            e.preventDefault();
+            
+            let parentLi = $(this).parent('.page-item');
+            if (parentLi.hasClass('disabled') || parentLi.hasClass('active')) {
+                return;
+            }
+
+            let selectedPage = $(this).data('page');
+            fetchHistory(selectedPage);
+        });
+
+        // Live Search with 300ms debounce
+        let timer;
+        $('#input_history').on('keyup search input', function() {
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                fetchHistory(1);
+            }, 300);
+        });
+    });
+*/
 
 //superadmin/history.php
  $(document).ready(function() {
@@ -600,6 +899,8 @@ document.addEventListener("DOMContentLoaded", ()=> {
     fetchHistory();
 
 });
+
+//
 
 
 
@@ -665,7 +966,7 @@ $(document).ready(function() {
 
 
 
- document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     const startDateInput = document.getElementById("start_date");
     const endDateInput = document.getElementById("end_date");
     const wrapper = document.getElementById("wrapper");
@@ -675,71 +976,80 @@ $(document).ready(function() {
     const container = document.getElementById("custom_container");
     const labelText = document.querySelector(".label-text");
 
+    // Check kung narito ang lahat ng elements
+    if (!startDateInput || !endDateInput || !checkbox || !wrapper || !not_custom || !custom_section || !container || !labelText) {
+        return; 
+    }
 
     function checkDateRange() {
         const startVal = startDateInput.value;
         const endVal = endDateInput.value;
 
+        // Siguraduhing may napiling petsa sa dalawang input
         if (startVal && endVal) {
-            const start = new Date(startVal);
-            const end = new Date(endVal);
-
-            if (end > start) {
-                wrapper.classList.remove("d-none");
+            // String comparison para sa YYYY-MM-DD
+            if (endVal > startVal) {
+                // KAPAG MAGKAIBANG ARAW: Ipakita ang checkbox wrapper
+                wrapper.style.display = "block";
             } else {
-                wrapper.classList.add("d-none");    
+                // KAPAG SAME DATE O MAS MABABA: Itago nang pilit ang checkbox wrapper
+                wrapper.style.display = "none";    
                 checkbox.checked = false;           
                 resetToSingleMode();                
             }
+        } else {
+            wrapper.style.display = "none";
+            checkbox.checked = false;
+            resetToSingleMode();
         }
     }
 
-  
     function resetToSingleMode() {
         not_custom.style.display = "flex";
         custom_section.style.display = "none";
         labelText.innerHTML = "Custom daily time schedule";
         container.innerHTML = "";
     }
-    
-    if (!startDateInput || !endDateInput || !checkbox || !wrapper || !not_custom || !custom_section || !container || !labelText) {
-        return; 
-    }
+
+    // Pakinggan ang bawat pagbago ng input
     startDateInput.addEventListener("change", checkDateRange);
     endDateInput.addEventListener("change", checkDateRange);
+    startDateInput.addEventListener("input", checkDateRange);
+    endDateInput.addEventListener("input", checkDateRange);
 
-   
+    // PAHABOL: Pilitin nating itago MUNA at i-check pagka-load ng page
+    wrapper.style.display = "none"; 
+    checkDateRange();
+
+    // Checkbox Toggle Handler
     checkbox.addEventListener("change", function() {
         const startVal = startDateInput.value;
         const endVal = endDateInput.value;
 
         if (this.checked) {
-     
             if (!startVal || !endVal) {
                 CoolAlert.show({ icon: "warning", title: "Wait!", text: "Select dates first." });
                 this.checked = false;
                 return;
             }
 
-            const start = new Date(startVal);
-            const end = new Date(endVal);
+            const [sYear, sMonth, sDay] = startVal.split('-').map(Number);
+            const [eYear, eMonth, eDay] = endVal.split('-').map(Number);
+            
+            let current = new Date(sYear, sMonth - 1, sDay);
+            const end = new Date(eYear, eMonth - 1, eDay);
 
-          
             labelText.innerHTML = "Use same time for all dates";
             not_custom.style.display = "none";
             custom_section.style.display = "block";
             container.innerHTML = ""; 
 
-         
-            let current = new Date(start);
             while (current <= end) {
-              
                 let y = current.getFullYear();
                 let m = String(current.getMonth() + 1).padStart(2, '0');
                 let d = String(current.getDate()).padStart(2, '0');
                 let dateStr = `${y}-${m}-${d}`;
 
-          
                 let displayDate = current.toLocaleDateString('en-US', { 
                     weekday: 'short', month: 'short', day: 'numeric' 
                 });
@@ -753,7 +1063,7 @@ $(document).ready(function() {
         }
     });
 
-    // FUNCTION: Generator ng HTML Slot Row
+    // Generator ng HTML Slot Row
     function createTimeSlot(dateValue, dateLabel) {
         const div = document.createElement("div");
         div.className = "p-3 mb-2 border rounded bg-light shadow-sm";
@@ -763,16 +1073,16 @@ $(document).ready(function() {
                     <span class="fw-bold text-primary">${dateLabel}</span>
                     <input type="hidden" name="custom_date[]" value="${dateValue}">
                 </div>
-                <div class="col-md-4 ">
+                <div class="col-md-4">
                     <div class="input-group input-group-sm custom_input">
                         <span class="input-group-text">Start</span>
-                        <input type="time" name="custom_start[]" class="form-control " required>
+                        <input type="time" name="custom_start[]" class="form-control" required>
                     </div>
                 </div>
-                <div class="col-md-4 ">
+                <div class="col-md-4">
                     <div class="input-group input-group-sm custom_input">
                         <span class="input-group-text">End</span>
-                        <input type="time" name="custom_end[]" class="form-control " required>
+                        <input type="time" name="custom_end[]" class="form-control" required>
                     </div>
                 </div>
             </div>
@@ -922,7 +1232,107 @@ document.addEventListener("DOMContentLoaded", function(){
 
   //stop
 
+//start
+// meeting title
+$(document).ready(function() {
+    const $searchInput = $('#empSearchmeeting');
+    const $hiddenInput = $('#meeting_title');
+    const $dropdown = $('#empDropdown_meeting');
+    const $items = $('.emp-item_meeting');
 
+  
+    $searchInput.on('focus click', function() {
+        $dropdown.removeClass('d-none');
+        filterList();
+    });
+
+
+    $searchInput.on('keyup input', function() {
+        const val = $(this).val();
+        $hiddenInput.val(val);
+        $dropdown.removeClass('d-none');
+        filterList();
+    });
+
+    function filterList() {
+        const query = $searchInput.val().toLowerCase();
+
+        $items.each(function() {
+            const titleText = $(this).data('name').toString().toLowerCase();
+            if (titleText.includes(query)) {
+                $(this).removeClass('d-none');
+            } else {
+                $(this).addClass('d-none');
+            }
+        });
+    }
+
+
+    $(document).on('click', '.emp-item_meeting', function() {
+        const selectedTitle = $(this).data('name');
+        
+        $searchInput.val(selectedTitle);
+        $hiddenInput.val(selectedTitle);
+        $dropdown.addClass('d-none');
+    });
+
+ 
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.position-relative').length) {
+            $dropdown.addClass('d-none');
+        }
+    });
+});
+//stop
+
+
+//start serial number search select 
+document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
+        $('#serial_data').on('focus click keyup input', function() {
+            var value = $(this).val().toLowerCase().trim();
+            var matchFound = false;
+            $('.serial_num').each(function() {
+                var name = $(this).data('name').toString().toLowerCase();
+                if (value === '' || name.indexOf(value) > -1) {
+                    $(this).show();
+                    matchFound = true;
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            if (matchFound) {
+                $('#empDropdown_serial').removeClass('d-none');
+            }
+        });
+        $(document).on('mousedown', '.serial_num', function(e) {
+            e.preventDefault();
+
+            var name = $(this).data('name');
+            var token = $(this).data('token');
+
+
+            $('#serial_data').val(name);
+            
+        
+            $('#serial_number_hidden').val(token);
+
+    
+            $('#empDropdown_serial').addClass('d-none');
+        });
+
+
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.position-relative').length) {
+                $('#empDropdown_serial').addClass('d-none');
+            }
+        });
+
+
+    });
+});
+//stop
 
 //superadmin
 /*

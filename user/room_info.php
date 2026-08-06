@@ -100,7 +100,7 @@
                                 <div class="tab-pane fade show active" id="home">
                                     <div class="row">
                                         <div class="col-lg-5 .col-md-6 .col-sm-12">
-                                            <img src="../assets/uploads/<?php echo htmlspecialchars($image); ?>" alt="Room Image" class="img-fluid rounded mb-3">
+                                            <img src="../assets/uploads/<?php echo htmlspecialchars($image); ?>" alt="Room Image" loading="lazy" class="img-fluid rounded mb-3">
                                         </div>
                                         <div class="col-lg-7 .col-md-6 .col-sm-12">
                                           <ul class="list-group list-group-flush border-top">

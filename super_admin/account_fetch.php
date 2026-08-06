@@ -9,7 +9,7 @@ $search_param = "%$search%";
 
 // 1. Get all employee_ids from conn2 (the accounts table)
 $account_ids = [];
-$get_auth = $conn2->query("SELECT employee_id FROM `accounts`");
+$get_auth = $conn2->query("SELECT employee_id FROM `accounts` WHERE `user_status` != 'Inactive' AND `role` = '2'");
 while($auth_row = $get_auth->fetch_assoc()){
     $account_ids[] = $auth_row['employee_id'];
 }
@@ -22,7 +22,7 @@ if (!empty($account_ids)) {
     $placeholders = implode(',', array_fill(0, count($account_ids), '?'));
 
     $sql = "SELECT * FROM `employee` 
-            WHERE (`lastname` LIKE ? OR `firstname` LIKE ? OR `middlename` LIKE ?) 
+            WHERE (`lastname` LIKE ? OR `firstname` LIKE ? OR `middlename` LIKE ?)  
             AND `Employee_ID` IN ($placeholders)
             ORDER BY lastname, firstname, middlename 
             LIMIT ? OFFSET ?";
@@ -57,10 +57,25 @@ if (!empty($account_ids)) {
             </tr>";
         }
     } else {
-        $tableData = "<tr><td colspan='5' class='text-center'>No matching accounts found.</td></tr>";
+        $tableData = "<tr>;
+                <td colspan='5' class='text-center'>
+                    <div class='d-flex flex-column text-muted justify-content-center align-items-center py-3'>
+                        <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-user-round-search-icon lucide-user-round-search'><circle cx='10' cy='8' r='5'/><path d='M2 21a8 8 0 0 1 10.434-7.62'/><circle cx='18' cy='18' r='3'/><path d='m22 22-1.9-1.9'/></svg>
+                        <span>No Account Found</span>
+                    </div>
+                </td>
+            </tr>";
     }
 } else {
-    $tableData = "<tr><td colspan='5' class='text-center'>No accounts registered in the system.</td></tr>";
+    $tableData = "<tr>;
+                <td colspan='5' class='text-center'>
+                    <div class='d-flex flex-column text-muted justify-content-center align-items-center py-3'>
+                        <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-user-round-search-icon lucide-user-round-search'><circle cx='10' cy='8' r='5'/><path d='M2 21a8 8 0 0 1 10.434-7.62'/><circle cx='18' cy='18' r='3'/><path d='m22 22-1.9-1.9'/></svg>
+                        <span>No accounts registered.</span>
+                    </div>
+                </td>
+            </tr>";
+
 }
 
 echo $tableData;

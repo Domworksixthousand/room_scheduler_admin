@@ -102,7 +102,7 @@ if ($has_session_img) {
                                   <i class='bx bx-image-add' id="uploadIcon2" 
                                     style="font-size: 3rem; color:#7d7f81; display: <?php echo (!empty($image)) ? 'none' : 'block'; ?>;">
                                     </i>
-                                    <img id="previewImage2" 
+                                    <img id="previewImage2" loading="lazy"
                                         src="../assets/uploads/<?php echo htmlspecialchars($image); ?>" 
                                         style="max-width: 100%; max-height: 150px; display: <?=  '../assets/uploads/' .  $image  ? 'block' : 'none' ?>; margin: 0 auto;">
                                     

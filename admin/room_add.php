@@ -60,9 +60,36 @@
                                     <label for="room_name" class="form-label">Room Name</label>
                                     <input type="text"  class="form-control uppercase_function" name="room_name" value="<?php echo $_SESSION['room_name'] ?? ''  ?>" placeholder="Enter Floor Name"  required>
                                 </div>
-                                <div class="col-lg-6  col-md-6 col-sm-12 mb-3">
-                                    <label for="serial_numnber" class="form-label">Serial Number</label>
-                                    <input type="text" class="form-control" name="serial_number" value="<?php echo $_SESSION['serial_number'] ?? ''  ?>" placeholder="Enter Serial Number "  required>
+                                <div class="col-lg-6 col-md-6 col-sm-12 mb-3">
+                                    <label for="serial_data" class="form-label">Serial Number / Device Name</label>
+                                    <div class="position-relative">        
+                                        <input type="text" id="serial_data" name="device_name" class="form-control upper_function" value="<?php echo htmlspecialchars($_SESSION['device_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="Type to search..." autocomplete="off" required>
+                                        <input type="hidden" id="serial_number_hidden" name="serial_number" value="<?php echo htmlspecialchars($_SESSION['serial_number'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                        <div id="empDropdown_serial" class="dropdown_body card position-absolute w-100 shadow-sm mt-1 d-none" style="z-index: 1000;">
+                                            <div class="list-group list-group-flush" id="empList_meeting">
+                                                <?php
+                                                $meeting_selection = $conn2->prepare("SELECT DISTINCT device_token, device_name FROM `user_devices` WHERE device_token IS NOT NULL AND device_name IS NOT NULL");
+                                                $meeting_selection->execute();
+                                                $result_selection = $meeting_selection->get_result();
+                                                
+                                                if($result_selection->num_rows > 0){
+                                                    while($row_meet = mysqli_fetch_assoc($result_selection)){
+                                                        $device_name = htmlspecialchars($row_meet['device_name'] ?? '', ENT_QUOTES, 'UTF-8');
+                                                        $device_token = htmlspecialchars($row_meet['device_token'] ?? '', ENT_QUOTES, 'UTF-8');
+                                                ?>
+                                                        <button type="button" 
+                                                                class="list-group-item list-group-item-action serial_num"
+                                                                data-name="<?php echo $device_name; ?>"
+                                                                data-token="<?php echo $device_token; ?>">
+                                                            <?php echo $device_name; ?>
+                                                        </button>
+                                                <?php 
+                                                    }
+                                                } 
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="mb-0 row">
@@ -99,7 +126,7 @@
                                     style="font-size: 3rem; color:#7d7f81; display: <?= $has_session_img ? 'none' : 'block' ?>;"></i>
 
                                     <img id="previewImage" 
-                                        src="<?= $has_session_img ? '../assets/trash_images/' . $_SESSION['new_img_session'] : '#' ?>" 
+                                        src="<?= $has_session_img ? '../assets/trash_images/' . $_SESSION['new_img_session'] : '#' ?>"  loading="lazy"
                                         style="max-width: 100%; max-height: 150px; display: <?= $has_session_img ? 'block' : 'none' ?>; margin: 0 auto;">
                                     
                                     <p class="text-muted small mb-0 mt-2">Click to change image</p>

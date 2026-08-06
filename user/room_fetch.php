@@ -117,7 +117,7 @@ if (!empty($display_rooms)) {
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-title fw-bold mb-1">'.$room_name_short.'</h6>
                         <p class="card-text text-secondary small mb-1"><i class="bx bx-star"></i> '.$short_desc.'</p>
-                        <p class="card-text small mb-1 text-muted"><i class="bx bx-layer"></i> '.htmlspecialchars($row['floor_name']).'</p>
+                        <p class="card-text small mb-1 text-muted"><i class="bx bx-layer"></i> '.htmlspecialchars($row['floor_name'] ?? '').'</p>
                         <div class="reservation_bottona mt-3">
                             <a href="reservation_add.php?room_id='.$row['room_id'].'" class="btn btn_reserve btn-sm w-100 '.($status_label == "Fully Occupied" ? "disabled" : "").'"><i class="bx bxs-calendar-check"></i> Book Now</a>
                         </div>

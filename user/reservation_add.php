@@ -95,11 +95,11 @@
                             </div>  
                             <div class="row mb-0">
                                 <div class="col-lg-6 mb-4">
-                                    <label for="fullname" class="form-label">Full Name</label>
+                                    <label for="empSearch" class="form-label">Employee</label>
                                     <div class="position-relative">
                                         <!-- Search Input -->
-                                        <input type="text" id="empSearch" name="employee_name1" class="form-control upper_function" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off" required>
-                                            <input type="hidden" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" name="employee_name"  id="selectedEmployee_meeting" >
+                                        <input type="text" id="empSearch" name="employee_name1" class="form-control upper_function" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off">
+                                            <input type="hidden" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" name="employee_name"  id="selectedEmployee" required>
                                             <!-- Dropdown -->
                                             <div id="empDropdown" 
                                                 class="dropdown_body card position-absolute w-100 shadow-sm mt-1 d-none" >
@@ -183,7 +183,6 @@
        </form>
     </section>
 </main>
-
 
 
 

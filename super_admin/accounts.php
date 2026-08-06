@@ -1,9 +1,17 @@
 
 <?php
   include '../config.php'; 
-  if(!isset($_SESSION['superadmin_login'])){
-    echo "<script>location.href='../index.php';</script>";
-  }
+    //go to current user page  role
+      if (isset($role)) {
+         if ($role  > "2") {
+              echo "<script>location.href='../user/index.php';</script>";
+              exit;
+          }
+      }else{
+          echo "<script>location.href='../index.php';</script>";
+          exit;
+      }
+
  ?>
 
 <!DOCTYPE html>
@@ -14,88 +22,29 @@
     <title>Accounts</title>
     <link rel="shortcut icon" href="../assets/images/fs_logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/boostrap.css">
-    <link rel="stylesheet" href="../assets/css/sidebar_superadmin.css">
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
+    <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
+    <link rel="stylesheet" href="../assets/css/boostrap.css">
+    <script src="../assets/js/jquery.js"></script>
   </head>
   <body>
-<?php include '../loading_animation.php'; ?>
-<!-- Navbar -->
-<nav class="site-nav">
-    <button class="sidebar-toggle">
-        <span class="material-symbols-rounded"><img src="../assets/images/menus_icon.png" alt=""></span>
-    </button>
-</nav>
 
-<div class="container-fluid p-0">
-    <!-- Sidebar -->
-     <aside class="sidebar collapsed">
-        <!-- Sidebar header -->
-        <div class="sidebar-header">
-            <img src="../assets/images/fs_logo.jpg" alt="" class="header-logo" />
-            <button class="sidebar-toggle">
-            <span class="material-symbols-rounded"><img src="../assets/images/menu_icon.png" alt=""></span>
-            </button>
-        </div>
-        <div class="sidebar-content">
-            <!-- Sidebar Menu -->
-            <ul class="menu-list">
-                <li class="menu-item ">
-                    <a href="index.php" class="menu-link ">
-                        <span class="material-symbols-rounded"><i class="bx bx-grid-alt "></i></span>
-                        <span class="menu-label">Dashboard</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="accounts.php" class="menu-link active">
-                    <span class="material-symbols-rounded"><i class='bx bx-user-circle  '></i></span>
-                    <span class="menu-label ">Accounts</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="rooms.php" class="menu-link">
-                    <span class="material-symbols-rounded"><i class="bx bx-door-open" ></i></span>
-                    <span class="menu-label ">Rooms</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="history.php" class="menu-link">
-                    <span class="material-symbols-rounded "><i class='bx bx-history fs-4'></i></span>
-                    <span class="menu-label">History</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="reservations.php" class="menu-link">
-                    <span class="material-symbols-rounded "><i class='bx bx-calendar fs-4'></i></span>
-                    <span class="menu-label">Reservations</span>
-                    </a>
-                </li>
-                <li class="menu-item" >
-                    <a href="logout.php?location_back=accounts.php" class="menu-link">
-                        <span class="material-symbols-rounded "><i class='bx bx-log-out fs-4'></i></span>
-                        <span class="menu-label">Sign Out</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </aside>
 
-    <!-- Site main content -->
-    <div class="main-content">
-        <div class="header_title ">
-            <div class="container">
-                <h2 class="page-title"> Accounts</h2>
-            </div>
-        </div>
+
+
+   <div class="main_content">
+        <?php include 'fab.php'; ?>
         <section class="accounts_superadmin_section">
-           <div class="container">
-           <div class="card  p-2">
+          <div class="container">
+            <h2 class="text_header">Accounts </h2>
+            <div class="inner_con">
+              <div class="card  p-2">
                  <div class="d-flex gap-2">
                     <div class="input-group flex-nowrap">
                     <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
                         <input type="search" class="form-control" id="myInput" placeholder="Search">
                     </div>
-                    <a href="account_add.php" class="btn btn_add"> Add <img src="../assets/images/add_user_icon.png" alt=""></a>
+                    <a href="account_add.php" class="btn btn_add"> Add <img src="../assets/images/add_user_icon.png" loading="lazy" alt=""></a>
                 </div>
            </div>
             <div class="inner_con">
@@ -122,16 +71,18 @@
                 </ul>
               </nav>
             </div>
-           </div>   
-        </section>
-    </div>
-</div>
 
-<script src="../assets/js/jquery.js"></script>
-<script src="../assets/js/cool_alert.js"></script>
-<script src="../assets/js/script.js"></script>
-<script src="../assets/js/boostrap.js"></script>
-<?php include '../alert.php'; ?>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/cool_alert.js"></script>
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/boostrap.js"></script>
+    <script src="../assets/js/walkthrough_tour.js"></script>;
+    <?php include '../alert.php'; ?>
 </body>
 </html>
 <script>

@@ -27,13 +27,18 @@ if(isset($_POST['update_shutdown_superadmin'])){
 }
 
 
+
+//assign user
 if (isset($_POST['assign_user'])) {
 
     $employee_id = $_POST['employee_id'] ?? '';
+    $user_status = "Active";
+
+    
 
     # check kun naka save na
-    $get_data2 = $conn2->prepare("SELECT * FROM `accounts` WHERE `employee_id` = ?");
-    $get_data2->bind_param("i", $employee_id);
+    $get_data2 = $conn2->prepare("SELECT * FROM `accounts` WHERE `employee_id` = ? AND `user_status` = ?");
+    $get_data2->bind_param("ss", $employee_id, $user_status);
     $get_data2->execute();
     $result_data2 = $get_data2->get_result();
 
@@ -43,27 +48,49 @@ if (isset($_POST['assign_user'])) {
         header("location:super_admin/account_add.php");
         exit();
 
-    } else {
-        $role = "2";
-        # mag laog na sa database
-        $id = "assigned" . rand() . uniqid();
-        $insert = $conn2->prepare("INSERT INTO `accounts` (`employee_id`,`role`,`id`) VALUES (?,?,?)");
-        $insert->bind_param("iss", $employee_id,$role,$id);
-        $insert->execute();
+    }
+
+
+    
+    # check kun naka save na
+    $get_data2 = $conn2->prepare("SELECT * FROM `accounts` WHERE `employee_id` = ? AND `user_status` != ?");
+    $get_data2->bind_param("ss", $employee_id, $user_status);
+    $get_data2->execute();
+    $result_data2 = $get_data2->get_result();
+
+    if ($result_data2->num_rows > 0) {
+
+        $update = $conn2->prepare("UPDATE `accounts` SET `user_status` = ?,`time_date_added` = ?,`user_id_added` = ? WHERE `employee_id` = ?");
+        $update->bind_param("ssss", $user_status, $currentDateTime, $_SESSION['user_id'], $employee_id);
+        $update->execute();
 
         $_SESSION['success'] = "Successfully Assigned";
         header("location:super_admin/accounts.php");
         exit();
+
+    }   else {
+        $role = "2";
+        # mag laog na sa database
+        $id = "assigned" . rand() . uniqid();
+        $insert = $conn2->prepare("INSERT INTO `accounts` (`employee_id`,`role`,`id`,`user_status`,`time_date_added`,`user_id_added`) VALUES (?,?,?,?,?,?)");
+        $insert->bind_param("ssssss", $employee_id,$role,$id,$user_status,$currentDateTime,$_SESSION['user_id']);
+        $insert->execute();
+
+            $_SESSION['success'] = "Successfully Assigned";
+        header("location:super_admin/accounts.php");
+        exit();
     }
+    
+ 
 }
 
 
 if(isset($_POST['delete_account'])){
     $employee_id =  htmlspecialchars($_POST['employee_id'] ?? '');
-     
-    $delete =  $conn2->prepare("DELETE FROM `accounts` WHERE `employee_id` = ?");
-    $delete->bind_param("s",$employee_id);
-    $delete->execute();
+    $Inactive = "Inactive";
+    $update =  $conn2->prepare("UPDATE `accounts` SET `user_status` = ?,`time_date_deleted` = ? WHERE `employee_id` = ?");
+    $update->bind_param("sss",$Inactive,$currentDateTime,$employee_id);
+    $update->execute();
 
     $_SESSION['success'] = "Successfully Deleted";
     header("location:super_admin/accounts.php");
@@ -71,151 +98,7 @@ if(isset($_POST['delete_account'])){
 }
 
 
-if(isset($_POST['login'])){
-    $username = mysqli_real_escape_string($conn1,$_POST['employee_id'] ?? '');
-    $password = mysqli_real_escape_string($conn1,$_POST['password'] ?? '');
-    
 
-    $_SESSION['user'] = $username;
-    $_SESSION['pass'] = $password;
-
-    #check kun tama an employee id and password
-    $check = $conn1->prepare("SELECT * FROM employeesystemcredential WHERE Username = ? AND Password = ?");
-    $sha1_password = sha1($password);
-    $check->bind_param("ss", $username, $sha1_password);
-    $check->execute();
-    $result = $check->get_result();
-
-    if($result->num_rows > 0){
-        while($row_data = mysqli_fetch_assoc($result)){
-        $employee_id = $row_data['Employee_ID'];
-
-        #kuhaon an role
-        $get_role = $conn2->prepare("SELECT * FROM `accounts` WHERE `employee_id` = ?");
-        $get_role->bind_param("s",$employee_id);
-        $get_role->execute();
-        $result_get=$get_role->get_result();
-       if($result_get->num_rows > 0){
-            $row_role = $result_get->fetch_assoc();
-            $role = htmlspecialchars($row_role['role'] ?? '');
-        }else{
-            $_SESSION['error'] = "Invalid Username or Password";
-            header('Location: index.php');
-            exit();
-        }
-
-       
-        $remember_token = bin2hex(random_bytes(32)); // 64-character secure token
-
-        $update_token = $conn2->prepare("UPDATE accounts SET remember_token = ? WHERE employee_id = ?");
-        $update_token->bind_param("ss", $remember_token, $employee_id);
-        $update_token->execute();
-
-        setcookie("remember_token", $remember_token, time() + (7 * 24 * 60 * 60), "/", "", false, true); // httponly
-
-        #role destination
-        if($role === "1"){
-            $_SESSION['superadmin_login'] = $employee_id;
-            header('Location: super_admin');
-            exit();
-        }elseif($role === "2"){
-            $_SESSION['admin_login'] = $employee_id;
-            header('Location: admin');
-            exit();
-        }elseif($role === "3"){
-            $_SESSION['user_login'] = $employee_id;
-            header('Location: user');
-            exit();
-        }else{
-            $_SESSION['error'] = "Invalid Role";
-            header('Location: index.php');
-            exit();
-        }
-
-        }
-    } else {
-        $_SESSION['error'] = "Invalid Username or Password";
-        header('Location: index.php');
-        exit();
-    }
-}
-
-
-if(isset($_POST['sigout_admin'])){
-    
-    // Invalidate token in DB if session is active
-    if (isset($_SESSION['admin_login'])) {
-        $stmt = $conn2->prepare("UPDATE accounts SET remember_token = NULL WHERE employee_id = ?");
-        $stmt->bind_param("i", $admin_id);
-        $stmt->execute();
-    }
-
-    // Clear session
-    $_SESSION = array();
-
-    // Clear session cookie
-    if (ini_get("session.use_cookies")) {
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $params["path"], $params["domain"],
-            $params["secure"], $params["httponly"]
-        );
-    }
-
-    // Clear remember_token cookie
-    setcookie("remember_token", "", time() - 3600, "/", "", false, true); // HttpOnly
-
-  
-
-    #dile image deleter
-    $trash_folder = 'assets/trash_images/';
-
-    if (isset($admin_id) && !empty($admin_id)) {
-        
-
-        $files = glob($trash_folder . '*');
-
-        foreach ($files as $file) {
-            if (is_file($file)) {
-              
-                $basename = basename($file);
-
-                // Hanapin ang position ng unang underscore o hyphen
-                $underscore_pos = strpos($basename, '_');
-                $hyphen_pos = strpos($basename, '-');
-
-                // Tukuyin kung alin ang naunang separator
-                $separator_pos = false;
-                if ($underscore_pos !== false && $hyphen_pos !== false) {
-                    $separator_pos = min($underscore_pos, $hyphen_pos);
-                } else {
-                    $separator_pos = ($underscore_pos !== false) ? $underscore_pos : $hyphen_pos;
-                }
-
-                // Kung may nahanap na separator, kunin ang prefix
-                if ($separator_pos !== false) {
-                    $file_prefix = substr($basename, 0, $separator_pos);
-
-                    // I-compare ang prefix sa admin_id
-                    if ($file_prefix === (string)$admin_id) {
-                        unlink($file); // Dito buburahin ang file
-                    }
-                }
-            }
-        }
-    }
-
-
-    unset($_SESSION['admin_login']);
-
-    // Destroy session
-    session_destroy();
-
-
-    // Redirect
-    header("location:index.php");
-    exit();
-}
 
 
 if(isset($_POST['floors_save'])){
@@ -224,7 +107,15 @@ if(isset($_POST['floors_save'])){
     $floor_id = "floor" . rand() . uniqid();
     $_SESSION['floor_name'] = $floor_name;
     $_SESSION['number_of_rooms'] = $number_of_rooms;
+    $floor_status = "Active";
+    
+    if($role === "1"){
+        $folder = "super_admin";
+    }elseif($role === "2"){
+        $folder = "admin";
+    }
 
+   
     # Check floor_id
     $check_floor_id = $conn2->prepare("SELECT * FROM floors WHERE floor_id = ?");
     $check_floor_id->bind_param("s", $floor_id);
@@ -232,30 +123,30 @@ if(isset($_POST['floors_save'])){
     $result = $check_floor_id->get_result();
     if($result->num_rows > 0){
         $_SESSION['error'] = "Technical Issue Please Try Again";
-        header("location:admin/floors.php");
+        header("location:$folder/floors.php");
         exit();
     }
 
     # Check if floor_name exists
-    $get_same_data = $conn2->prepare("SELECT * FROM floors WHERE floor_name = ?");
-    $get_same_data->bind_param("s", $floor_name);
+    $get_same_data = $conn2->prepare("SELECT * FROM floors WHERE floor_name = ? AND floor_status = ?");
+    $get_same_data->bind_param("ss", $floor_name, $floor_status);
     $get_same_data->execute();
     $data_get = $get_same_data->get_result();
     if($data_get->num_rows > 0){
         $_SESSION['error'] = "$floor_name Already Inserted";
-        header("location:admin/floor_add.php");
+        header("location:$folder/floor_add.php");
         exit();
     } else {
         # Insert
-        $insert = $conn2->prepare("INSERT INTO floors (floor_id, floor_name, rooms_number) VALUES (?, ?, ?)");
-        $insert->bind_param("ssi", $floor_id, $floor_name, $number_of_rooms); // i=integer, s=string
+        $insert = $conn2->prepare("INSERT INTO floors (floor_id, floor_name, rooms_number, floor_status,user_id_added,time_date_added) VALUES (?, ?, ?, ?, ?,?)");
+        $insert->bind_param("ssssss", $floor_id, $floor_name, $number_of_rooms, $floor_status, $_SESSION['user_id'],$currentDateTime);
         $insert->execute();
 
         unset($_SESSION['floor_name']);
         unset($_SESSION['number_of_rooms']);
 
         $_SESSION['success'] = "Successfully Inserted";
-        header("location:admin/floors.php");
+        header("location:$folder/floors.php");
         exit();
     }
 }
@@ -265,7 +156,19 @@ if(isset($_POST['floors_save'])){
 if(isset($_POST['delete_floor'])){
     $floor_id = htmlspecialchars($_POST['floor_id'] ?? '');
 
-    $delete_all = $conn2->prepare("
+        
+    if($role === "1"){
+        $folder = "super_admin";
+    }elseif($role === "2"){
+        $folder = "admin";
+    }
+    $floor_status = "Inactive";
+    $update = $conn2->prepare("UPDATE `floors` SET `floor_status` = ?,`time_date_update` = ?,`user_id_update` = ? WHERE `floor_id` = ?");
+    $update->bind_param("ssss",$floor_status,$currentDateTime,$_SESSION['user_id'],$floor_id);
+    $update->execute();
+
+    /*
+    $delete_all = $conn2->prepare(";
     DELETE r, b 
     FROM rooms r
     LEFT JOIN booking b ON r.room_id = b.room_id 
@@ -277,10 +180,10 @@ if(isset($_POST['delete_floor'])){
     $delete = $conn2->prepare("DELETE FROM `floors` WHERE `floor_id` = ?");
     $delete->bind_param("s",$floor_id);
     $delete->execute();
-
+*/
 
     $_SESSION['success'] = "Successfully Deleted";
-    header("location:admin/floors.php");
+    header("location:$folder/floors.php");
     exit();
     
    
@@ -292,22 +195,31 @@ if(isset($_POST['floors_update'])){
     $floor_id = mysqli_real_escape_string($conn2,$_POST['floor_id'] ?? '');
     $floor_name = mysqli_real_escape_string($conn2,$_POST['floor_name'] ?? '');
     $number_of_rooms = mysqli_real_escape_string($conn2,$_POST['number_of_rooms'] ?? '');
-
-    $check = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_name` = ? AND `floor_id` != ?");
-    $check->bind_param("ss",$floor_name,$floor_id);
+    if($role === "1"){
+        $folder = "super_admin";    
+    }elseif($role === "2"){
+        $folder = "admin";
+    }else{
+        header("location:user");
+        exit();
+    }
+  
+    $floor_status = "Active";
+    $check = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_name` = ? AND `floor_id` != ? AND `floor_status` = ?");
+    $check->bind_param("sss",$floor_name,$floor_id,$floor_status);
     $check->execute();
     $result_check = $check->get_result();
     if($result_check->num_rows>0){
         $_SESSION['error'] = "Floor Name Already Taken";
-        header("location:admin/floor_update.php?floor_id=$floor_id");
+        header("location:$folder/floor_update.php?floor_id=$floor_id");
         exit();
     }else{
-        $update = $conn2->prepare("UPDATE `floors` SET `floor_name` = ?, `rooms_number` = ? WHERE `floor_id` = ?");
-        $update->bind_param("sss",$floor_name,$number_of_rooms,$floor_id);
+        $update = $conn2->prepare("UPDATE `floors` SET `floor_name` = ?, `rooms_number` = ?,`time_date_update`=?,`user_id_update`=? WHERE `floor_id` = ?");
+        $update->bind_param("sssss",$floor_name,$number_of_rooms,$currentDateTime,$_SESSION['user_id'],$floor_id);
         $update->execute();
       
         $_SESSION['success'] = "Successfully Updated";
-        header("location:admin/floors.php");
+        header("location:$folder/floors.php");
         exit();
     }
 }
@@ -319,13 +231,22 @@ if(isset($_POST['room_save'])){
     $floor         = mysqli_real_escape_string($conn2,$_POST['floor'] ?? '');
     $capacity      = mysqli_real_escape_string($conn2,$_POST['capacity'] ?? '');
     $description   = mysqli_real_escape_string($conn2,$_POST['description'] ?? '');
-    
+    $device_name   = mysqli_real_escape_string($conn2,$_POST['device_name'] ?? '');
+    $status = "Active";
+      
+    if($role === "1"){
+        $folder = "super_admin";
+    }elseif($role === "2"){
+        $folder = "admin";
+    }
+
 
     $_SESSION['room_name']     = $room_name;
     $_SESSION['serial_number'] = $serial_number;
     $_SESSION['floor']         = $floor;
     $_SESSION['capacity']      = $capacity;
     $_SESSION['description']   = $description;
+    $_SESSION['device_name']   = $device_name;
 
     $image     = $_FILES['image']['name'] ?? ''; 
     $image_tmp = $_FILES['image']['tmp_name'] ?? ''; 
@@ -347,26 +268,26 @@ if(isset($_POST['room_save'])){
    
     if(empty($image) && empty($_SESSION['new_img_session'])){
         $_SESSION['error'] = "Please Upload an Image";
-        header("location:admin/room_add.php");
+        header("location:$folder/room_add.php");
         exit();
     }
 
     if($floor === "Select Floor"){
         $_SESSION['error'] = "Please Select Floor";
-        header("location:admin/room_add.php");
+        header("location:$folder/room_add.php");
         exit();
     }
 
   
-    $check = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_name` = ? OR `serial_number` = ?");
-    $check->bind_param("ss", $room_name, $serial_number);
+    $check = $conn2->prepare("SELECT * FROM `rooms` WHERE (`room_name` = ? OR `serial_number` = ? ) AND `status` = ?");
+    $check->bind_param("sss", $room_name,$serial_number,$status);
     $check->execute();
     $result_check = $check->get_result();
 
     if($result_check->num_rows > 0){
   
-        $_SESSION['error'] = "Room Name or Serial Number Already Taken. Your image is saved.";
-        header("location:admin/room_add.php");
+        $_SESSION['error'] = "Room Name or Serial Number Already Taken";
+        header("location:$folder/room_add.php");
         exit();
     }
 
@@ -381,12 +302,13 @@ if(isset($_POST['room_save'])){
     if (file_exists($sourcePath)) {
         if (rename($sourcePath, $destinationPath)) {
             $tablet_status = "Active";
-            $insert = $conn2->prepare("INSERT INTO `rooms` (`room_id`,`room_name`,`serial_number`,`floor_id`,`capacity`,`description`,`image`,`tablet_status`) VALUES (?,?,?,?,?,?,?,?)");
-            $insert->bind_param("ssssssss", $room_id, $room_name, $serial_number, $floor, $capacity, $description, $fileName,$tablet_status);
+
+            $insert = $conn2->prepare("INSERT INTO `rooms` (`room_id`,`room_name`,`serial_number`,`floor_id`,`capacity`,`description`,`image`,`tablet_status`,`user_id_added`,`time_date_added`,`status`) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+            $insert->bind_param("sssssssssss", $room_id, $room_name, $serial_number, $floor, $capacity, $description, $fileName,$tablet_status,$_SESSION['user_id'],$currentDateTime,$status);
             
             if($insert->execute()){
             
-                unset($_SESSION['room_name'], $_SESSION['serial_number'], $_SESSION['floor'], $_SESSION['capacity'], $_SESSION['description'], $_SESSION['image'], $_SESSION['trash_img'], $_SESSION['new_img_session']);
+                unset($_SESSION['room_name'], $_SESSION['serial_number'], $_SESSION['floor'], $_SESSION['capacity'], $_SESSION['description'], $_SESSION['image'], $_SESSION['trash_img'], $_SESSION['new_img_session'], $_SESSION['device_name']);
 
                 $all_trash = glob('assets/trash_images/' . $admin_id . '_*');
                 foreach($all_trash as $file) {
@@ -394,13 +316,13 @@ if(isset($_POST['room_save'])){
                 }
 
                 $_SESSION['success'] = "Successfully Inserted";
-                header("location:admin/rooms.php");
+                header("location:$folder/rooms.php");
                 exit();
             }
         }
     } else {
         $_SESSION['error'] = "File error. Please try uploading again.";
-        header("location:admin/room_add.php");
+        header("location:$folder/room_add.php");
         exit();
     }
 }
@@ -418,6 +340,7 @@ if(isset($_POST['room_update'])){
     $trash_filename = $room_name . '_' . time() . '_' . $image;
     $trash_path = 'assets/uploads/' . $trash_filename;
     $location_back = ($role === "1") ? "super_admin" : "admin";
+    $status = 'Active';
 
     if($extension !== "jpeg" && $extension !== "jpg"  &&  !empty($image)){
         $_SESSION['error'] = "jpeg image type only";
@@ -425,8 +348,8 @@ if(isset($_POST['room_update'])){
         exit();
     }
 
-    $check = $conn2->prepare("SELECT * FROM `rooms` WHERE `serial_number` = ? AND `room_id` != ?  ");
-    $check->bind_param("ss",$serial_number,$room_id);
+    $check = $conn2->prepare("SELECT * FROM `rooms` WHERE `serial_number` = ? AND `room_id` != ? AND `status` = ? ");
+    $check->bind_param("sss",$serial_number,$room_id,$status);
     $check->execute();
     $result_check = $check->get_result();
     if($result_check->num_rows>0){
@@ -435,8 +358,8 @@ if(isset($_POST['room_update'])){
         exit();
     }
 
-    $check1 = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_name` = ? AND `room_id` != ?  ");
-    $check1->bind_param("ss",$room_name,$room_id);
+    $check1 = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_name` = ? AND `room_id` != ? AND `status` = ?  ");
+    $check1->bind_param("sss",$room_name,$room_id,$status);
     $check1->execute();
     $result_check1 = $check1->get_result();
     if($result_check1->num_rows>0){
@@ -446,8 +369,8 @@ if(isset($_POST['room_update'])){
     }
 
     if(empty($image)){
-         $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=? WHERE `room_id` =?");
-        $update->bind_param("ssssss",$room_name,$serial_number,$floor,$capacity,$description,$room_id);
+         $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?,`user_id_update` = ?,`time_date_update` =? WHERE `room_id` =?");
+        $update->bind_param("ssssssss",$room_name,$serial_number,$floor,$capacity,$description,$_SESSION['user_id'],$currentDateTime,$room_id);
         $update->execute();
 
         $_SESSION['success'] = "Successfully Updated";
@@ -473,8 +396,8 @@ if(isset($_POST['room_update'])){
     
         }
         if(move_uploaded_file($image_tmp,$trash_path)){
-            $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?, `image` = ? WHERE `room_id` =?");
-            $update->bind_param("sssssss",$room_name,$serial_number,$floor,$capacity,$description,$trash_filename,$room_id);
+            $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?, `image` = ?,`user_id_update` = ?,`time_date_update` =? WHERE `room_id` =?");
+            $update->bind_param("sssssssss",$room_name,$serial_number,$floor,$capacity,$description,$trash_filename,$_SESSION['user_id'],$currentDateTime,$room_id);
             $update->execute();
 
             $_SESSION['success'] = "Successfully Updated";
@@ -491,7 +414,8 @@ if(isset($_POST['room_update'])){
 if(isset($_POST['delete_room'])){
         $room_id = htmlspecialchars($_POST['room_id'] ?? '');
         $location_back = ($role === "1") ? "super_admin" : "admin";
-
+        $status = "Inactive";
+          /*
         $check_if_exist = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_id` = ?");
         $check_if_exist->bind_param("s",$room_id);
         $check_if_exist->execute();
@@ -511,6 +435,7 @@ if(isset($_POST['delete_room'])){
 
     }
 
+  
     $delete_booking = $conn2->prepare("DELETE  FROM booking WHERE `room_id` = ?");
     $delete_booking->bind_param("s",$room_id);
     $delete_booking->execute();
@@ -518,7 +443,12 @@ if(isset($_POST['delete_room'])){
     $delete = $conn2->prepare("DELETE FROM `rooms` WHERE `room_id` = ?");
     $delete->bind_param("s",$room_id);
     $delete->execute();
+*/
 
+    $update = $conn2->prepare("UPDATE `rooms` SET `status` = ? , `user_id_update` = ?, `time_date_update` = ? WHERE `room_id` = ?");
+    $update->bind_param("ssss",$status,$_SESSION['user_id'],$currentDateTime,$room_id);
+    $update->execute();
+    
     $_SESSION['success'] = "Successfully Deleted";
     header("location:$location_back/rooms.php");
     exit();
@@ -530,8 +460,8 @@ if(isset($_POST['cancel_booking'])){
     $booking_id = htmlspecialchars($_POST['booking_id'] ?? '');
     $cancelled_at = htmlspecialchars($_POST['cancelled_at'] ?? '');
     $status_cancelled = "Cancelled";
-    $update = $conn2->prepare("UPDATE `booking` SET `status` = ?, `cancelled_at` = ? WHERE `booking_id` = ?");
-    $update->bind_param("sss",$status_cancelled,$cancelled_at,$booking_id);
+    $update = $conn2->prepare("UPDATE `booking` SET `status` = ?, `cancelled_at` = ?,`user_id_cancelled` =?,`date_time_cancelled`=? WHERE `booking_id` = ?");
+    $update->bind_param("sssss",$status_cancelled,$cancelled_at,$_SESSION['user_id'],$currentDateTime,$booking_id);
     $update->execute();
 
     if($role === "1"){
@@ -551,40 +481,6 @@ if(isset($_POST['cancel_booking'])){
 
 
 
-
-if(isset($_POST['sigout_superadmin'])){
-     // Invalidate token in DB if session is active
-    if (isset($_SESSION['superadmin_login'])) {
-        $stmt = $conn2->prepare("UPDATE accounts SET remember_token = NULL WHERE employee_id = ?");
-        $stmt->bind_param("i", $admin_id);
-        $stmt->execute();
-    }
-
-    // Clear session
-    $_SESSION = array();
-
-    // Clear session cookie
-    if (ini_get("session.use_cookies")) {
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $params["path"], $params["domain"],
-            $params["secure"], $params["httponly"]
-        );
-    }
-
-    // Clear remember_token cookie
-    setcookie("remember_token", "", time() - 3600, "/", "", false, true); // HttpOnly
-
-
-    unset($_SESSION['superadmin_login']);
-
-    // Destroy session
-    session_destroy();
-
-    // Redirect
-    header("location:index.php");
-    exit();
-}
 
 
 if(isset($_POST['reservation_save'])){
@@ -621,11 +517,12 @@ if(isset($_POST['reservation_save'])){
     $_SESSION['employee_name'] = $employee_name;
     $_SESSION['checkbox_admin'] = $checkbox;
 
+    
     if($role === "1"){
         $folder = "super_admin";
     }elseif($role === "2"){
         $folder = "admin";
-    }elseif($role === "3"){
+    }else{
         $folder = "user";
     }
 
@@ -710,8 +607,8 @@ if(isset($_POST['reservation_save'])){
             }
             $check_diplicate->close();
 
-            $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $insert->bind_param("sssssssss", $b_id, $curr_d, $curr_d, $sql_s, $sql_e, $employee_name, $meeting_title, $room_id, $occupied);
+            $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`,`user_id_added`,`time_date_added`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)");
+            $insert->bind_param("sssssssssss", $b_id, $curr_d, $curr_d, $sql_s, $sql_e, $employee_name, $meeting_title, $room_id, $occupied,$_SESSION['user_id'],$currentDateTime);
             $insert->execute();
             
             $date_ins->modify('+1 day');
@@ -780,8 +677,8 @@ if(!$errors_found && $checkbox === "no" && $start_date === $end_date){
     
     $check_diplicate->close();
 
-    $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $insert->bind_param("sssssssss", $b_id, $start_date, $end_date, $start_time_data, $end_time_data, $employee_name, $meeting_title, $room_id, $occupied);
+    $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`,`user_id_added`,`time_date_added`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)");
+    $insert->bind_param("sssssssssss", $b_id, $start_date, $end_date, $start_time_data, $end_time_data, $employee_name, $meeting_title, $room_id, $occupied,$_SESSION['user_id'],$currentDateTime);
     
     if($insert->execute()){
         $insert->close();
@@ -877,12 +774,12 @@ if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
 
         $insert = $conn2->prepare("
             INSERT INTO `booking` 
-            (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`,`user_id_added`,`time_date_added`) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
         ");
 
         
-        $insert->bind_param("sssssssss", 
+        $insert->bind_param("sssssssssss", 
             $b_id, 
             $date_to_save, 
             $date_to_save, 
@@ -891,7 +788,9 @@ if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
             $employee_name, 
             $meeting_title, 
             $room_id, 
-            $occupied
+            $occupied,
+            $_SESSION['user_id'],
+            $currentDateTime
         );
 
         // I-execute ang insert

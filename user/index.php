@@ -10,17 +10,20 @@
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
     <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
     <link rel="stylesheet" href="../assets/css/boostrap.css">
+  
+    <script src="../assets/js/jquery.js"></script>
   </head>
   <body>
 
 <?php
   include '../config.php'; 
-  /*
-  if(!isset($_SESSION['admin_login'])){
-    echo "<script>location.href='../index.php';</script>";
-    exit;
-  }*/
-  include '../loading_animation.php';
+  //go to current user page  role
+    if($role === "1"){
+        echo "<script>location.href='../super_admin/index.php';</script>";
+    }elseif($role === "2"){
+        echo "<script>location.href='../admin/index.php';</script>";
+    }
+
     if(isset($_GET['filter'])){
         $filter = $_GET['filter']; 
         echo '<script>
@@ -59,9 +62,6 @@
                       <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
                       <input type="search" class="form-control "  id="input_room"  placeholder="Search rooms, Serial Number, or floors..." aria-label="Username" aria-describedby="addon-wrapping">
                     </div>
-                    <div class="button_dec <?php echo $button_hide; ?>">
-                      <a href="room_add.php" class="btn btn_add">Add <i class="bx bx-plus-circle fs-5"></i></a>
-                    </div>
                   </div>
                   <div class="filter_options ">
                       <ul>
@@ -98,12 +98,12 @@
 
 
 
-    <script src="../assets/js/jquery.js"></script>
     <script src="../assets/js/cool_alert.js"></script>
     <script src="../assets/js/box_icons.js"></script>
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/calendar.io.js"></script>
+    <script src="../assets/js/walkthrough_tour.js"></script>;
     <?php include '../alert.php'; ?>
   </body>
 </html>

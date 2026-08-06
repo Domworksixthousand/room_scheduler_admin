@@ -37,8 +37,8 @@ if ($conn2->connect_error) {
     die("We are experiencing technical difficulties. Please try again later.");
 }*/
 
-$button_hide = "";
 
+ $role  = " ";
 #get data kun available
  if(isset($_SESSION['admin_login'])){
    $admin_id = $_SESSION['admin_login'];
@@ -53,7 +53,7 @@ $button_hide = "";
         $firstname = htmlspecialchars($row_admin['FirstName'] ?? '');
         $middlename = htmlspecialchars($row_admin['MiddleName'] ?? '');
         $fullname = $lastname . ' ' . $firstname . ' ' . $middlename;
-        $button_hide = "";
+
     }
    }
 
@@ -64,23 +64,50 @@ $button_hide = "";
     if($get_personal_info ->num_rows>0){
         while($row_personal = mysqli_fetch_assoc($get_personal_info)){
             $role = $row_personal['role'];
-            $button_hide = "";
+          
         }
+    }
+
+ }elseif(isset($_SESSION['superadmin_login'])){
+   $superadmin_login = $_SESSION['superadmin_login'];
+
+   $get_data = $conn1->prepare("SELECT * FROM `employee` WHERE `Employee_ID` = ?");
+   $get_data->bind_param("i",$superadmin_login);
+   $get_data->execute();
+   $result_get = $get_data->get_result();
+   if($result_get->num_rows>0){
+    while($row_admin = mysqli_fetch_assoc($result_get)){
+        $lastname = htmlspecialchars($row_admin['LastName'] ?? '');
+        $firstname = htmlspecialchars($row_admin['FirstName'] ?? '');
+        $middlename = htmlspecialchars($row_admin['MiddleName'] ?? '');
+        $fullname = $lastname . ' ' . $firstname . ' ' . $middlename;
+
+    }
+   }
+
+    $get_user_info = $conn2->prepare("SELECT * FROM `accounts` WHERE `employee_id` = ?");
+    $get_user_info->bind_param("s",$superadmin_login);
+    $get_user_info->execute();
+    $get_personal_info = $get_user_info->get_result();
+    if($get_personal_info ->num_rows>0){
+        while($row_personal = mysqli_fetch_assoc($get_personal_info)){
+            $role = $row_personal['role'];
+        
+        }
+    }
+
+ }else{
+    
+    if(isset($_SESSION['user_login'])){
+        $user = $_SESSION['user_login'];
+        $role = "3";
+
     }
 
  }
 
- if(isset($_SESSION['superadmin_login'])){
-    $superadmin_login = $_SESSION['superadmin_login'];
-    $role = "1";
-    $button_hide = "";
- }
 
- if(isset($_SESSION['user_login'])){
-    $user = $_SESSION['user_login'];
-    $role = "3";
-    $button_hide = "d-none";
- }
+
 
 
 
@@ -94,7 +121,7 @@ date_default_timezone_set("asia/manila");
   #get time today
  $timetoday = date("h:i:s a");
  $timetoday2 = date("H:i:s");
-
+$currentDateTime = date('Y-m-d H:i:s');
  
  $status_occupied = 'Occupied';
  $status_new = "Done";

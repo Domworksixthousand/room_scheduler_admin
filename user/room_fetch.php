@@ -111,7 +111,7 @@ if (!empty($display_rooms)) {
                         <div class="' .$tablet_style. ' position-absolute bottom-0 start-0 w-100 h-50" >
                         </div>
                         <div class="buttton_actions">
-                            <a href="room_info.php?room_id='.$row['room_id'].'&location_back=rooms.php" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Info" class="btn btn-info btn-sm text-light"><i class="bx bx-info-circle"></i></a>        
+                            <a href="room_info.php?room_id='.$row['room_id'].'&location_back=index.php" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Info" class="btn btn-info btn-sm text-light"><i class="bx bx-info-circle"></i></a>        
                         </div>
                     </div>
                     <div class="card-body d-flex flex-column">

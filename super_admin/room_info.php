@@ -83,7 +83,7 @@
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                     <div class="modal-header border-0 d-flex justify-content-between">
-                        <p class="modal-title fs-6 fw-bold" id="staticBackdropLabel"> Room Information</p>
+                        <p class="modal-title fs-5 fw-bold" id="staticBackdropLabel"> Room Information</p>
                         <a href="<?php echo $location_back; ?>" class=" btn_x "><i class="bx bx-x"></i></a>
                     </div>
                     <div class="modal-body">
@@ -129,16 +129,17 @@
                                             <!-- Room Name -->
                                             <li class="list-group-item d-flex align-items-center py-2">
                                                 <i class='bx bx-door-open me-3 text-secondary fs-5'></i>
-                                                <div class="d-flex justify-content-between w-100 align-items-center">
+                                                <div class="d-flex flex-column flex-sm-row justify-content-between w-100">
                                                     <span class="text-muted small">Room Name:</span>
                                                     <span class="fw-semibold"><?php echo htmlspecialchars($room_name); ?></span>
                                                 </div>
                                             </li>
 
+
                                             <!-- Floor -->
                                             <li class="list-group-item d-flex align-items-center py-2">
                                                 <i class='bx bx-layer me-3 text-secondary fs-5'></i>
-                                                <div class="d-flex justify-content-between w-100 align-items-center">
+                                                <div class="d-flex flex-column flex-sm-row justify-content-between w-100">
                                                     <span class="text-muted small">Floor:</span>
                                                     <span class="fw-semibold"><?php echo htmlspecialchars($floor_name); ?></span>
                                                 </div>
@@ -147,7 +148,7 @@
                                             <!-- Capacity -->
                                             <li class="list-group-item d-flex align-items-center py-2">
                                                 <i class='bx bx-group me-3 text-secondary fs-5'></i>
-                                                <div class="d-flex justify-content-between w-100 align-items-center">
+                                                <div class="d-flex flex-column flex-sm-row justify-content-between w-100">
                                                     <span class="text-muted small">Capacity:</span>
                                                     <span class="badge bg-light text-dark border fw-normal"><?php echo htmlspecialchars($capacity); ?> Persons</span>
                                                 </div>
@@ -185,7 +186,6 @@
        </form>
     </section>
 </main>
-
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {

@@ -27,7 +27,7 @@
 
 
     #para sa session kung exist
-    if($_SESSION['floor']){
+    if(isset($_SESSION['floor'])){
         $get_data = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_id` = ?");
         $get_data->bind_param("s",$_SESSION['floor']);
         $get_data->execute();
@@ -40,7 +40,6 @@
         }
     }
 ?>
-
 
 
 <main >
@@ -63,7 +62,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-12 mb-3">
                                     <label for="serial_data" class="form-label">Serial Number / Device Name</label>
                                     <div class="position-relative">        
-                                        <input type="text" id="serial_data" name="device_name" class="form-control upper_function" value="<?php echo htmlspecialchars($_SESSION['device_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="Type to search..." autocomplete="off" required>
+                                        <input type="text" id="serial_data" name="device_name" class="form-control upper_function" value="<?php echo htmlspecialchars($_SESSION['device_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="Type to search..." autocomplete="off" >
                                         <input type="hidden" id="serial_number_hidden" name="serial_number" value="<?php echo htmlspecialchars($_SESSION['serial_number'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <div id="empDropdown_serial" class="dropdown_body card position-absolute w-100 shadow-sm mt-1 d-none" style="z-index: 1000;">
                                             <div class="list-group list-group-flush" id="empList_meeting">
@@ -149,3 +148,4 @@
        </form>
     </section>
 </main>
+

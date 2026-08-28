@@ -1,9 +1,9 @@
 <?php
-include 'reservations.php';
+
 
 $booking_id = $_GET['booking_id'] ?? '';
-
-
+$location_back = $_GET['location_back'] ?? '';
+include "$location_back";
 if ($booking_id) {
     $get = $conn2->prepare("SELECT `meeting_title` FROM `booking` WHERE `booking_id` = ?");
     $get->bind_param("s", $booking_id);
@@ -41,7 +41,7 @@ window.addEventListener('DOMContentLoaded', function() {
         if (result.isConfirmed) {
             document.getElementById('assignForm').submit();
         } else {
-            location.href = 'reservations.php';
+            location.href = '<?php echo $location_back; ?>';
         }
     });
 });

@@ -2,16 +2,21 @@
 <?php
   include '../config.php'; 
     //go to current user page  role
-      if (isset($role)) {
-         if ($role  > "2") {
-              echo "<script>location.href='../user/index.php';</script>";
-              exit;
-          }
-      }else{
-          echo "<script>location.href='../index.php';</script>";
-          exit;
-      }
-
+     
+    if (isset($role)) {
+        if ($role  === "2") {
+            echo "<script>location.href='../admin/index.php';</script>";
+            exit;
+        }elseif($role  === "3") {
+            echo "<script>location.href='../user/index.php';</script>";
+            exit;
+        } 
+          
+    }else{
+        echo "<script>location.href='../index.php';</script>";
+        exit;
+    }
+ include '../../mysidebar/Sidebar_Portal.php';
  ?>
 
 <!DOCTYPE html>
@@ -23,21 +28,32 @@
     <link rel="shortcut icon" href="../assets/images/fs_logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
-    <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
     <link rel="stylesheet" href="../assets/css/boostrap.css">
     <script src="../assets/js/jquery.js"></script>
   </head>
   <body>
 
-
+    <header>
+      <div class="top_bar_nav">
+        <div class="container d-flex justify-content-between">
+          <img src="../assets/images/FsLogoW.png" class="fs-icon">
+        <div class="w-100 text-end">
+        <button id="BtnBurger" class="btn btn-ghost ">
+          ☰
+        </button>
+        </div>
+        </div>
+      </div>
+    </header>
+   
 
 
    <div class="main_content">
         <?php include 'fab.php'; ?>
         <section class="accounts_superadmin_section">
           <div class="container">
-            <h2 class="text_header">Accounts </h2>
-            <div class="inner_con">
+            <h2 class="text-header">Accounts </h2>
+            <div class="inner_con ">
               <div class="card  p-2">
                  <div class="d-flex gap-2">
                     <div class="input-group flex-nowrap">
@@ -47,7 +63,7 @@
                     <a href="account_add.php" class="btn btn_add"> Add <img src="../assets/images/add_user_icon.png" loading="lazy" alt=""></a>
                 </div>
            </div>
-            <div class="inner_con">
+            <div class="overflow-auto pt-3">
                 <table class="table">
                     <thead>
                         <tr>
@@ -60,7 +76,7 @@
                     </thead>
                     <tbody id="accounts_data">
                       
-                      
+                      <!--account data-->
                     </tbody>
                 </table>
             </div>
@@ -81,7 +97,7 @@
     <script src="../assets/js/cool_alert.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/boostrap.js"></script>
-    <script src="../assets/js/walkthrough_tour.js"></script>;
+    <script src="../assets/js/walkthrough_tour.js?v=9"></script>;
     <?php include '../alert.php'; ?>
 </body>
 </html>

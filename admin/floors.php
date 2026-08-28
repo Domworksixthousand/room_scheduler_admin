@@ -104,6 +104,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
     ]);
     exit;
 }
+  include '../../mysidebar/Sidebar_Portal.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -118,6 +119,20 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
     <link rel="stylesheet" href="../assets/css/boostrap.css">
   </head>
   <body>
+
+    <header>
+      <div class="top_bar_nav">
+        <div class="container d-flex justify-content-between">
+          <img src="../assets/images/FsLogoW.png" class="fs-icon">
+        <div class="w-100 text-end">
+        <button id="BtnBurger" class="btn btn-ghost ">
+          ☰
+        </button>
+        </div>
+        </div>
+      </div>
+    </header>
+   
 
     <!-- Main Content -->
     <div class="main_content">
@@ -167,7 +182,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
     <script src="../assets/js/box_icons.js"></script>
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/walkthrough_tour.js"></script>
+    <script src="../assets/js/walkthrough_tour.js?v=9"></script>;
     <?php include '../alert.php'; ?>
 
 

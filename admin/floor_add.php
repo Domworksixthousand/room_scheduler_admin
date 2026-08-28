@@ -10,8 +10,8 @@
                         <p class="modal-title  fw-bold" id="staticBackdropLabel">Add Floor</p>
                         <a href="floors.php" class=" btn_x "><i class="bx bx-x"></i></a>
                     </div>
-                    <div class="modal-body">
-                        <div class="inner_body shadow-lg">
+                    <div class="modal-body ">
+                        <div class="inner_body  shadow-lg">
                             <div class="mb-3">
                                 <label for="floor_name" class="form-label">Floor Name</label>
                                 <input type="text" class="form-control" id="floor_name" name="floor_name" value="<?php echo $_SESSION['floor_name'] ?? ''; ?>" placeholder="Enter Floor Name" required>

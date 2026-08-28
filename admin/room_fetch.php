@@ -96,24 +96,25 @@ if (!empty($display_rooms)) {
     foreach ($display_rooms as $row) {
         $status_label = $row['calc_label'];
         $tablet_status = $row['tablet_status'];
-        $badge_class = ($status_label == "Fully Occupied") ? "bg-glasmorphism   text-danger border border-danger border-2  fw-bold p-2" : (($status_label == "Partially Occupied") ? "bg-glasmorphism text-warning border border-warning border-2   p-2" : "bg-glasmorphism text-success border border-success border-2 fw-bold p-2");
+        $badge_class = ($status_label == "Fully Occupied") ? "bg-light   text-danger border border-danger border-2  fw-bold p-2" : (($status_label == "Partially Occupied") ? "bg-light text-warning border border-warning border-2   p-2" : "bg-light text-success border border-success border-2 fw-bold p-2");
         $desc = htmlspecialchars($row['description'] ?? '');
         $room_name = htmlspecialchars($row['room_name'] ?? '');
         $short_desc = (strlen($desc) > 25 ? substr($desc, 0, 25) . '...' : $desc);
         $room_name_short = (strlen($room_name) > 22 ? substr($room_name, 0, 22) . '...' : $room_name);
-        $tablet_style = ($tablet_status === "Active") ? "text-success" : "text-danger";
-  
-        
-        echo '<div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+        $tablet_style = ($tablet_status === "Active") ? "active_tablet" : "inactive_tablet";
+
+        echo '<div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="overflow-hidden position-relative">
-                        <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" alt="'.$room_name.'" loading="lazy" style="height: 180px; object-fit: cover;">
+                        <img src="../assets/uploads/'.$row['image'].'" class="card-img-top" alt="'.$room_name.'" loading="lazy" >
                         <span class="badge position-absolute rounded-pill top-0 end-0 m-2 '.$badge_class.'">'.$status_label.'</span>
-                        <span class="badge position-absolute rounded-pill bottom-0 end-0 m-2  bg-light ' .$tablet_style. '">'.$tablet_status.'</span>
+                        <span class="badge position-absolute rounded-pill bottom-0 end-0 m-2  z-3 ">' . "Tablet" . " " . $tablet_status. '</span>
+                        <div class="' .$tablet_style. ' position-absolute bottom-0 start-0 w-100 h-50" >
+                        </div>
                         <div class="buttton_actions">
                             <a href="room_shutdown.php?room_id='.$row['room_id'].'&location_back=rooms.php" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Shutdown"  class="btn btn-danger btn-sm text-light"><i class="bx bx-block"></i></a>
-                            <a href="room_delete.php?room_id='.$row['room_id'].'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Delete" class="btn btn-danger btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-trash"></i></a>
-                            <a href="room_update.php?room_id='.$row['room_id'].'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Update" class="btn btn-primary btn-sm '.($status_label != "Available" ? "d-none" : "").'"><i class="bx bx-edit"></i></a>
+                            <a href="room_delete.php?room_id='.$row['room_id'].'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Delete" class="btn btn-danger btn-sm"><i class="bx bx-trash"></i></a>
+                            <a href="room_update.php?room_id='.$row['room_id'].'" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Update" class="btn btn-primary btn-sm "><i class="bx bx-edit"></i></a>
                             <a href="room_info.php?room_id='.$row['room_id'].'&location_back=rooms.php" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Info" class="btn btn-info btn-sm text-light"><i class="bx bx-info-circle"></i></a>        
                         </div>
                     </div>
@@ -121,8 +122,13 @@ if (!empty($display_rooms)) {
                         <h6 class="card-title fw-bold mb-1">'.$room_name_short.'</h6>
                         <p class="card-text text-secondary small mb-1"><i class="bx bx-star"></i> '.$short_desc.'</p>
                         <p class="card-text small mb-1 text-muted"><i class="bx bx-layer"></i> '.htmlspecialchars($row['floor_name']).'</p>
-                        <div class="reservation_bottona mt-3">
-                            <a href="reservation_add.php?room_id='.$row['room_id'].'" class="btn btn_reserve btn-sm w-100 '.($status_label == "Fully Occupied" ? "disabled" : "").'"><i class="bx bxs-calendar-check"></i> Book Now</a>
+                        <div class="reservation_botton mt-3 d-flex flex-column flex-sm-row gap-2 ">
+                            <a href="reservation_add.php?room_id='.$row['room_id'].'" class="btn btn_reserve d-flex align-items-center justify-content-center  gap-1  btn-sm w-100 '.($status_label == "Fully Occupied" ? "disabled" : "").'" >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-down-icon lucide-book-down"><path d="M12 13V7"/><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="m9 10 3 3 3-3"/></svg>
+                            BOOK NOW</a>
+                             <a href="calendar.php?room_id='.$row['room_id'].'" class="btn btn_reserve btn-sm  w-100 d-flex align-items-center justify-content-center gap-1 '.($status_label == "Fully Occupied" ? "disabled" : "").'" >
+                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days-icon lucide-calendar-days"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 13h.01"/><path d="M12 13h.01"/><path d="M16 13h.01"/><path d="M8 17h.01"/><path d="M12 17h.01"/><path d="M16 17h.01"/></svg>
+                              CALENDAR</a>
                         </div>
                     </div>
                 </div>

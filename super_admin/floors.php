@@ -137,6 +137,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
 }
  
 if (ob_get_level()) { ob_end_flush(); }
+include '../../mysidebar/Sidebar_Portal.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -151,13 +152,27 @@ if (ob_get_level()) { ob_end_flush(); }
     <link rel="stylesheet" href="../assets/css/boostrap.css">
   </head>
   <body>
+
+    <header>
+      <div class="top_bar_nav">
+        <div class="container d-flex justify-content-between">
+          <img src="../assets/images/FsLogoW.png" class="fs-icon">
+        <div class="w-100 text-end">
+        <button id="BtnBurger" class="btn btn-ghost ">
+          ☰
+        </button>
+        </div>
+        </div>
+      </div>
+    </header>
+   
  
     <!-- Main Content -->
     <div class="main_content">
       <?php include 'fab.php'; ?>
       <section class="floor_superadmin_section">
         <div class="container">
-          <h2 class="text_header">Floors </h2>
+          <h2 class="text-header">Floors </h2>
           <div class="inner_con">
               <div class="card p-2 mb-3">
                   <div class="d-flex gap-2">
@@ -200,7 +215,7 @@ if (ob_get_level()) { ob_end_flush(); }
     <script src="../assets/js/box_icons.js"></script>
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/walkthrough_tour.js"></script>;
+    <script src="../assets/js/walkthrough_tour.js?v=9"></script>;
     <?php include '../alert.php'; ?>
 
  

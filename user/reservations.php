@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -8,7 +7,6 @@
     <link rel="shortcut icon" href="../assets/images/fs_logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
-    <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
     <link rel="stylesheet" href="../assets/css/boostrap.css">
   </head>
   <body>
@@ -40,79 +38,50 @@
           });
         </script>';
     }
+   include '../../mysidebar/Sidebar_Portal.php';
 ?>
  
 
 
-<!--
-   <div class="sidebar close">
-      <div class="logo-details">
-        <img src="../assets/images/fs_logo.jpg" alt="Logo">
-        <span class="logo_name"></span>
+    <header>
+      <div class="top_bar_nav">
+        <div class="container d-flex justify-content-between">
+          <img src="../assets/images/FsLogoW.png" class="fs-icon">
+        <div class="w-100 text-end">
+        <button id="BtnBurger" class="btn btn-ghost ">
+          ☰
+        </button>
+        </div>
+        </div>
       </div>
-      <ul class="nav-links">
-        <li><a href="index.php">
-          <i class="bx bx-grid-alt"></i><span class="link_name">Dashboard</span></a>
-          <ul class="sub-menu blank">
-            <li><a class="link_name" href="index.php">Dashboard</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="floors.php" ><i class='bx bx-building'></i><span class="link_name">Floors</span></a>
-          <ul class="sub-menu blank">
-            <li><a class="link_name" href="floors.php">Floors</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="rooms.php" ><i class="bx bx-door-open"></i><span class="link_name">Rooms</span></a>
-          <ul class="sub-menu blank">
-            <li><a class="link_name" href="rooms.php">Rooms</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="history.php" ><i class="bx bx-history"></i><span class="link_name">History</span></a>
-          <ul class="sub-menu blank">
-            <li><a class="link_name" href="history.php">History</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="reservations.php" class="active"><i class='bx bx-calendar'></i><span class="link_name">Reservations</span></a>
-          <ul class="sub-menu blank">
-            <li><a class="link_name" href="reservations.php">Reservations</a></li>
-          </ul>
-        </li>
-        <li>
-          <div class="profile-details">
-            <div class="profile-content"><i class="bx bx-user-circle fs-2"></i></div>
-            <div class="name-job">
-              <div class="job"><?php// echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
-              <div class="job">Admin</div>
-            </div>
-            <a href="logout.php?location_back=reservations.php"><i class="bx bx-log-out"></i></a>
-          </div>
-        </li>
-      </ul>
-    </div>-->
+    </header>
 
 
     <div class="main_content">
-       <!-- <div class="header-content">;
-          <span class="menu_toggle"><i class="bx bx-menu-alt-left"></i></span>
-          <h3>Good Day <?php // echo $firstname; ?>!</h3>
-        </div>-->
         <?php include 'fab.php'; ?>
         <section class="reservation_admin_section">
             <div class="container">
-            <h2 class="text_header">Reservations </h2>
+            <h2 class="text_header">Weekly Reservations </h2>
                <div class="card p-2 mb-3 ">
                    <div class="upper_search p-0">
                       <div class="input-group flex-nowrap">
                         <span class="input-group-text" id="addon-wrapping"><i class='bx bx-search'></i></span>
-                        <input type="search" id="input_reservation" class="form-control" placeholder="Search Floor Name or Date">
+                        <input type="search" id="input_reservation_weekly" class="form-control" placeholder="Search Fullname">
                       </div>
-                      <div class="input-group flex-nowrap">
-                        <span class="input-group-text" id="addon-wrapping"><i class="bx bx-calendar"></i></span>
-                        <input type="date" id="date_reservation" class="form-control" placeholder="Search Floor Name or Date">
+                      <div class="input-group flex-nowrap gap-1">
+                          <span class="input-group-text p-0 border-0 " data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Weekly">
+                            <button type="button" id="weekly_cal" class="btn btn-secondary date-mode-btn w-100  my_color" data-mode="week" onclick="location.href='reservations.php'"><i class="bx bx-calendar"></i>W
+                            </button>
+                        </span>
+                          <span class="input-group-text p-0 border-0 " data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Daily">
+                            <button type="button" id="daily_cal" class="btn btn-secondary date-mode-btn w-100" data-mode="date" onclick="location.href='reservation_daily.php'"><i class="bx bx-calendar"></i>D
+                            </button>
+                        </span>
+                        <span class="input-group-text p-0 border-0 " data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Montly">
+                            <button type="button" id="daily_montly" class="btn btn-secondary  date-mode-btn w-100" data-mode="month" onclick="location.href='reservation_montly.php'"><i class="bx bx-calendar"></i>M
+                            </button>
+                        </span>
+                        <input type="week" id="date_reservation_weekly" class="form-control" >
                       </div>
                   </div>
                   <div class="filter_options mt-3">
@@ -124,12 +93,12 @@
                     </ul>
                   </div>
                </div>
-              <div class="row" id="reservation_body">
+              <div class="row d-flex" id="reservation_body_weekly">
                 <!--data-->
               </div>
               <div class="d-flex justify-content-end align-items-end">
               <nav aria-label="Page navigation">
-                <ul class="pagination" id="pagination_reservation">
+                <ul class="pagination" id="pagination_reservation_weekly">
                   <!--data-->
                 </ul>
               </nav>
@@ -146,9 +115,7 @@
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/calendar.io.js"></script>
-    <script src="../assets/js/walkthrough_tour.js"></script>;
+    <script src="../assets/js/walkthrough_tour.js?v=9"></script>
     <?php include '../alert.php'; ?>
 </body>
 </html>
-
-

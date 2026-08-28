@@ -77,27 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-//show hide ppassword type
-document.addEventListener("DOMContentLoaded", () => {
-  
-    const showPasswordCheckbox = document.getElementById("show_password");
 
-   
-    if (showPasswordCheckbox) {
-        showPasswordCheckbox.addEventListener("change", function() {
-           
-            const passwordInput = document.getElementById("password"); 
-            
-            if (passwordInput) {
-                if (this.checked) {
-                    passwordInput.type = "text";  
-                } else {
-                    passwordInput.type = "password"; 
-                }
-            }
-        });
-    }
-});
 
 document.addEventListener("DOMContentLoaded", function() {
     const fileInput = document.getElementById('imageInput2');
@@ -262,6 +242,280 @@ $(document).ready(function(){
     }
   });
 });
+//stop
+
+//daily reservation
+//start
+document.addEventListener("DOMContentLoaded", function(){
+    let currentPage = 1;
+
+        function getSelectedStatuses() {
+            const statuses = [];
+            document.querySelectorAll('.filter_options input[type="checkbox"]:checked').forEach(cb => {
+                const map = {
+                    ongoing: "On Going",
+                    upcoming: "Upcoming",
+                    done: "Done",
+                    cancelled: "Cancelled"
+                };
+                if (map[cb.id]) statuses.push(map[cb.id]);
+            });
+            return statuses;
+        }
+
+    function fetchReservations(page = 1) {
+        currentPage = page;
+
+        const dateInput = document.getElementById("date_reservation_daily");
+        const searchInput = document.getElementById("input_reservation_daily");
+
+        $.ajax({
+            url: "reservation_fetch_daily.php",
+            method: "GET",
+            data: {
+                search: searchInput ? searchInput.value : '',
+                date: dateInput ? dateInput.value : '',
+                mode: 'date',
+                page: page,
+                status: getSelectedStatuses()
+            },
+            success: function (response) {
+                const parts = response.split("|||");
+                if (parts.length === 2) {
+                    $('#reservation_body_daily').html(parts[0]);
+                    $('#pagination_reservations_daily').html(parts[1]);
+                } else {
+                    // Helps you see raw PHP errors instead of a silent blank screen
+                    console.error("Unexpected response from reservation_fetch_daily.php:", response);
+                    $('#reservation_body_daily').html(
+                        "<div class='col-12 text-center py-5 text-danger'>Something went wrong loading reservations. Check console for details.</div>"
+                    );
+                    $('#pagination_reservations_daily').html('');
+                }
+            },
+            error: function (xhr) {
+                console.error("AJAX error fetching daily reservations:", xhr.status, xhr.responseText);
+                $('#reservation_body_daily').html(
+                    "<div class='col-12 text-center py-5 text-danger'>Failed to load reservations (server error).</div>"
+                );
+                $('#pagination_reservations_daily').html('');
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        let searchTimer;
+
+        // Initial load for daily view
+        fetchReservations(1);
+
+        // Search input
+        $(document).on('keyup', '#input_reservation_daily', function () {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => fetchReservations(1), 500);
+        });
+
+        // Daily date picker change
+        $(document).on('change', '#date_reservation_daily', function () {
+            fetchReservations(1);
+        });
+
+        // Status checkboxes
+        $(document).on('change', '.filter_options input[type="checkbox"]', function () {
+            fetchReservations(1);
+        });
+
+        // Pagination links
+        $(document).on('click', '.page-link-ajax', function (e) {
+            e.preventDefault();
+            if (!$(this).parent().hasClass('disabled')) {
+                fetchReservations($(this).data('page'));
+            }
+        });
+    });
+});
+//stop
+
+
+//start 
+//reservation montly
+document.addEventListener("DOMContentLoaded", function(){
+    let currentPage = 1;
+
+function getSelectedStatuses() {
+    const statuses = [];
+    document.querySelectorAll('.filter_options input[type="checkbox"]:checked').forEach(cb => {
+        const map = {
+            ongoing: "On Going",
+            upcoming: "Upcoming",
+            done: "Done",
+            cancelled: "Cancelled"
+        };
+        if (map[cb.id]) statuses.push(map[cb.id]);
+    });
+    return statuses;
+}
+
+function fetchReservations(page = 1) {
+    currentPage = page;
+
+    const monthInput = document.getElementById("reservation_montly");
+    const searchInput = document.getElementById("input_reservation_montly");
+
+    $.ajax({
+        url: "reservation_fetch_montly.php",
+        method: "GET",
+        data: {
+            search: searchInput ? searchInput.value : '',
+            month: monthInput ? monthInput.value : '', // format: YYYY-MM
+            mode: 'month',
+            page: page,
+            status: getSelectedStatuses()
+        },
+        success: function (response) {
+            const parts = response.split("|||");
+            if (parts.length === 2) {
+                $('#reservation_body_montly').html(parts[0]);
+                $('#pagination_reservations_montly').html(parts[1]);
+            } else {
+                console.error("Unexpected response from reservation_fetch_montly.php:", response);
+                $('#reservation_body_montly').html(
+                    "<div class='col-12 text-center py-5 text-danger'>Something went wrong loading reservations. Check console for details.</div>"
+                );
+                $('#pagination_reservations_montly').html('');
+            }
+        },
+        error: function (xhr) {
+            console.error("AJAX error fetching monthly reservations:", xhr.status, xhr.responseText);
+            $('#reservation_body_montly').html(
+                "<div class='col-12 text-center py-5 text-danger'>Failed to load reservations (server error).</div>"
+            );
+            $('#pagination_reservations_montly').html('');
+        }
+    });
+}
+
+$(document).ready(function () {
+    let searchTimer;
+
+    // Initial load for monthly view
+    fetchReservations(1);
+
+    // Search input
+    $(document).on('keyup', '#input_reservation_montly', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => fetchReservations(1), 500);
+    });
+
+    // Month picker change
+    $(document).on('change', '#reservation_montly', function () {
+        fetchReservations(1);
+    });
+
+    // Status checkboxes
+    $(document).on('change', '.filter_options input[type="checkbox"]', function () {
+        fetchReservations(1);
+    });
+
+    // Pagination links
+    $(document).on('click', '.page-link-ajax', function (e) {
+        e.preventDefault();
+        if (!$(this).parent().hasClass('disabled')) {
+            fetchReservations($(this).data('page'));
+        }
+    });
+});
+});
+//stop
+
+
+//weekly reservation
+//start
+document.addEventListener("DOMContentLoaded", function(){
+    let currentPage = 1;
+
+    function getSelectedStatuses() {
+        const statuses = [];
+        document.querySelectorAll('.filter_options input[type="checkbox"]:checked').forEach(cb => {
+            const map = {
+                ongoing: "On Going",
+                upcoming: "Upcoming",
+                done: "Done",
+                cancelled: "Cancelled"
+            };
+            if (map[cb.id]) statuses.push(map[cb.id]);
+        });
+        return statuses;
+    }
+
+    function fetchReservations(page = 1) {
+        currentPage = page;
+
+        const dateInput = document.getElementById("date_reservation_weekly");
+        const searchInput = document.getElementById("input_reservation_weekly");
+
+        $.ajax({
+            url: "reservation_fetch.php", // Target weekly fetch script
+            method: "GET",
+            data: {
+                search: searchInput ? searchInput.value : '',
+                date: dateInput ? dateInput.value : '', // format: YYYY-Wxx
+                page: page,
+                status: getSelectedStatuses()
+            },
+            success: function (response) {
+                const parts = response.split("|||");
+                if (parts.length === 2) {
+                    $('#reservation_body_weekly').html(parts[0]);
+                    $('#pagination_reservation_weekly').html(parts[1]);
+                } else {
+                    console.error("Unexpected response:", response);
+                    $('#reservation_body_weekly').html(
+                        "<div class='col-12 text-center py-5 text-danger'>Something went wrong loading reservations.</div>"
+                    );
+                    $('#pagination_reservation_weekly').html('');
+                }
+            },
+            error: function (xhr) {
+                console.error("AJAX error:", xhr.status, xhr.responseText);
+                $('#reservation_body_weekly').html(
+                    "<div class='col-12 text-center py-5 text-danger'>Failed to load reservations (server error).</div>"
+                );
+                $('#pagination_reservation_weekly').html('');
+            }
+        });
+    }
+
+    let searchTimer;
+
+    // Initial load for weekly view
+    fetchReservations(1);
+
+    // Search input
+    $(document).on('keyup', '#input_reservation_weekly', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => fetchReservations(1), 500);
+    });
+
+    // Week picker change
+    $(document).on('change', '#date_reservation_weekly', function () {
+        fetchReservations(1);
+    });
+
+    // Status checkboxes change
+    $(document).on('change', '.filter_options input[type="checkbox"]', function () {
+        fetchReservations(1);
+    });
+
+    // Pagination links
+    $(document).on('click', '.page-link-ajax', function (e) {
+        e.preventDefault();
+        if (!$(this).parent().hasClass('disabled')) {
+            fetchReservations($(this).data('page'));
+        }
+    });
+});
+//stop
 
 
   // search account super admin floors.php
@@ -904,65 +1158,6 @@ $(document).ready(function() {
 
 
 
-    
-//super admin reservation
-$(document).ready(function() {
-    let searchTimer;
-    let currentPage = 1;
-    let isTyping = false;
-
-    const fetchHistory = (page = 1) => {
-        const searchTerm = $('#superadmin_input_reservation').val();
-        currentPage = page;
-
-        if(searchTerm){
-    
-        $.ajax({
-            url: "reservation_fetch.php",
-            method: "GET",
-            data: { search: searchTerm, page: page },
-            success: function(response) {
-  
-                const parts = response.split("|||");
-                if (parts.length === 2) {
-                    $('#superadmin_reservation_body').html(parts[0]);
-                    $('#superadmin_pagination_reservation').html(parts[1]);
-                }
-            },
-            error: function() {
-                console.log("Error fetching data.");
-            }
-        });
-                
-        }
-    };
-
-    fetchHistory();
-
-
-    $(document).on('keyup', '#superadmin_input_reservation', function() {
-        isTyping = true; 
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => {
-            fetchHistory(1);
-            isTyping = false;
-        }, 500);
-    });
-
-    // 3. Pagination Click (Manual)
-    $(document).on('click', '.page-link-ajax', function(e) {
-        e.preventDefault();
-        fetchHistory($(this).data('page'));
-    });
-
-
-    setInterval(function() {
-        if (!isTyping) {
-            fetchHistory(currentPage);
-        }
-    }, 1000); 
-});
-
 
 
 
@@ -1147,56 +1342,78 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
- 
 
-//search dropdown
+// search dropdown 
 document.addEventListener("DOMContentLoaded", function () {
 
     const searchInput = document.getElementById("empSearch");
     const dropdown = document.getElementById("empDropdown");
-    const items = document.querySelectorAll(".emp-item");
     const hiddenInput = document.getElementById("selectedEmployee");
+    const items = document.querySelectorAll(".emp-item");
 
     if (!searchInput || !dropdown || !hiddenInput || items.length === 0) {
         return; 
     }
 
-    // Normalize function
+    // Normalize function na may enye (Ñ/ñ) support
     function normalize(str) {
-        return str.toLowerCase().replace(/\s+/g, ' ').trim();
+        return str.toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .replace(/\s+/g, ' ')
+                  .trim();
     }
 
-    searchInput.addEventListener("focus", () => {
-        dropdown.classList.remove("d-none");
-    });
-
-    searchInput.addEventListener("keyup", function () {
-        let search = normalize(this.value);
+    // Function para i-filter ang mga items base sa nakalagay sa input
+    function filterItems() {
+        let search = normalize(searchInput.value);
+        let searchWords = search.split(" ");
 
         items.forEach(item => {
-            let text = normalize(item.textContent);
-
-            // Split words (for flexible search)
-            let searchWords = search.split(" ");
+            let rawName = item.getAttribute("data-name") || item.textContent;
+            let text = normalize(rawName);
 
             let match = searchWords.every(word => text.includes(word));
-
             item.style.display = match ? "" : "none";
         });
+    }
+
+    // Kapag binalikan o pinindot ang loob ng input, buksan agad at i-filter kung may laman na
+    searchInput.addEventListener("focus", () => {
+        dropdown.classList.remove("d-none");
+        filterItems(); // Salain agad depende sa kasalukuyang text sa loob
     });
 
-    // Select
+    // Para kahit i-click ulit kahit naka-focus na, lalabas pa rin
+    searchInput.addEventListener("click", () => {
+        dropdown.classList.remove("d-none");
+        filterItems();
+    });
+
+    // Habang nagta-type
+    searchInput.addEventListener("keyup", function () {
+        filterItems();
+    });
+
+    // Pagpili ng item gamit ang mousedown
     items.forEach(item => {
-        item.addEventListener("click", function () {
+        item.addEventListener("mousedown", function (e) {
+            e.preventDefault(); 
+
             let name = this.getAttribute("data-name");
+            let id = this.getAttribute("data-id");
 
             searchInput.value = name;
-            hiddenInput.value = name;
+            hiddenInput.value = id;
 
             dropdown.classList.add("d-none");
+
+            // I-reset ang display para sa susunod na pag-search
+            items.forEach(el => el.style.display = "");
         });
     });
 
+    // Close dropdown kapag sa labas pinindot
     document.addEventListener("click", function (e) {
         if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
             dropdown.classList.add("d-none");
@@ -1333,6 +1550,115 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 //stop
+
+
+//start
+//weekly reservation
+document.addEventListener("DOMContentLoaded", function(){
+let currentPage = 1;
+
+function getSelectedStatuses() {
+    const statuses = [];
+    document.querySelectorAll('.filter_options input[type="checkbox"]:checked').forEach(cb => {
+        const map = {
+            ongoing: "On Going",
+            upcoming: "Upcoming",
+            done: "Done",
+            cancelled: "Cancelled"
+        };
+        if (map[cb.id]) statuses.push(map[cb.id]);
+    });
+    return statuses;
+}
+
+function fetchReservations(page = 1) {
+    currentPage = page;
+
+    const dateInput = document.getElementById("date_reservation_weekly");
+    const searchInput = document.getElementById("input_reservation_weekly");
+
+    $.ajax({
+        url: "reservation_fetch.php",
+        method: "GET",
+        data: {
+            search: searchInput ? searchInput.value : '',
+            date: dateInput ? dateInput.value : '',
+            mode: 'week',
+            page: page,
+            status: getSelectedStatuses()
+        },
+        success: function (response) {
+            const parts = response.split("|||");
+            if (parts.length === 2) {
+                $('#reservation_body_weekly').html(parts[0]);
+                $('#pagination_reservation_weekly').html(parts[1]);
+            }
+        },
+        error: function () {
+            console.log("Error fetching weekly reservations.");
+        }
+    });
+}
+
+$(document).ready(function () {
+    let searchTimer;
+
+    // Initial load for the current week
+    fetchReservations(1);
+
+    // Search input
+    $(document).on('keyup', '#input_reservation_weekly', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => fetchReservations(1), 500);
+    });
+
+    // Week date picker change
+    $(document).on('change', '#date_reservation_weekly', function () {
+        fetchReservations(1);
+    });
+
+    // Status checkboxes
+    $(document).on('change', '.filter_options input[type="checkbox"]', function () {
+        fetchReservations(1);
+    });
+
+    // Pagination links
+    $(document).on('click', '.page-link-ajax', function (e) {
+        e.preventDefault();
+        if (!$(this).parent().hasClass('disabled')) {
+            fetchReservations($(this).data('page'));
+        }
+    });
+});
+});
+//stop
+
+
+//start
+//marquee
+/*
+document.addEventListener("DOMContentLoaded", function() {
+    const wrappers = document.querySelectorAll('.meeting-wrapper');
+
+    wrappers.forEach(wrapper => {
+        const title = wrapper.querySelector('.meeting_title');
+        const textLength = title.textContent.trim().length;
+        
+        // I-check ang lapad ng screen (window.innerWidth)
+        // Kung ang screen ay 1150px pababa, ang limit ay 20 characters. 
+        // Kung mas malaki sa 1150px, ang limit ay 40 characters.
+        const characterLimit = (window.innerWidth <= 1150) ? 20 : 40;
+
+        // Kung lumampas o umabot sa itinakdang limit, i-activate ang marquee
+        if (textLength >= characterLimit) {
+            wrapper.classList.add('is-overflowing');
+        }
+    });
+});*/
+//stop
+
+
+
 
 //superadmin
 /*

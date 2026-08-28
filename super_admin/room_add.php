@@ -27,9 +27,10 @@
 
 
     #para sa session kung exist
-    if($_SESSION['floor']){
-        $get_data = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_id` = ?");
-        $get_data->bind_param("s",$_SESSION['floor']);
+    if(isset($_SESSION['floor'])){
+        $floor_status = "Active";
+        $get_data = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_id` = ? AND `floor_status` = ?");
+        $get_data->bind_param("ss",$_SESSION['floor'],$floor_status);
         $get_data->execute();
         $result_get = $get_data->get_result();
         if ($result_get->num_rows > 0) {
@@ -37,6 +38,7 @@
                 $floor_name_data = htmlspecialchars($row_floor['floor_name'] ?? '');         
             
             }   
+            
         }
     }
 ?>
@@ -63,7 +65,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-12 mb-3">
                                     <label for="serial_data" class="form-label">Serial Number</label>
                                     <div class="position-relative">        
-                                        <input type="text" id="serial_data" name="device_name" class="form-control upper_function" value="<?php echo htmlspecialchars($_SESSION['device_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="Type to search..." autocomplete="off" required>
+                                        <input type="text" id="serial_data" name="device_name" class="form-control upper_function" value="<?php echo htmlspecialchars($_SESSION['device_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="Type to search..." autocomplete="off" >
                                         <input type="hidden" id="serial_number_hidden" name="serial_number" value="<?php echo htmlspecialchars($_SESSION['serial_number'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <div id="empDropdown_serial" class="dropdown_body card position-absolute w-100 shadow-sm mt-1 d-none" style="z-index: 1000;">
                                             <div class="list-group list-group-flush" id="empList_meeting">
@@ -98,7 +100,9 @@
                                     <select name="floor" id="floor" class="form-control" required>
                                         <option  value="<?php echo  $_SESSION['floor'] ?? 'Select Floor'; ?>"><?php echo  $floor_name_data ?? 'Select Floor'; ?></option>
                                         <?php
-                                            $floor_get = $conn2->prepare("SELECT * FROM `floors`");
+                                            $floor_status = "Active";
+                                            $floor_get = $conn2->prepare("SELECT * FROM `floors` WHERE `floor_status` = ?");
+                                            $floor_get->bind_param("s",$floor_status);
                                             $floor_get->execute();
                                             $get_floor = $floor_get->get_result();
                                             if($get_floor->num_rows>0){

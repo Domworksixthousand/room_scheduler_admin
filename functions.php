@@ -246,9 +246,11 @@ if(isset($_POST['room_save'])){
     $description   = mysqli_real_escape_string($conn2,$_POST['description'] ?? '');
     $device_name   = mysqli_real_escape_string($conn2,$_POST['device_name'] ?? '');
     $status = "Active";
+    $tablet_status = "Active";
 
     if(empty($serial_number)){
         $serial_number = "custom" . "-" . $room_name .  rand();
+        $tablet_status = "Inactive";
     }
       
    
@@ -320,7 +322,7 @@ if(isset($_POST['room_save'])){
 
     if (file_exists($sourcePath)) {
         if (rename($sourcePath, $destinationPath)) {
-            $tablet_status = "Active";
+            
 
             $insert = $conn2->prepare("INSERT INTO `rooms` (`room_id`,`room_name`,`serial_number`,`floor_id`,`capacity`,`description`,`image`,`tablet_status`,`user_id_added`,`time_date_added`,`status`) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
             $insert->bind_param("sssssssssss", $room_id, $room_name, $serial_number, $floor, $capacity, $description, $fileName,$tablet_status,$_SESSION['User_Id'],$currentDateTime,$status);
@@ -360,6 +362,7 @@ if(isset($_POST['room_update'])){
     $trash_path = 'assets/uploads/' . $trash_filename;
     $location_back = ($role === "1") ? "super_admin" : "admin";
     $status = 'Active';
+    $tablet_status = "Active";
 
     if($extension !== "jpeg" && $extension !== "jpg"  &&  !empty($image)){
         $_SESSION['error'] = "jpeg image type only";
@@ -388,8 +391,8 @@ if(isset($_POST['room_update'])){
     }
 
     if(empty($image)){
-         $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?,`user_id_update` = ?,`time_date_update` =? WHERE `room_id` =?");
-        $update->bind_param("ssssssss",$room_name,$serial_number,$floor,$capacity,$description,$_SESSION['User_Id'],$currentDateTime,$room_id);
+         $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?,`user_id_update` = ?,`time_date_update` =?,`tablet_status` = ? WHERE `room_id` =?");
+        $update->bind_param("sssssssss",$room_name,$serial_number,$floor,$capacity,$description,$_SESSION['User_Id'],$currentDateTime,$tablet_status,$room_id);
         $update->execute();
 
         $_SESSION['success'] = "Successfully Updated";
@@ -415,8 +418,8 @@ if(isset($_POST['room_update'])){
     
         }
         if(move_uploaded_file($image_tmp,$trash_path)){
-            $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?, `image` = ?,`user_id_update` = ?,`time_date_update` =? WHERE `room_id` =?");
-            $update->bind_param("sssssssss",$room_name,$serial_number,$floor,$capacity,$description,$trash_filename,$_SESSION['User_Id'],$currentDateTime,$room_id);
+            $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?, `image` = ?,`user_id_update` = ?,`time_date_update` =?,`tablet_status` = ?  WHERE `room_id` =?");
+            $update->bind_param("ssssssssss",$room_name,$serial_number,$floor,$capacity,$description,$trash_filename,$_SESSION['User_Id'],$currentDateTime,$tablet_status,$room_id);
             $update->execute();
 
             $_SESSION['success'] = "Successfully Updated";

@@ -46,7 +46,11 @@
                             <div class="row mb-0">
                                 <div class="col-lg-12 mb-4">
                                     <label class="form-label">Select Date(s)</label>
+<<<<<<< HEAD
                                     <input type="text" class="form-control" id="multi_dates" placeholder="Click to Select Single or Multiple Dates" readonly required>
+=======
+                                    <input type="text" class="form-control" value="<?php echo $date ?? ''; ?>" id="multi_dates" placeholder="Click to Select Single or Multiple Dates" readonly required>
+>>>>>>> d0d8fc59652733ee00754b4a565abeb31abb039a
                                     <!-- One hidden input per selected date gets injected here on change -->
                                     <div id="selected_dates_hidden"></div>
                                 </div>
@@ -282,12 +286,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // ---- Multi-date picker: lets the user click Aug 1, then 10, then 20, then 25 ----
     // ---- (non-contiguous) instead of only a start/end range                      ----
+<<<<<<< HEAD
     // Dates carried over from a failed save (session) win; otherwise use the day clicked on the calendar (?date=YYYY-MM-DD)
     const getDate = <?php echo json_encode($_GET['date'] ?? ''); ?>;
     let preselected = sessionBookedDetails.map(item => item.date).filter(Boolean);
     if (!preselected.length && /^\d{4}-\d{2}-\d{2}$/.test(getDate)) {
         preselected = [getDate];
     }
+=======
+    const preselected = sessionBookedDetails.map(item => item.date).filter(Boolean);
+>>>>>>> d0d8fc59652733ee00754b4a565abeb31abb039a
 
     const fp = flatpickr("#multi_dates", {
         mode: "multiple",
@@ -340,7 +348,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // even if "custom" wasn't checked before, so the user can still switch to
     // per-day times if they change their mind.
     if (preselected.length > 0) {
+<<<<<<< HEAD
         syncHiddenDateInputs(toIsoList(fp.selectedDates));
+=======
+        syncHiddenDateInputs(preselected.slice().sort());
+>>>>>>> d0d8fc59652733ee00754b4a565abeb31abb039a
     }
 
     if (preselected.length > 1) {

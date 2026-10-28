@@ -24,20 +24,28 @@ if ($conn1->connect_error) {
     error_log("Database connection1 failed: " . $conn1->connect_error);
     die("We are experiencing technical difficulties. Please try again later.");
 }
-
+/*
 $conn2 = mysqli_connect("localhost","root","","room_sched_db","3307");
+<<<<<<< HEAD
 if ($conn2->connect_error) {
+=======
+if ($conn2->connect_error) {>
+>>>>>>> d0d8fc59652733ee00754b4a565abeb31abb039a
     
     die("We are experiencing technical difficulties. Please try again later.");
 }
 
-/*
+*/
 $conn2 = mysqli_connect("10.0.0.161","usr","usrpass","room_sched_db","3306");
 if ($conn2->connect_error) {
     error_log("Database connection2 failed: " . $conn2->connect_error);
     die("We are experiencing technical difficulties. Please try again later.");
 }
+<<<<<<< HEAD
 */
+=======
+
+>>>>>>> d0d8fc59652733ee00754b4a565abeb31abb039a
 
  $role  = " ";
 #get data kun available
@@ -132,6 +140,10 @@ $currentDateTime = date('Y-m-d H:i:s');
  $update_automatic->execute();
 
 
+<<<<<<< HEAD
 $_SESSION['SideBarType'] = "Room Scheduler";
+=======
+
+>>>>>>> d0d8fc59652733ee00754b4a565abeb31abb039a
 
 ?>

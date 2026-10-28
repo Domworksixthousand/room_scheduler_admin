@@ -249,6 +249,7 @@
       el = el.parentElement;
     }
   }
+<<<<<<< HEAD
 
   // Custom page names from .htaccess (URL name -> real file).
   // Custom page names per section. Keep in sync with room_scheduler_admin/.htaccess.
@@ -258,6 +259,8 @@
     admin:       { 'room': 'rooms.php' },
     user:        { 'room': 'index.php' }
   };
+=======
+>>>>>>> d0d8fc59652733ee00754b4a565abeb31abb039a
 
   function currentFile() {
     var path = window.location.pathname;

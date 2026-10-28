@@ -75,7 +75,6 @@
     $eventsJson = json_encode($events);
 
 ?>
-
 <main >
     <section class="room_info_section" >
        <form action="../functions.php" method="POST">
@@ -186,7 +185,6 @@
        </form>
     </section>
 </main>
-
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {

@@ -1,8 +1,9 @@
 (function () {
   function currentSection() {
     var path = window.location.pathname;
-    if (path.indexOf('/super_admin/') !== -1) return 'super_admin';
-    if (path.indexOf('/user/') !== -1) return 'user';
+    // .htaccess folder aliases: 1 = super_admin, 2 = admin, 3 = user
+    if (path.indexOf('/super_admin/') !== -1 || path.indexOf('/1/') !== -1) return 'super_admin';
+    if (path.indexOf('/user/') !== -1 || path.indexOf('/3/') !== -1) return 'user';
     return 'admin';
   }
 
@@ -54,6 +55,20 @@
     },
     {
       file: 'rooms.php',
+      selector: '.buttton_actions a',
+      title: 'Room Info',
+      text: 'Click this info icon on any room card to see that room\'s full details and booking calendar.'
+    },
+    {
+      file: 'room_info.php',
+      selector: '.modal-content',
+      insideModal: true,
+      side: 'right',
+      title: 'Room Details',
+      text: 'Room Details shows the description, floor, and capacity. Switch to the Calendar tab to see the room\'s bookings — click any open date to go straight to Add Reservation for that room. Dates before today are disabled and can\'t be clicked.'
+    },
+    {
+      file: 'rooms.php',
       selector: '.btn_add',
       title: 'Add a Room',
       text: 'Click here to register a new room. Let\'s take a look at the form.'
@@ -75,7 +90,19 @@
       file: 'reservations.php',
       selector: '.text_header',
       title: 'Reservations',
-      text: 'View and manage all reservations. Filter by ongoing, upcoming, done, or cancelled.'
+     text: 'View and manage all reservations here. There are 3 icons you will see in your reservations, info,cancel reservation and update or reched. only who booked will only allowed to update or cancel there reservations.  '
+    },
+    {
+      file: 'reservations.php',
+      selector: '.filter_options',
+      title: 'Filter Reservations',
+      text: 'Filter reservations by status: On Going, Upcoming, Done, or Cancelled.'
+    },
+    {
+      file: 'reservations.php',
+      selector: '.input-group.gap-1',
+      title: 'Weekly / Daily / Monthly View',
+      text: 'Switch how reservations are viewed — Weekly (W), Daily (D), or Monthly (M) — and search by floor or date.'
     },
     {
       file: 'reservation_add.php',
@@ -86,9 +113,23 @@
     }
   ];
 
-  var ADMIN_STEPS = DASHBOARD_STEPS.concat(FLOORS_ROOMS_HISTORY_RESERVATIONS_STEPS);
+  var ADMIN_STEPS = [
+    {
+      file: 'index.php',
+      selector: '#userNavMenu',
+      title: 'Menu',
+      text: 'This is your menu. Use it to jump between Dashboard, Floors, Rooms, History, Reservations, and this Walkthrough guide.'
+    }
+  ].concat(DASHBOARD_STEPS, FLOORS_ROOMS_HISTORY_RESERVATIONS_STEPS);
 
-  var SUPER_ADMIN_STEPS = DASHBOARD_STEPS.concat([
+  var SUPER_ADMIN_STEPS = [
+    {
+      file: 'index.php',
+      selector: '#userNavMenu',
+      title: 'Menu',
+      text: 'This is your menu. Use it to jump between Dashboard, Accounts, Floors, Rooms, History, Reservations, and this Walkthrough guide.'
+    }
+  ].concat(DASHBOARD_STEPS, [
     {
       file: 'accounts.php',
       selector: '.text_header',
@@ -113,6 +154,12 @@
   var USER_STEPS = [
     {
       file: 'index.php',
+      selector: '#userNavMenu',
+      title: 'Menu',
+      text: 'This is your menu. Use it to jump between Rooms, Reservations, and this Walkthrough guide.'
+    },
+    {
+      file: 'index.php',
       selector: '.text_header',
       title: 'Rooms',
       text: 'Your landing page. Browse all meeting rooms and see which ones are open.'
@@ -121,20 +168,46 @@
       file: 'index.php',
       selector: '.filter_options',
       title: 'Filter Rooms',
-      text: 'Filter rooms by Available, Partially Occupied, or Fully Occupied status. Click a room afterward to view its details.'
+      text: 'Filter rooms by status: Available (completely open with no meetings booked today), Partially Occupied (has meetings booked, but not for the full day), or Fully Occupied (all time slots booked today). Click a room to view its details. Device Status indicates if a device is Active (turned on) or Inactive (powered off).'
+    },
+    {
+      file: 'index.php',
+      selector: '.buttton_actions a',
+      title: 'Room Info',
+      text: 'Click this info icon on any room card to see that room\'s full details and booking calendar.'
+    },
+    {
+      file: 'room_info.php',
+      selector: '.modal-content',
+      insideModal: true,
+      side: 'right',
+      title: 'Room Details',
+      text: 'Room Details shows the description, floor, and capacity. Switch to the Calendar tab to see the room\'s bookings — click any open date to go straight to Add Reservation for that room. Dates before today are disabled and can\'t be clicked.'
     },
     {
       file: 'reservations.php',
       selector: '.text_header',
       title: 'Reservations',
-      text: 'View and manage your own reservations. Filter by ongoing, upcoming, done, or cancelled, and search by floor or date.'
+      text: 'View and manage your reservations here. There are three available actions: Info, Cancel Reservation, and Reschedule/Update Reservation. Please note that only the user who made the booking is permitted to cancel or update it.'
+    },
+    {
+      file: 'reservations.php',
+      selector: '.filter_options',
+      title: 'Filter Reservations',
+      text: 'Filter your reservations by status: On Going, Upcoming, Done, or Cancelled.'
+    },
+    {
+      file: 'reservations.php',
+      selector: '.input-group.gap-1',
+      title: 'Weekly / Daily / Monthly View',
+      text: 'Switch how reservations are viewed — Weekly (W), Daily (D), or Monthly (M) — and search by floor or date.'
     },
     {
       file: 'reservation_add.php',
       selector: '.modal-content',
       insideModal: true,
       title: 'Book a Room',
-      text: 'Pick a date and time range and fill in the meeting details, then save to submit your reservation.'
+      text: 'Pick a date and time range, fill in the meeting details, and save to submit your reservation.'
     }
   ];
 
@@ -151,10 +224,47 @@
 
   var overlay = null;
   var tooltip = null;
+  var liftedEls = [];
+
+  function clearLiftedAncestors() {
+    liftedEls.forEach(function (el) {
+      el.style.removeProperty('z-index');
+      el.classList.remove('wt-lift');
+    });
+    liftedEls = [];
+  }
+
+  function liftAncestors(target) {
+    clearLiftedAncestors();
+    var el = target.parentElement;
+    while (el && el !== document.body) {
+      var pos = window.getComputedStyle(el).position;
+      if (pos === 'fixed' || pos === 'sticky' || pos === 'absolute') {
+        // Inline !important beats any external stylesheet's !important
+        // utility class (e.g. Bootstrap's .z-3), regardless of load order.
+        el.style.setProperty('z-index', '9999', 'important');
+        el.classList.add('wt-lift');
+        liftedEls.push(el);
+      }
+      el = el.parentElement;
+    }
+  }
+
+  // Custom page names from .htaccess (URL name -> real file).
+  // Custom page names per section. Keep in sync with room_scheduler_admin/.htaccess.
+  // (user has no rooms.php -- its rooms page is index.php)
+  var CLEAN_NAMES = {
+    super_admin: { 'room': 'rooms.php' },
+    admin:       { 'room': 'rooms.php' },
+    user:        { 'room': 'index.php' }
+  };
 
   function currentFile() {
     var path = window.location.pathname;
     var file = path.substring(path.lastIndexOf('/') + 1);
+    var names = CLEAN_NAMES[currentSection()] || {};
+    if (names[file]) return names[file];
+    if (file && file.indexOf('.') === -1) file += '.php'; // clean URL: "floors" -> "floors.php"
     return file || 'index.php';
   }
 
@@ -180,6 +290,7 @@
     document.querySelectorAll('.wt-highlight').forEach(function (el) {
       el.classList.remove('wt-highlight');
     });
+    clearLiftedAncestors();
     if (overlay) { overlay.remove(); overlay = null; }
     if (tooltip) { tooltip.remove(); tooltip = null; }
   }
@@ -215,11 +326,38 @@
     });
 
     window.addEventListener('resize', function () {
+      if (tooltip && tooltip.dataset.side === 'right') {
+        positionTooltipRight();
+        return;
+      }
       if (tooltip && tooltip.dataset.targetSelector) {
         var target = document.querySelector(tooltip.dataset.targetSelector);
         if (target) positionTooltip(target);
       }
     });
+  }
+
+  function positionTooltipRight() {
+    var isMobile = window.innerWidth < 576;
+
+    if (isMobile) {
+      tooltip.style.position = 'fixed';
+      tooltip.style.transform = 'none';
+      tooltip.style.left = '4vw';
+      tooltip.style.right = 'auto';
+      tooltip.style.width = '92vw';
+      tooltip.style.top = 'auto';
+      tooltip.style.bottom = '16px';
+      return;
+    }
+
+    tooltip.style.position = 'fixed';
+    tooltip.style.top = '50%';
+    tooltip.style.right = '20px';
+    tooltip.style.left = 'auto';
+    tooltip.style.bottom = 'auto';
+    tooltip.style.width = '';
+    tooltip.style.transform = 'translateY(-50%)';
   }
 
   function centerTooltip() {
@@ -240,7 +378,16 @@
       tooltip.style.left = '4vw';
       tooltip.style.width = '92vw';
       tooltip.style.top = 'auto';
-      tooltip.style.bottom = '16px';
+
+      // Clear any fixed bottom bar (e.g. the user section's bottom nav)
+      // so the tooltip never overlaps/covers it.
+      var bottomOffset = 16;
+      var bottomBar = document.getElementById('userNavMenu');
+      if (bottomBar) {
+        var barRect = bottomBar.getBoundingClientRect();
+        bottomOffset = Math.max(bottomOffset, (window.innerHeight - barRect.top) + 12);
+      }
+      tooltip.style.bottom = bottomOffset + 'px';
       return;
     }
 
@@ -272,6 +419,7 @@
     document.querySelectorAll('.wt-highlight').forEach(function (el) {
       el.classList.remove('wt-highlight');
     });
+    clearLiftedAncestors();
 
     var step = TOUR_STEPS[i];
     var target = step.selector ? document.querySelector(step.selector) : null;
@@ -284,14 +432,29 @@
     tooltip.querySelector('.wt-prev').style.visibility = i === 0 ? 'hidden' : 'visible';
     tooltip.querySelector('.wt-next').textContent = i === TOUR_STEPS.length - 1 ? 'Finish' : 'Next';
 
+    if (step.side === 'right') {
+      tooltip.dataset.side = 'right';
+    } else {
+      delete tooltip.dataset.side;
+    }
+
     if (target) {
       target.classList.add('wt-highlight');
+      liftAncestors(target);
       target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       tooltip.dataset.targetSelector = step.selector;
-      setTimeout(function () { positionTooltip(target); }, 350);
+      if (step.side === 'right') {
+        setTimeout(function () { positionTooltipRight(); }, 350);
+      } else {
+        setTimeout(function () { positionTooltip(target); }, 350);
+      }
     } else {
       delete tooltip.dataset.targetSelector;
-      centerTooltip();
+      if (step.side === 'right') {
+        positionTooltipRight();
+      } else {
+        centerTooltip();
+      }
     }
   }
 
@@ -312,12 +475,17 @@
   function init() {
     var urlParams = new URLSearchParams(window.location.search);
     var forceStart = urlParams.get('tour') === '1';
-    var idx = getStepIndex();
+    var idx;
 
-    if (idx === null) {
-      if (forceStart) {
-        idx = 0;
-      } else {
+    if (forceStart) {
+      // ?tour=1 always restarts the tour from the first step (the FAB
+      // menu), overriding any stale progress left over from a previous run.
+      idx = 0;
+      setStepIndex(idx);
+    } else {
+      idx = getStepIndex();
+
+      if (idx === null) {
         var seen = false;
         try { seen = localStorage.getItem(SEEN_KEY) === '1'; } catch (e) {}
         if (!seen && currentFile() === 'index.php') {
@@ -325,8 +493,8 @@
         } else {
           return;
         }
+        setStepIndex(idx);
       }
-      setStepIndex(idx);
     }
 
     var step = TOUR_STEPS[idx];

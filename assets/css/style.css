@@ -33,8 +33,8 @@
     --border-color: #dfe6e9;
 }
 
-body{
-    background: #F2F2F2 !important;
+body,.body_color{
+   background-color: #e4e9f7 !important;
 }
 
 #loadingOverlay{
@@ -49,6 +49,12 @@ backdrop-filter: blur(8.9px);
 -webkit-backdrop-filter: blur(8.9px);
 }
 
+.main_content{
+    background-color: #e4e9f7 !important;
+    padding-top:50px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
 
 
 .header-content{
@@ -60,7 +66,6 @@ backdrop-filter: blur(8.9px);
 .header-content i{
     color:white;
 }
-
 
 /* Toolbar Styling */
  .fc-toolbar-title { 
@@ -120,9 +125,19 @@ backdrop-filter: blur(8.9px);
     margin: 2px 5px !important;
     padding: 5px 8px !important;
     border: none !important;
-    background-color: var(--primary-navy) !important;
+    background: var(--primary-navy) !important;
     transition: transform 0.15s ease;
 }
+
+.fc-popover-body,
+.fc-popover-header  {
+    background:white !important;
+    color:black;
+}
+/*
+.fc-popover  .fc-daygrid-event{
+    background:linear-gradient(to top,#020024,#090979) !important;
+}*/
 
  .fc-daygrid-event:hover {
     transform: translateY(-1px);
@@ -140,12 +155,18 @@ backdrop-filter: blur(8.9px);
     background-color: rgba(0, 0, 128, 0.03) !important;
 }
 
+.calendar-container .fc-col-header tr{
+    z-index: 0;
+    position: relative;
+}
+
 .room_admin_section .card,
 .room_superadmin_section .card{
     position: relative;
     overflow: hidden;
     transition: transform 0.2s ease;
     border-radius: 13px;
+    
 }
 
 
@@ -157,7 +178,7 @@ backdrop-filter: blur(8.9px);
 
 .room_admin_section .card img,
 .room_superadmin_section .card img{
-    height: 200px;
+    height: 160px;
     object-fit: cover;
     border-top-left-radius: 13px;
     border-top-right-radius: 13px;
@@ -180,7 +201,7 @@ backdrop-filter: blur(8.9px);
   display: flex;
   gap:10px;
   position: absolute;
-  top: 10px !important;
+  top: 5px !important;
   left: -50px;
   color: #fff;
   padding: 5px 10px;
@@ -196,6 +217,9 @@ backdrop-filter: blur(8.9px);
     transition: all 0.3s ease;
     opacity: 0; 
     transform: translateX(-20px);
+    font-size:0.625rem !important;
+    border-radius:50%;
+    font-size: 0.8rem !important;
 }
 
 .room_admin_section .card:hover .buttton_actions,
@@ -227,18 +251,19 @@ backdrop-filter: blur(8.9px);
 
 .room_admin_section .card .btn_reserve,
 .room_superadmin_section .card .btn_reserve {
-  font-weight:900;
-  padding:10px;
-  border-radius: 10px;
-  color:white;
-  transition-duration: 300ms;
-  transition-timing-function: ease-in-out;
- background: #0F1595;
+    font-weight:900;
+    padding:5px;
+    border-radius: 7px;
+    color:white;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    background:linear-gradient(to top,#020024,#090979) !important;
+    font-size:0.625rem !important;	
 }
 
 .room_admin_section .card .btn_reserve:hover,
 .room_superadmin_section  .card .btn_reserve:hover{
- background: #141cc3;
+    background:linear-gradient(to bottom,#020024,#090979) !important;
 }
 
 .room_admin_section .floor_name,
@@ -250,11 +275,6 @@ backdrop-filter: blur(8.9px);
   color: #fff;
   padding: 5px 10px;
   border-radius: 5px;
-}
-
-.room_admin_section .buttton_actions a,
-.room_superadmin_section  .buttton_actions a{
-  border-radius:50%;
 }
 
 .room_admin_section .buttton_actions a i,
@@ -274,6 +294,11 @@ backdrop-filter: blur(8.9px);
     display:flex;
     gap:10px;
 }
+
+/*
+.reservation_admin_section .row{
+    margin: 0 0 0 0.1px
+}*/
 
 .room_admin_section li,
 .reservation_admin_section li,
@@ -301,7 +326,6 @@ backdrop-filter: blur(8.9px);
  .reservation_admin_section  .filter_options ul,
  .room_superadmin_section .filter_options ul,
  .reservation_superadmin_section .filter_options ul {
-    background:white;
     border-radius: 10px;
     display: flex !important;
     gap:0;
@@ -309,13 +333,100 @@ backdrop-filter: blur(8.9px);
     margin:0;
     width: fit-content;
     margin:0;
+    background:linear-gradient(to top,#020024,#090979);
 }
+/*
+.reservation_admin_section .card-img-top {
+    object-fit: cover;
+    height: 10px !important;
+}*/
+
+.overlay-gradient {
+    background: linear-gradient(to top,  #090979,transparent);
+    z-index: 1;
+}
+
+.active_tablet{
+    background: linear-gradient(to top,  #006700,transparent);
+    z-index: 0;
+}
+
+.inactive_tablet{
+     background: linear-gradient(to top,  #670000,transparent);
+    z-index: 0;
+}
+
+.reservation_admin_section .badge {
+    z-index: 2;
+}   
+
+.reservation_admin_section .card-title {
+    z-index: 2;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.reservation_admin_section .meeting_title{
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+/*
+@keyframes scroll-with-pause {
+   
+    0%, 20% { 
+        transform: translate(0, 0); 
+    }
+  
+    70% { 
+        transform: translate(-100%, 0); 
+    }
+ 
+    70.1%, 100% { 
+        transform: translate(0, 0); 
+    }
+}
+
+.reservation_admin_section .meeting-wrapper {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    display: block;
+}
+
+.reservation_admin_section .meeting-wrapper.is-overflowing .meeting_title {
+    padding-left: 0%;
+    animation: scroll-left 12s linear infinite;
+    animation-delay:3s;
+    animation: scroll-with-pause 15s linear infinite;
+}
+*/
+ .room_admin_section .filter_options ul .filter-item:nth-child(2),
+  .room_superadmin_section .filter_options ul .filter-item:nth-child(2){
+    border-right:1px solid gray !important;
+    border-left:1px solid gray !important;
+ }
+
+  .reservation_admin_section  .filter_options ul 
+  .filter-item:nth-child(2),
+    .reservation_superadmin_section .filter_options ul .filter-item:nth-child(2){
+     border-right:1px solid gray !important;
+    border-left:1px solid gray !important;
+  }
+
+    .reservation_superadmin_section  .filter_options ul 
+  .filter-item:nth-child(3),
+      .reservation_admin_section  .filter_options ul 
+  .filter-item:nth-child(3){
+    border-right:1px solid gray !important;
+
+  }
 
 .room_admin_section .filter_options label,
 .reservation_admin_section .filter_options label,
 .room_superadmin_section .filter_options label,
 .reservation_superadmin_section .filter_options label {
     font-size: 0.9rem !important;
+    
 }
 
 .room_admin_section .floor-item,
@@ -357,12 +468,13 @@ backdrop-filter: blur(8.9px);
     align-items: center;
     gap: 8px;
     padding: 8px 16px;
-    color:#727985;
+    color:white;
     border-radius: 0; 
     cursor: pointer;
     transition: all 0.3s ease;
     user-select: none;
     margin:0;
+ 
 }
 
 .room_admin_section  .clickable-label:hover,
@@ -372,6 +484,7 @@ backdrop-filter: blur(8.9px);
 .reservation_superadmin_section  .clickable-label:hover{
     background-color: #e9ecef;
     border-color: #ccc;
+    color:black;
 }
 
 .room_admin_section  .hidden-checkbox:checked + .clickable-label,
@@ -404,6 +517,20 @@ backdrop-filter: blur(8.9px);
     z-index: 1050;
     max-height: 200px;
     overflow-y: auto;
+}
+
+ .reservation_admin_section .input-group-text button{
+    border:1px solid #cccccc;
+}
+
+.reservation_admin_section .my_color{
+    background:linear-gradient(to top,#020024,#090979);
+    color:white;
+}
+
+.reservation_admin_section .my_color:hover{
+    background:linear-gradient(to top,#020024,#090979);
+    color:white;
 }
 
 /*loading animation*/
@@ -577,10 +704,6 @@ backdrop-filter: blur(8.9px);
     color:white;
 }
 
-.accounts_superadmin_section .inner_con{
-    overflow:auto;
-}
-
 .assign_account_section .modal-body{
     padding:20px;
     background:white;
@@ -639,6 +762,11 @@ backdrop-filter: blur(8.9px);
     color:#C50000;
     font-weight: bold;
     border:1px solid #C50000;
+}
+
+.dashboard_superadmin_section .text-header,
+.room_superadmin_section .text-header{
+    margin-top:7px;
 }
 
 .dashboard_superadmin_section .box{
@@ -737,9 +865,19 @@ backdrop-filter: blur(8.9px);
 .room_admin_section,
 .floor_admin_section,
 .history_admin_section,
-.reservation_admin_section {
+.reservation_admin_section,
+.accounts_superadmin_section,
+.floor_superadmin_section,
+.history_superadmin_section{
     padding:50px 0;
 }
+
+.dashboard_superadmin_section,
+.room_superadmin_section,
+.reservation_superadmin_section{
+      padding:43px 0;
+}
+
 
 .reservation_admin_section .upper_search,
 .reservation_superadmin_section  .upper_search{
@@ -864,10 +1002,18 @@ backdrop-filter: blur(8.9px);
 
 
 .dashboard_admin_section .text_header,
-.text_header,
+.room_admin_section  .text_header,
 .floor_admin_section .text_header,
 .history_admin_section .text_header,
-.reservation_admin_section .text_header{
+.reservation_admin_section .text_header,
+.walkthrough_admin_section .text-header,
+.dashboard_superadmin_section .text-header,
+.accounts_superadmin_section .text-header,
+.floor_superadmin_section .text-header,
+.room_superadmin_section .text-header,
+.history_superadmin_section .text-header,
+.reservation_superadmin_section  .text-header,
+.walkthrough_admin_section  .text-header {
     border-left:5px solid #0F1595;
     padding-left:10px;
     font-weight: bold;
@@ -963,7 +1109,9 @@ backdrop-filter: blur(8.9px);
     padding: 0 15px 5px 15px;
 }
 
-.room_add_section .modal-body{
+.room_add_section .modal-body,
+.floor_add_section .modal-body
+{
     padding:30px;
 }
 
@@ -1084,6 +1232,7 @@ backdrop-filter: blur(8.9px);
     transform: translateY(5px);
 }
 
+
 .floor_update_section i{
     transform: translateY(px);
 }
@@ -1142,38 +1291,45 @@ backdrop-filter: blur(8.9px);
 .reservation_superadmin_section .action_butt{
     display: flex;
     justify-content: center;
+    align-items: center;
     gap:5px;
-    padding:15px;
+    padding:5px 0 5px 0;
+    background:linear-gradient(to top,#020024,#090979);
 }
 
 .reservation_admin_section .btn_cancelled,
 .reservation_superadmin_section .btn_cancelled  {
-    background:#b30000;
+    
     color:white;
-    width:100%;
     font-weight: 900;
-    border-radius: 10px;
+    width:fit-content !important;
 }
 
 .reservation_admin_section .btn_cancelled:hover,
 .reservation_superadmin_section .btn_cancelled:hover{
-    background-color: #cd0000;
     color:white;
 }
 
 .reservation_admin_section .btn_view,
 .reservation_superadmin_section  .btn_view {
-    background: var(--primary-navy) !important;
+
     color:white;
-    width:100%;
     font-weight: 900;
-    border-radius: 10px;
+    width:fit-content !important;
 }
 
 .reservation_superadmin_section .btn_view:hover,
-.reservation_admin_section .btn_view{
+.reservation_admin_section .btn_view:hover,
+.reservation_admin_section .btn_resched:hover{
     color:white !important;
-    background-color: #00009a !important;
+  
+}
+
+.reservation_admin_section .btn_resched {
+
+    color:white;
+    font-weight: 900;
+    width:fit-content !important;
 }
 
 .reservation_admin_section .card,
@@ -1192,7 +1348,7 @@ backdrop-filter: blur(8.9px);
 
 .reservation_admin_section .card img,
 .reservation_superadmin_section .card img{
-    height: 200px;
+    height: 160px;
     object-fit: cover;
     border-top-left-radius: 13px;
     border-top-right-radius: 13px;
@@ -1260,6 +1416,7 @@ backdrop-filter: blur(8.9px);
     transition-delay: 0.3s;
 }
 
+/*
 .reservation_admin_section .card .btn_reserve,
 .reservation_superadmin_section   .card .btn_reserve{
     font-weight:900;
@@ -1275,6 +1432,7 @@ backdrop-filter: blur(8.9px);
 .reservation_superadmin_section .card .btn_reserve:hover{
     background: #141cc3;
 }
+*/
 
 .reservation_admin_section .card-text,
 .reservation_superadmin_section .card-text {
@@ -1329,6 +1487,10 @@ backdrop-filter: blur(8.9px);
     .reservation_admin_section .upper_search button,
     .reservation_superadmin_section  .upper_search button{
         width:100%;
+    }
+    
+    .reservation_add_section .modal-body{
+        padding:10px;
     }
 
 }
@@ -1410,134 +1572,45 @@ backdrop-filter: blur(8.9px);
 
 }
 
-
-.fab-section .fab-container{
-    position:fixed;
-    top:20px;
-    right:0px;
-    z-index:999;
-    display:flex;
-    flex-direction:column-reverse;
-    align-items:center;
+/*bottom bar*/
+.fab{
+    z-index:500;
+    position:absolute;
 }
 
-.fab-section .fab-main{
-    width:50px;
-    height:50px;
-    font-size:28px;
-    cursor:pointer;
-    transition:.3s;
-    border:none;
-    border-radius:15px;
-    margin-right:20px;
-    background:#000080;
-    color:white;
-    
+.fab .inner-fab{
+    max-width: 90vw;
+    margin-bottom: 1rem;
 }
 
-.fab-section .fab-main:hover{
-   box-shadow:0 8px 20px rgba(0,0,0,.10);
+.fab #userNavMenu{
+    border-radius: 1rem;
+}
+   
+.fab .backdrop-blur {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: #101B6B !important;
 }
 
-.fab-main i{
-    transition:.3s;
-
+.fab .nav-fab-btn {
+  min-width: 90px; 
+  transition: all 0.2s ease-in-out;
 }
 
-.fab-section .speed-dial .fab-item i{
-    background:#000080;
-    color:white;
-    padding:15px !important;
-    border-radius:15px;
+.fab .nav-label {
+  font-size: 0.75rem; 
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
 }
 
-.fab-section .speed-dial{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-end;
-    gap:12px;
-    margin-right:20px;
-    margin-top:30px;
+.fab .nav-fab-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-2px);
 }
 
-.fab-section .speed-dial .fab-item  span{
-  font-size:1rem;
-}
-
-.fab-section .fab-item {
-    display: flex;            
-    align-items: center;
-    gap: 10px;
-    opacity: 0;
-    pointer-events: none;      
-    height: 0;                
-    margin: 0;                 
-    overflow: hidden;          
-    transform: translateY(20px);
-    transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
-    cursor: pointer;
-}
-
-.fab-item button{
-    width:50px;
-    height:50px;
-    border:none;
-    box-shadow:0 5px 15px rgba(0,0,0,.2);
-}
-
-.fab-section .fab-label{
-    background:#fff;
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:14px;
-    font-weight:500;
-    box-shadow:0 3px 10px rgba(0,0,0,.15);
-    white-space:nowrap;
-}
-
-.fab-section .speed-dial.show .fab-item {
-    opacity: 1;
-    pointer-events: auto;     
-    height: 50px;             
-    overflow: visible;       
-    transform: translateY(0);
-}
-
-.fab-section .speed-dial.show .fab-item:nth-child(1){
-    transition-delay:.05s;
-}
-
-.fab-section .speed-dial.show .fab-item:nth-child(2){
-    transition-delay:.10s;
-}
-
-.fab-section .speed-dial.show .fab-item:nth-child(3){
-    transition-delay:.15s;
-}
-
-.fab-section .speed-dial.show .fab-item:nth-child(4){
-    transition-delay:.20s;
-}
-
-.fab-section .rotate{
-    transform:rotate(45deg);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* === Admin walkthrough tour === */
+/* ===  walkthrough  === */
 .wt-overlay {
     position: fixed;
     inset: 0;
@@ -1558,6 +1631,10 @@ backdrop-filter: blur(8.9px);
     border-radius: 8px;
     box-shadow: 0 0 0 6px rgba(0, 0, 128, 0.25);
     background-color: #fff;
+}
+
+.wt-lift {
+    z-index: 9999 !important;
 }
 
 .wt-tooltip {
@@ -1626,6 +1703,10 @@ backdrop-filter: blur(8.9px);
 }
 
 /* === Walkthrough guide page === */
+.walkthrough_admin_section{
+    padding:50px 0;
+}
+
 .walkthrough_admin_section .wg-card {
     border: 1px solid #e6e6e6;
     border-radius: 10px;
@@ -1654,4 +1735,66 @@ backdrop-filter: blur(8.9px);
     padding: 10px 22px;
     border-radius: 8px;
     font-weight: 600;
+}
+
+/* header top bar*/
+.top_bar_nav{
+    z-index: 99;
+    position: fixed;
+    width:100%;
+    background:#101B6B;
+    padding: 16px 0 16px 0;
+}
+
+.top_bar_nav .btn-ghost{
+    font-size: 1.5rem;
+    color:white;
+}
+
+.top_bar_nav .btn-ghost:hover{
+    color:white;
+}
+
+@media(min-width:761px){
+    .top_bar_nav .btn-ghost {
+        display:none;
+    }
+
+    .reservation_admin_section .card-img-top {
+        min-height: 160px !important;
+    }
+}
+
+@media(max-width:761px){
+
+    .top_bar_nav .fs-icon{
+        height:50% !important;
+        margin-top:10px !important;
+    }
+
+    .top_bar_nav .fs-icon{
+        height:50% !important;
+        margin-top:10px !important;
+    }
+
+    .top_bar_nav{
+        padding: 9px 0 9px 0 !important;
+    }
+
+    .fab .inner-fab{
+        margin-bottom: 0rem ;
+        max-width:100vw;
+        width:100%;
+    }
+
+    .fab #userNavMenu{
+        border-radius: 0rem;
+    }
+
+    .room_add_section .modal-body,
+    .floor_add_section .modal-body{
+        padding:5px;
+    }
+
+
 }

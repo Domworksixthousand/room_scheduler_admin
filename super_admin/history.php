@@ -74,7 +74,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
         $table_html = "<tr>
             <td colspan='8' class='text-center py-4'>
                 <div class='d-flex flex-column text-muted justify-content-center align-items-center'>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='35' height='35' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-folder-clock'><path d='M16 14v2.2l1.6 1'/><path d='M7 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2'/><circle cx='16' cy='16' r='6'/></svg>
+                    <svg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-folder-clock'><path d='M16 14v2.2l1.6 1'/><path d='M7 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2'/><circle cx='16' cy='16' r='6'/></svg>
                     No results found.
                 </div>
             </td>
@@ -100,9 +100,21 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
         $prev_val = max(1, $page - 1);
         $pagination_html .= "<li class='page-item $prev_disabled'><a class='page-link page-link-ajax' href='#' data-page='$prev_val'>Previous</a></li>";
 
-        for ($i = 1; $i <= $total_pages; $i++) {
+        // Windowed page numbers: first, current ±2, last, with ellipsis gaps
+        $window = 2;
+        $start = max(1, $page - $window);
+        $end = min($total_pages, $page + $window);
+        $pages_to_show = array_unique(array_merge([1], range($start, $end), [$total_pages]));
+        sort($pages_to_show);
+
+        $prev_shown = 0;
+        foreach ($pages_to_show as $i) {
+            if ($i - $prev_shown > 1) {
+                $pagination_html .= "<li class='page-item disabled'><span class='page-link'>&hellip;</span></li>";
+            }
             $active = ($i == $page) ? 'active' : '';
             $pagination_html .= "<li class='page-item $active'><a class='page-link page-link-ajax' href='#' data-page='$i'>$i</a></li>";
+            $prev_shown = $i;
         }
 
         $next_disabled = ($page >= $total_pages) ? 'disabled' : '';
@@ -116,6 +128,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
     ]);
     exit;
 }
+ include '../../mysidebar/Sidebar_Portal.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -125,18 +138,32 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
     <title>History</title>
     <link rel="shortcut icon" href="../assets/images/fs_logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
     <link rel="stylesheet" href="../assets/css/boostrap.css">
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
   </head>
+  
   <body>
+
+  <header>
+      <div class="top_bar_nav">
+        <div class="container d-flex justify-content-between">
+          <img src="../assets/images/FsLogoW.png" class="fs-icon">
+        <div class="w-100 text-end">
+        <button id="BtnBurger" class="btn btn-ghost ">
+          ☰
+        </button>
+        </div>
+        </div>
+      </div>
+    </header>
+   
 
     <!-- Main Content -->
     <div class="main_content">
         <?php include 'fab.php'; ?>
         <section class="history_superadmin_section">
           <div class="container">
-            <h2 class="text_header">History</h2>
+            <h2 class="text-header">History</h2>
             <div class="inner_con"> 
               <div class="card p-2 mb-3">
                   <div class="d-flex gap-2">
@@ -186,7 +213,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
     <script src="../assets/js/box_icons.js"></script>
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/walkthrough_tour.js"></script>;
+    <script src="../assets/js/walkthrough_tour.js?v=9"></script>;
 
 
 

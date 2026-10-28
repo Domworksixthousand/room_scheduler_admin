@@ -9,7 +9,7 @@ $search_param = "%$search%";
 
 // 1. Get all employee_ids from conn2 (the accounts table)
 $account_ids = [];
-$get_auth = $conn2->query("SELECT employee_id FROM `accounts` WHERE `user_status` != 'Inactive' AND `role` = '2'");
+$get_auth = $conn2->query("SELECT employee_id FROM `accounts` WHERE `user_status` != 'Inactive' AND `role` > '1'");
 while($auth_row = $get_auth->fetch_assoc()){
     $account_ids[] = $auth_row['employee_id'];
 }

@@ -9,7 +9,6 @@
     <link rel="shortcut icon" href="../assets/images/fs_logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
-    <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
     <link rel="stylesheet" href="../assets/css/boostrap.css">
     <script src="../assets/js/jquery.js"></script>
   </head>
@@ -33,11 +32,12 @@
       }
 
     
+     
       
       //calendar ini
       $occupied = 'Occupied';
       $Done = 'Done';
-      $query = "SELECT meeting_title, start_date, end_date, start_time, end_time, fullname, status FROM `booking` WHERE `status` = '$occupied' OR `status` = '$Done' ORDER BY start_time ASC";
+      $query = "SELECT room_id, meeting_title, start_date, end_date, start_time, end_time, fullname, status FROM `booking` WHERE `status` = '$occupied' OR `status` = '$Done' ORDER BY start_time ASC";
       $result = mysqli_query($conn2, $query);
 
       $events = [];
@@ -78,87 +78,35 @@
               'extendedProps' => [
                   'fullname'  => $row['fullname'],
                   'timeRange' => $timeRange,
-                  'status'    => $status
+                  'status'    => $status,
+                  'room_id'   => $row['room_id']
               ]
           ];
       }
       $eventsJson = json_encode($events);
+        include '../../mysidebar/Sidebar_Portal.php';
+        
     ?>
 
 
-      <!---sidebarini
-      <div class="sidebar close">
-        <div class="logo-details">
-          <img src="../assets/images/fs_logo.jpg"  alt="">
-          <span class="logo_name"></span>
+
+     <header>
+      <div class="top_bar_nav">
+        <div class="container d-flex justify-content-between">
+          <img src="../assets/images/FsLogoW.png" class="fs-icon">
+        <div class="w-100 text-end">
+        <button id="BtnBurger" class="btn btn-ghost ">
+          ☰
+        </button>
         </div>
-        <ul class="nav-links">
-          <li>
-            <a href="index.php" class="active">
-              <i class="bx bx-grid-alt"></i>
-              <span class="link_name">Dashboard</span>
-            </a>
-            <ul class="sub-menu blank">
-              <li><a class="link_name" href="index.php">Dashboard</a></li>
-            </ul>
-          </li>
-          <li>
-            <a href="floors.php">
-              <i class='bx bx-building'></i>
-              <span class="link_name">Floors</span>
-            </a>
-            <ul class="sub-menu blank">
-              <li><a class="link_name" href="floors.php">Floors</a></li>
-            </ul>
-          </li>
-          <li>
-            <a href="rooms.php">
-              <i class="bx bx-door-open" ></i>
-              <span class="link_name">Rooms</span>
-            </a>
-            <ul class="sub-menu blank">
-              <li><a class="link_name" href="rooms.php">Rooms</a></li>
-            </ul>
-          </li>
-          <li>
-            <a href="history.php">
-              <i class="bx bx-history"></i>
-              <span class="link_name">History</span>
-            </a>
-            <ul class="sub-menu blank">
-              <li><a class="link_name" href="history.php">History</a></li>
-            </ul>
-          </li>
-          <li>
-            <a href="reservations.php">
-              <i class='bx bx-calendar'></i>
-              <span class="link_name">Reservations</span>
-            </a>
-            <ul class="sub-menu blank">
-              <li><a class="link_name" href="reservations.php">Reservations</a></li>
-            </ul>
-          </li>
-          <li>
-            <div class="profile-details">
-              <div class="profile-content"><i class="bx bx-user-circle fs-2"></i></div>
-              <div class="name-job">
-                <div class="job"><?php // echo strlen($fullname) > 18 ? substr($fullname, 0, 18) . '...' : $fullname; ?></div>
-                <div class="job">Admin</div>
-              </div>
-              <a href="logout.php?location_back=index.php"><i class="bx bx-log-out"></i></a>
-            </div>
-          </li>
-        </ul>
-      </div>-->
-      
+        </div>
+      </div>
+    </header>
+   
       <!--maincontent ini-->
       <div class="main_content ">
-        <!--<div class="header-content">;
-          <span class="menu_toggle"><i class="bx bx-menu-alt-left"></i></span>
-          <h3>Good Day <?php // echo $firstname; ?>!</h3>
-        </div>-->
         <?php include 'fab.php'; ?>
-        <section class="dashboard_admin_section">
+        <section class="dashboard_admin_section ">
           <div class="container">
             <h2 class="text_header">Dashboard </h2>
             <div class="inner_con">
@@ -378,9 +326,33 @@
             </div>
           </div>
         </section>
-        <section class="graph_admin_section">
+        <section class="graph_admin_section">;
           <div class="container">
             <div class="inner_graph">
+              <div class="shadow-sm p-3 mb-3 rounded-3 border border-gray">
+                <div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal-icon lucide-sliders-horizontal"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>
+                    </span>
+                    <select class="form-select" name="room_select" id="room_select">
+                      <option value="show all">Show All</option>
+                      <?php
+                      $status_room = "Active";
+                      $get_rooms = $conn2->prepare("SELECT * FROM `rooms` WHERE `status` = ?");
+                      $get_rooms->bind_param("s",$status_room);
+                      $get_rooms->execute();
+                      $result_get = $get_rooms->get_Result();
+                      if($result_get->num_rows>0){
+                        while($row_rooms = mysqli_fetch_assoc($result_get)){
+                          $room_id = $row_rooms['room_id'];
+                          $room_name = $row_rooms['room_name'];
+                          echo "<option value='$room_id'>$room_name</option>";
+                        }
+                      }
+                      ?>
+                    </select>
+                  </div>
+              </div>
               <div id="calendar-container" data-wt="calendar">
                   <div id="calendar"></div>
               </div>
@@ -390,17 +362,16 @@
       </div>
 
 
- 
-<!--para mg show an data sa calendar-->
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
 
     const calendarEl = document.getElementById('calendar');
     const modalEl = document.getElementById('modal_system');
-    const bookingData = <?php echo $eventsJson; ?>;
+    const allEvents = <?php echo $eventsJson; ?>; 
+    const roomSelect = document.getElementById('room_select');
 
-    // 1. Initialize the calendar variable
+
     const calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
     selectable: true,
@@ -409,7 +380,7 @@
     center: 'title',
     right: 'dayGridMonth,timeGridWeek,timeGridDay'
     },
-    events: bookingData,
+    events: allEvents,
     navLinks: true,
     selectable: true,
     dayMaxEvents: 3, 
@@ -468,6 +439,20 @@
 
     calendar.render();
 
+    // --- Room filter logic ---
+    if (roomSelect) {
+      roomSelect.addEventListener('change', function() {
+        const selectedRoom = this.value;
+
+        const filtered = selectedRoom === 'show all'
+          ? allEvents
+          : allEvents.filter(ev => String(ev.extendedProps.room_id) === String(selectedRoom));
+
+        calendar.removeAllEvents();
+        calendar.addEventSource(filtered);
+      });
+    }
+
       if(modalEl){
         modalEl.addEventListener('shown.bs.modal', function () {
           
@@ -490,7 +475,7 @@
   <script src="../assets/js/script.js"></script>
   <script src="../assets/js/boostrap.js"></script>
   <script src="../assets/js/calendar.io.js"></script>
-  <script src="../assets/js/walkthrough_tour.js"></script>
+  <script src="../assets/js/walkthrough_tour.js?v=9"></script>
 
   <?php
     include '../alert.php';

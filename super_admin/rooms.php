@@ -5,13 +5,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Rooms</title>
     <link rel="shortcut icon" href="../assets/images/fs_logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
-    <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
     <link rel="stylesheet" href="../assets/css/boostrap.css">
     <script src="../assets/js/jquery.js"></script>
+    <link rel="stylesheet" href="../assets/css/calendar_picker.css">
   </head>
   <body>
  
@@ -32,17 +32,28 @@
           echo "<script>location.href='../index.php';</script>";
           exit;
       }
-
-    
+    include '../auto_update_status_inactive.php';
+    include '../../mysidebar/Sidebar_Portal.php';
     
     ?>
-
+    <header>
+      <div class="top_bar_nav">
+        <div class="container d-flex justify-content-between">
+          <img src="../assets/images/FsLogoW.png" class="fs-icon">
+        <div class="w-100 text-end">
+        <button id="BtnBurger" class="btn btn-ghost ">
+          ☰
+        </button>
+        </div>
+        </div>
+      </div>
+    </header>
 
       <div class="main_content ">
         <?php include 'fab.php'; ?>
         <section class="room_superadmin_section">
           <div class="container">
-            <h2 class="text_header">Rooms </h2>
+            <h2 class="text-header">Rooms </h2>
             <div class="inner_con">
               <div class="card p-2 mb-3">
                   <div class="upper_search">
@@ -97,8 +108,8 @@
   <script src="../assets/js/script.js"></script>
   <script src="../assets/js/boostrap.js"></script>
   <script src="../assets/js/calendar.io.js"></script>
-  <script src="../assets/js/walkthrough_tour.js"></script>;
-
+  <script src="../assets/js/walkthrough_tour.js?v=9"></script>;
+  <script src="../assets/js/calendar_picker.js"></script>
   <?php
     include '../alert.php';
   ?>

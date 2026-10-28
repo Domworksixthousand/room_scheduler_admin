@@ -8,49 +8,63 @@
     <link rel="shortcut icon" href="../assets/images/fs_logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
-    <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
     <link rel="stylesheet" href="../assets/css/boostrap.css">
-  
+    <link rel="stylesheet" href="../assets/css/calendar_picker.css">
     <script src="../assets/js/jquery.js"></script>
   </head>
   <body>
 
-<?php
-  include '../config.php'; 
-  //go to current user page  role
-    if($role === "1"){
-        echo "<script>location.href='../super_admin/index.php';</script>";
-    }elseif($role === "2"){
-        echo "<script>location.href='../admin/index.php';</script>";
-    }
+  <?php
+    include '../config.php'; 
+    //go to current user page  role
+      if($role === "1"){
+          echo "<script>location.href='../super_admin/index.php';</script>";
+          exit;
+      }elseif($role === "2"){
+          echo "<script>location.href='../admin/index.php';</script>";
+           exit;
+      }
 
-    if(isset($_GET['filter'])){
-        $filter = $_GET['filter']; 
-        echo '<script>
-          document.addEventListener("DOMContentLoaded", function(){
-              const filterOptions = document.querySelector(".filter_options");
-              if(filterOptions) {
+      if(isset($_GET['filter'])){
+          $filter = $_GET['filter']; 
+          echo '<script>
+            document.addEventListener("DOMContentLoaded", function(){
+                const filterOptions = document.querySelector(".filter_options");
+                if(filterOptions) {
+          
+              
+                    const checkbox = document.getElementById("'.$filter.'");
+                    if(checkbox) {
+                        checkbox.checked = true;
         
-             
-                  const checkbox = document.getElementById("'.$filter.'");
-                  if(checkbox) {
-                      checkbox.checked = true;
-       
-                      $(checkbox).trigger("change");
-                  }
-              }
-          });
-        </script>';
-    }
-?>
+                        $(checkbox).trigger("change");
+                    }
+                }
+            });
+          </script>';
+      }
+    include '../auto_update_status_inactive.php';
+    include '../../mysidebar/Sidebar_Portal.php';
+  ?>
 
 
 
 
+    <header >
+      <div class="top_bar_nav">
+        <div class="container d-flex justify-content-between">
+          <img src="../assets/images/FsLogoW.png" class="fs-icon">
+        <div class="w-100 text-end">
+        <button id="BtnBurger" class="btn btn-ghost ">
+          ☰
+        </button>
+        </div>
+        </div>
+      </div>
+    </header>
 
     <!--main contetent-->
     <div class="main_content">
-
       <?php include 'fab.php'; ?>
       <section class="room_admin_section">
         <div class="container">
@@ -65,10 +79,10 @@
                   </div>
                   <div class="filter_options ">
                       <ul>
-                        <li class='filter-item'>
-                          <input type="checkbox" ' class='hidden-checkbox' id="available"> 
-                          <label for="available" class='clickable-label  m-0'> 
-                            <i class='bx bx-check-circle'></i> Available
+                        <li class='filter-item '>
+                          <input type="checkbox" ' class='hidden-checkbox ' id="available"> 
+                          <label for="available" class='clickable-label  m-0 '> 
+                            <i class='bx bx-check-circle '></i> Available
                           </label>
                         </li>
                         <li class='filter-item m-0'><input type="checkbox" ' class='hidden-checkbox' id="partially_occupied">
@@ -103,7 +117,8 @@
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/calendar.io.js"></script>
-    <script src="../assets/js/walkthrough_tour.js"></script>;
+    <script src="../assets/js/walkthrough_tour.js?v=9"></script>
+    <script src="../assets/js/calendar_picker.js"></script>
     <?php include '../alert.php'; ?>
   </body>
 </html>

@@ -102,9 +102,21 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
         $prev_val = max(1, $page - 1);
         $pagination_html .= "<li class='page-item $prev_disabled'><a class='page-link page-link-ajax' href='#' data-page='$prev_val'>Previous</a></li>";
 
-        for ($i = 1; $i <= $total_pages; $i++) {
+        // Windowed page numbers: first, current ±2, last, with ellipsis gaps
+        $window = 2;
+        $start = max(1, $page - $window);
+        $end = min($total_pages, $page + $window);
+        $pages_to_show = array_unique(array_merge([1], range($start, $end), [$total_pages]));
+        sort($pages_to_show);
+
+        $prev_shown = 0;
+        foreach ($pages_to_show as $i) {
+            if ($i - $prev_shown > 1) {
+                $pagination_html .= "<li class='page-item disabled'><span class='page-link'>&hellip;</span></li>";
+            }
             $active = ($i == $page) ? 'active' : '';
             $pagination_html .= "<li class='page-item $active'><a class='page-link page-link-ajax' href='#' data-page='$i'>$i</a></li>";
+            $prev_shown = $i;
         }
 
         $next_disabled = ($page >= $total_pages) ? 'disabled' : '';
@@ -118,6 +130,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
     ]);
     exit;
 }
+   include '../../mysidebar/Sidebar_Portal.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -132,6 +145,22 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
     <link rel="stylesheet" href="../node_modules/boxicons/css/boxicons.min.css">
   </head>
   <body>
+
+
+  
+     <header>
+      <div class="top_bar_nav">
+        <div class="container d-flex justify-content-between">
+          <img src="../assets/images/FsLogoW.png" class="fs-icon">
+        <div class="w-100 text-end">
+        <button id="BtnBurger" class="btn btn-ghost ">
+          ☰
+        </button>
+        </div>
+        </div>
+      </div>
+    </header>
+
 
     <!-- Main Content -->
     <div class="main_content">
@@ -188,7 +217,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
     <script src="../assets/js/box_icons.js"></script>
     <script src="../assets/js/boostrap.js"></script>
     <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/walkthrough_tour.js"></script>;
+    <script src="../assets/js/walkthrough_tour.js?v=9"></script>;
     <?php include '../alert.php'; ?>
 
 </body>

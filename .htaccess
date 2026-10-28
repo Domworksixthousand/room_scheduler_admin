@@ -1,0 +1,59 @@
+RewriteEngine On
+RewriteBase /room_scheduler_admin/
+
+# ================================================================
+# 1) ADDRESS BAR: lumang URL -> malinis na URL  (GET lang)
+# ================================================================
+
+# --- Custom page names (dapat nauuna) ---
+# user/, user/index.php, 3/, 3/index -> 3/room
+RewriteCond %{REQUEST_METHOD} GET
+RewriteCond %{THE_REQUEST} \s/+room_scheduler_admin/(user|3)/(index(\.php)?)?[\s?] [NC]
+RewriteRule ^ 3/room [R=302,L]
+
+# super_admin/rooms.php -> 1/room
+RewriteCond %{REQUEST_METHOD} GET
+RewriteCond %{THE_REQUEST} \s/+room_scheduler_admin/(super_admin|1)/rooms(\.php)?[\s?] [NC]
+RewriteRule ^ 1/room [R=302,L]
+
+# admin/rooms.php -> 2/room
+RewriteCond %{REQUEST_METHOD} GET
+RewriteCond %{THE_REQUEST} \s/+room_scheduler_admin/(admin|2)/rooms(\.php)?[\s?] [NC]
+RewriteRule ^ 2/room [R=302,L]
+
+# --- Folder name -> numero ---
+RewriteCond %{REQUEST_METHOD} GET
+RewriteCond %{THE_REQUEST} \s/+room_scheduler_admin/super_admin/([^\s?]*?)(\.php)?[\s?] [NC]
+RewriteRule ^ 1/%1 [R=302,L]
+
+RewriteCond %{REQUEST_METHOD} GET
+RewriteCond %{THE_REQUEST} \s/+room_scheduler_admin/admin/([^\s?]*?)(\.php)?[\s?] [NC]
+RewriteRule ^ 2/%1 [R=302,L]
+
+RewriteCond %{REQUEST_METHOD} GET
+RewriteCond %{THE_REQUEST} \s/+room_scheduler_admin/user/([^\s?]*?)(\.php)?[\s?] [NC]
+RewriteRule ^ 3/%1 [R=302,L]
+
+# --- Tanggalin ang .php sa numero URL: 3/reservations.php -> 3/reservations ---
+RewriteCond %{REQUEST_METHOD} GET
+RewriteCond %{THE_REQUEST} \s/+room_scheduler_admin/([123])/([^\s?]+?)\.php[\s?] [NC]
+RewriteRule ^ %1/%2 [R=302,L]
+
+# ================================================================
+# 2) SA LOOB NG SERVER: malinis na URL -> totoong file
+# ================================================================
+
+# Custom page names
+RewriteRule ^1/room$ super_admin/rooms.php [L]
+RewriteRule ^2/room$ admin/rooms.php       [L]
+RewriteRule ^3/room$ user/index.php        [L]
+
+# Folder lang (1/, 2/, 3/) -> dashboard
+RewriteRule ^1/?$ super_admin/index.php [L]
+RewriteRule ^2/?$ admin/index.php       [L]
+RewriteRule ^3/?$ user/index.php        [L]
+
+# Lahat ng iba: 3/reservations -> user/reservations.php
+RewriteRule ^1/([^/]+?)(\.php)?$ super_admin/$1.php [L]
+RewriteRule ^2/([^/]+?)(\.php)?$ admin/$1.php       [L]
+RewriteRule ^3/([^/]+?)(\.php)?$ user/$1.php        [L]

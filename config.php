@@ -18,6 +18,7 @@ function customErrorHandler($errno, $errstr, $errfile, $errline) {
 
 #connection sa mysql
 session_start();
+
 $conn1 = mysqli_connect("10.0.0.161","it_dev","dev","ems_dev","3306");
 if ($conn1->connect_error) {
     error_log("Database connection1 failed: " . $conn1->connect_error);
@@ -26,7 +27,7 @@ if ($conn1->connect_error) {
 
 $conn2 = mysqli_connect("localhost","root","","room_sched_db","3307");
 if ($conn2->connect_error) {
-    error_log("Database connection2 failed: " . $conn2->connect_error);
+    
     die("We are experiencing technical difficulties. Please try again later.");
 }
 
@@ -35,8 +36,8 @@ $conn2 = mysqli_connect("10.0.0.161","usr","usrpass","room_sched_db","3306");
 if ($conn2->connect_error) {
     error_log("Database connection2 failed: " . $conn2->connect_error);
     die("We are experiencing technical difficulties. Please try again later.");
-}*/
-
+}
+*/
 
  $role  = " ";
 #get data kun available
@@ -131,8 +132,6 @@ $currentDateTime = date('Y-m-d H:i:s');
  $update_automatic->execute();
 
 
-
-
-
+$_SESSION['SideBarType'] = "Room Scheduler";
 
 ?>

@@ -7,31 +7,16 @@
             #para auto labas ng checkbox
                 echo "<script>
                 document.addEventListener('DOMContentLoaded', function(){
-                    const startDateInput = document.getElementById('start_date');
-                    const endDateInput = document.getElementById('end_date');
                     const wrapper = document.getElementById('wrapper');
                     const checkbox = document.getElementById('terms-checkbox-37');
-
 
                     if(checkbox) {
                         checkbox.checked = true;
                     }
 
-
-                    const startVal = startDateInput.value;
-                    const endVal = endDateInput.value;
-
-                    if (startVal && endVal) {
-                        const start = new Date(startVal);
-                        const end = new Date(endVal);
-
-                        if (end > start) {
-                
-                            wrapper.classList.remove('d-none');
-                    
-                
-                            checkbox.dispatchEvent(new Event('change'));
-                        }
+                    if (window.selectedDatesArr && window.selectedDatesArr.length > 1) {
+                        wrapper.classList.remove('d-none');
+                        checkbox.dispatchEvent(new Event('change'));
                     }
                 });
                 </script>";
@@ -41,6 +26,7 @@
     ?>
 
     
+
 
 
 <main >
@@ -56,16 +42,16 @@
                     <div class="modal-body">
                         <div class="inner_body shadow-lg">
                             <input type="hidden" value="<?php echo htmlspecialchars($_GET['room_id'] ?? ''); ?>" name="room_id">
+
                             <div class="row mb-0">
-                                    <div class="col-lg-6 mb-4">
-                                        <label class="form-label">Select Start Date</label>
-                                        <input type="date" class="form-control" id="start_date" name="start_date" value="<?php echo $_SESSION['start_date_admin'] ?? $date; ?>" required>
-                                    </div>
-                                    <div class="col-lg-6 mb-4">
-                                        <label class="form-label">Select End Date</label>
-                                        <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo $_SESSION['end_date_admin'] ?? $date; ?>" required>
-                                    </div>
+                                <div class="col-lg-12 mb-4">
+                                    <label class="form-label">Select Date(s)</label>
+                                    <input type="text" class="form-control" id="multi_dates" placeholder="Click to Select Single or Multiple Dates" readonly required>
+                                    <!-- One hidden input per selected date gets injected here on change -->
+                                    <div id="selected_dates_hidden"></div>
+                                </div>
                             </div>
+
                             <div id="wrapper" class="checkbox-wrapper mb-3 d-none">
                                     <input id="terms-checkbox-37" name="checkbox" type="checkbox" value="yes">
                                     <label class="terms-label" for="terms-checkbox-37">
@@ -100,33 +86,40 @@
                                     <label for="fullname" class="form-label">Full Name</label>
                                     <div class="position-relative">
                                         <!-- Search Input -->
-                                        <input type="text" id="empSearch" name="employee_name1" class="form-control" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off" required>
+                                        <input type="text" id="empSearch" name="employee_name1" class="form-control uppercase_function" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"  placeholder="Type to search..." autocomplete="off" required>
                                             <input type="hidden" value="<?php echo htmlspecialchars($_SESSION['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" name="employee_name"  id="selectedEmployee" >
                                             <!-- Dropdown -->
                                             <div id="empDropdown" 
                                                 class="dropdown_body card position-absolute w-100 shadow-sm mt-1 d-none" >
                                                 <div class="list-group list-group-flush" id="empList">
-                                                    <?php
-                                                    $users = $conn1->prepare("SELECT * FROM `employee` ORDER BY LastName, FirstName ASC");
-                                                    $users->execute();
-                                                    $result_users = $users->get_result();
-
-                                                    if($result_users->num_rows > 0){
-                                                        while ($row_users = $result_users->fetch_assoc()) {
-
-                                                            $lastname  = htmlspecialchars($row_users['LastName'] ?? '', ENT_QUOTES, 'UTF-8');
-                                                            $firstname = htmlspecialchars($row_users['FirstName'] ?? '', ENT_QUOTES, 'UTF-8');
-                                                            $middlename = htmlspecialchars($row_users['MiddleName'] ?? '', ENT_QUOTES, 'UTF-8');
-                                                            $fullname  = trim("$lastname $firstname $middlename");
-                                                    ?>
-                                                        <button type="button" 
-                                                                class="list-group-item list-group-item-action emp-item"
-                                                                data-name="<?php echo $fullname; ?>">
-                                                            <?php echo $fullname; ?>
-                                                        </button>
-                                                    <?php 
+                                                     <?php
+                                            
+                                                        if (isset($conn1)) {
+                                                            $conn1->set_charset("utf8mb4");
                                                         }
-                                                    } 
+
+                                                        $users = $conn1->prepare("SELECT * FROM `employee` ORDER BY LastName, FirstName ASC");
+                                                        $users->execute();
+                                                        $result_users = $users->get_result();
+
+                                                        if($result_users->num_rows > 0){
+                                                            while ($row_users = $result_users->fetch_assoc()) {
+                                                                $lastname   = htmlspecialchars($row_users['LastName'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+                                                                $firstname  = htmlspecialchars($row_users['FirstName'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+                                                                $middlename = htmlspecialchars($row_users['MiddleName'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+                                                                $employee_id = htmlspecialchars($row_users['Employee_ID'] );
+                                                                
+                                                                $fullname   = trim("$lastname, $firstname $middlename");
+                                                    ?>
+                                                                <button type="button" 
+                                                                        class="list-group-item list-group-item-action emp-item"
+                                                                        data-id="<?php echo $employee_id; ?>"
+                                                                        data-name="<?php echo $fullname; ?>">
+                                                                    <?php echo $fullname; ?>
+                                                                </button>
+                                                    <?php 
+                                                            }
+                                                        } 
                                                     ?>
                                                 </div>
                                             </div>
@@ -189,15 +182,13 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const startDateInput = document.getElementById("start_date");
-    const endDateInput = document.getElementById("end_date");
     const wrapper = document.getElementById("wrapper");
     const checkbox = document.getElementById("terms-checkbox-37");
     const not_custom = document.getElementById("not_custom");
     const custom_section = document.getElementById("custom");
     const container = document.getElementById("custom_container");
     const labelText = document.querySelector(".label-text");
-
+    const hiddenDatesWrap = document.getElementById("selected_dates_hidden");
 
     const sessionBookedDetails = <?php echo isset($_SESSION['booked_details_admin']) ? json_encode($_SESSION['booked_details_admin']) : '[]'; ?>;
     const sessionCheckbox = "<?php echo $_SESSION['checkbox_admin'] ?? ''; ?>";
@@ -218,54 +209,52 @@ document.addEventListener("DOMContentLoaded", function() {
         container.innerHTML = "";
     }
 
-    checkbox.addEventListener("change", function() {
-        const startVal = startDateInput.value;
-        const endVal = endDateInput.value;
+    // ---- Build the list of ISO ("YYYY-MM-DD") strings from flatpickr's selectedDates ----
+    function toIsoList(dateObjs) {
+        return dateObjs
+            .map(d => {
+                let y = d.getFullYear();
+                let m = String(d.getMonth() + 1).padStart(2, '0');
+                let day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            })
+            .sort(); // keep chronological order regardless of click order
+    }
 
-        if (this.checked) {
-            if (!startVal || !endVal) {
-                this.checked = false;
-                return;
+    // ---- Writes one hidden <input name="selected_date[]"> per chosen date so the ----
+    // ---- backend (functions.php) receives them as an array on submit             ----
+    function syncHiddenDateInputs(isoList) {
+        hiddenDatesWrap.innerHTML = "";
+        isoList.forEach(dateStr => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "selected_date[]";
+            input.value = dateStr;
+            hiddenDatesWrap.appendChild(input);
+        });
+        window.selectedDatesArr = isoList;
+    }
+
+    function buildCustomSlotsFromDates(isoList) {
+        container.innerHTML = "";
+        isoList.forEach(dateStr => {
+            const [y, m, d] = dateStr.split('-').map(Number);
+            const dateObj = new Date(y, m - 1, d);
+            const displayDate = dateObj.toLocaleDateString('en-US', {
+                weekday: 'short', month: 'short', day: 'numeric'
+            });
+
+            let sStart = "";
+            let sEnd = "";
+            const foundMatch = sessionBookedDetails.find(item => item.date === dateStr);
+            if (foundMatch) {
+                sStart = convertTo24h(foundMatch.start);
+                sEnd = convertTo24h(foundMatch.end);
             }
 
-            const start = new Date(startVal);
-            const end = new Date(endVal);
-
-            labelText.innerHTML = "Use same time for all dates";
-            not_custom.style.display = "none";
-            custom_section.style.display = "block";
-            container.innerHTML = ""; 
-
-            let current = new Date(start);
-            while (current <= end) {
-                let y = current.getFullYear();
-                let m = String(current.getMonth() + 1).padStart(2, '0');
-                let d = String(current.getDate()).padStart(2, '0');
-                let dateStr = `${y}-${m}-${d}`;
-
-                let displayDate = current.toLocaleDateString('en-US', { 
-                    weekday: 'short', month: 'short', day: 'numeric' 
-                });
-
-                // 2. SEARCH the array for the matching date
-                let sStart = "";
-                let sEnd = "";
-                
-                const foundMatch = sessionBookedDetails.find(item => item.date === dateStr);
-                
-                if (foundMatch) {
-                    // Convert AM/PM from session to 24h for the input value
-                    sStart = convertTo24h(foundMatch.start);
-                    sEnd = convertTo24h(foundMatch.end);
-                }
-
-                createTimeSlot(dateStr, displayDate, sStart, sEnd);
-                current.setDate(current.getDate() + 1);
-            }
-        } else {
-            resetToSingleMode();
-        }
-    });
+            createTimeSlot(dateStr, displayDate, sStart, sEnd);
+        });
+    }
 
     function createTimeSlot(dateValue, dateLabel, startTime, endTime) {
         const div = document.createElement("div");
@@ -293,11 +282,76 @@ document.addEventListener("DOMContentLoaded", function() {
         container.appendChild(div);
     }
 
-    // Auto-trigger if session is active
-    if (sessionCheckbox === "yes" && startDateInput.value && endDateInput.value) {
+    // ---- Multi-date picker: lets the user click Aug 1, then 10, then 20, then 25 ----
+    // ---- (non-contiguous) instead of only a start/end range                      ----
+    // Dates carried over from a failed save (session) win; otherwise use the day clicked on the calendar (?date=YYYY-MM-DD)
+    const getDate = <?php echo json_encode($_GET['date'] ?? ''); ?>;
+    let preselected = sessionBookedDetails.map(item => item.date).filter(Boolean);
+    if (!preselected.length && /^\d{4}-\d{2}-\d{2}$/.test(getDate)) {
+        preselected = [getDate];
+    }
+
+    const fp = flatpickr("#multi_dates", {
+        mode: "multiple",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "M j, Y",
+        minDate: "today",
+        defaultDate: preselected.length ? preselected : undefined,
+        onChange: function(selectedDates) {
+            const isoList = toIsoList(selectedDates);
+            syncHiddenDateInputs(isoList);
+
+            if (isoList.length < 2) {
+                // Custom per-day scheduling only makes sense with 2+ dates
+                wrapper.classList.add("d-none");
+                checkbox.checked = false;
+                resetToSingleMode();
+                return;
+            }
+
+            wrapper.classList.remove("d-none");
+
+            if (checkbox.checked) {
+                buildCustomSlotsFromDates(isoList);
+            }
+        }
+    });
+
+    checkbox.addEventListener("change", function() {
+        const isoList = window.selectedDatesArr || [];
+
+        if (this.checked) {
+            if (isoList.length < 2) {
+                this.checked = false;
+                return;
+            }
+
+            labelText.innerHTML = "Use same time for all dates";
+            not_custom.style.display = "none";
+            custom_section.style.display = "block";
+            buildCustomSlotsFromDates(isoList);
+        } else {
+            resetToSingleMode();
+        }
+    });
+
+    // Auto-trigger if session is active (only relevant with 2+ dates)
+    // Show the checkbox wrapper whenever 2+ dates carried over from a previous
+    // submission (e.g. after a validation/conflict error redirected back here) —
+    // even if "custom" wasn't checked before, so the user can still switch to
+    // per-day times if they change their mind.
+    if (preselected.length > 0) {
+        syncHiddenDateInputs(toIsoList(fp.selectedDates));
+    }
+
+    if (preselected.length > 1) {
         wrapper.classList.remove("d-none");
-        checkbox.checked = true;
-        checkbox.dispatchEvent(new Event('change'));
+
+        if (sessionCheckbox === "yes") {
+            checkbox.checked = true;
+            checkbox.dispatchEvent(new Event('change'));
+        }
     }
 });
 </script>

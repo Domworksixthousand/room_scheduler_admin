@@ -1,10 +1,10 @@
 <?php
    
-    if(isset($_GET['room_id']) && isset($_GET['location_back']) ){
-        $room_id = htmlspecialchars($_GET['room_id'] ?? '');
-        $location_back = htmlspecialchars($_GET['location_back'] ?? '');
-    }
-     include $location_back; 
+    $room_id = htmlspecialchars($_GET['room_id'] ?? '');
+    $location_back = htmlspecialchars($_GET['location_back'] ?? 'index.php');
+    include $location_back;
+    $room_name = $serial_number = $floor_name = $floor_id = $capacity = $description = $image = '';
+
     $get_rooms = $conn2->prepare("SELECT * FROM `rooms`  LEFT JOIN `floors` ON rooms.floor_id = floors.floor_id WHERE `room_id` = ?");
     $get_rooms->bind_param("s",$room_id);
     $get_rooms->execute();
@@ -22,38 +22,44 @@
         }
     }
 
-    //calendar ini
-    $occupied = 'Occupied';
+    
+    $today_date = date('Y-m-d');
+    $now_time   = date('H:i:s');
+  $occupied = 'Occupied';
     $Done = 'Done';
-    $query = "SELECT meeting_title, start_date, end_date, start_time, end_time, fullname, status FROM `booking` WHERE room_id = '$room_id' AND (`status` = '$occupied' OR `status` = '$Done' ) ORDER BY start_time ASC";
-    $result = mysqli_query($conn2, $query);
+    $stmt = $conn2->prepare("SELECT meeting_title, start_date, end_date, start_time, end_time, fullname, status FROM `booking` WHERE room_id = ? AND (status = ? OR status = ?) ORDER BY start_time ASC");
+    $stmt->bind_param("sss", $room_id, $occupied, $Done);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     $events = [];
     while($row = mysqli_fetch_assoc($result)) {
-        $start = $row['start_date'] . 'T' . date("H:i:s", strtotime($row['start_time']));
-        $end = $row['end_date'] . 'T' . date("H:i:s", strtotime($row['end_time']));
-        $timeRange = date("g:i A", strtotime($row['start_time'])) . " - " . date("g:i A", strtotime($row['end_time']));
-          $status = "Upcoming"; 
+        $row_start_date = $row['start_date'];
+        $row_end_date   = $row['end_date'];
+        $row_start_time = $row['start_time'];
+        $row_end_time   = $row['end_time'];
 
-            if ($row['status'] === 'Done') {
-                $status = "Done";
-            } elseif ($row['status'] === 'Cancelled') {
-                $status = "Cancelled";
-            } else {
-                if ($start_date < $datetoday) {
-                    $status = "Done";
-                } elseif ($start_date > $datetoday) {
-                    $status = "Upcoming"; 
-                } else {
-                    if ($timetoday2 > $end_time) {
-                        $status = "Done";
-                    } elseif ($timetoday2 >= $start_time && $timetoday2 <= $end_time) {
-                        $status = "On Going";
-                    } else {
-                        $status = "Upcoming";
-                    }
-                }
-            }
+        if ($row['status'] === 'Cancelled') {
+            $status = "Cancelled";
+        }
+        elseif ($row_end_date < $today_date || ($row_end_date === $today_date && $now_time > $row_end_time)) {
+            $status = "Done";
+        }
+        elseif (
+            ($row_start_date < $today_date || ($row_start_date === $today_date && $now_time >= $row_start_time))
+            &&
+            ($row_end_date > $today_date || ($row_end_date === $today_date && $now_time <= $row_end_time))
+        ) {
+            $status = "On Going";
+        }
+        else {
+            $status = "Upcoming";
+        }
+
+        $start = $row_start_date . 'T' . date("H:i:s", strtotime($row_start_time));
+        $end = $row_end_date . 'T' . date("H:i:s", strtotime($row_end_time));
+        $timeRange = date("g:i A", strtotime($row_start_time)) . " - " . date("g:i A", strtotime($row_end_time));
+
         $events[] = [
             'title' => $row['meeting_title'],
             'start' => $start,
@@ -100,7 +106,7 @@
                                 <div class="tab-pane fade show active" id="home">
                                     <div class="row">
                                         <div class="col-lg-5 .col-md-6 .col-sm-12">
-                                            <img src="../assets/uploads/<?php echo htmlspecialchars($image); ?>" alt="Room Image" class="img-fluid rounded mb-3" loading="lazy">
+                                            <img src="<?php echo $image !== '' ? '../assets/uploads/'.htmlspecialchars($image) : '../assets/images/fs_bg.jpg'; ?>" alt="Room Image" loading="lazy" class="img-fluid rounded mb-3">
                                         </div>
                                         <div class="col-lg-7 .col-md-6 .col-sm-12">
                                           <ul class="list-group list-group-flush border-top">
@@ -111,23 +117,29 @@
                                                 </div>
                                                 <div class="d-flex flex-column">
                                                     <small class="text-uppercase fw-bold text-muted" style="font-size: 0.7rem; letter-spacing: 1px;">Serial Number</small>
-                                                    <h6 class="m-0 fw-bold text-dark"><?php echo htmlspecialchars($serial_number); ?></h6>
+                                                     <h6 class="m-0 fw-bold text-dark">
+                                                    <?php 
+                                                        $sn = htmlspecialchars($serial_number);
+                                                        echo (mb_strlen($sn) > 5) ? mb_substr($sn, 0, 5) . '...' : $sn;
+                                                    ?>
+                                                    </h6>
                                                 </div>
                                             </li>
 
                                             <!-- Room Name -->
                                             <li class="list-group-item d-flex align-items-center py-2">
                                                 <i class='bx bx-door-open me-3 text-secondary fs-5'></i>
-                                                <div class="d-flex justify-content-between w-100 align-items-center">
+                                                <div class="d-flex flex-column flex-sm-row justify-content-between w-100">
                                                     <span class="text-muted small">Room Name:</span>
                                                     <span class="fw-semibold"><?php echo htmlspecialchars($room_name); ?></span>
                                                 </div>
                                             </li>
 
+
                                             <!-- Floor -->
                                             <li class="list-group-item d-flex align-items-center py-2">
                                                 <i class='bx bx-layer me-3 text-secondary fs-5'></i>
-                                                <div class="d-flex justify-content-between w-100 align-items-center">
+                                                <div class="d-flex flex-column flex-sm-row justify-content-between w-100">
                                                     <span class="text-muted small">Floor:</span>
                                                     <span class="fw-semibold"><?php echo htmlspecialchars($floor_name); ?></span>
                                                 </div>
@@ -136,7 +148,7 @@
                                             <!-- Capacity -->
                                             <li class="list-group-item d-flex align-items-center py-2">
                                                 <i class='bx bx-group me-3 text-secondary fs-5'></i>
-                                                <div class="d-flex justify-content-between w-100 align-items-center">
+                                                <div class="d-flex flex-column flex-sm-row justify-content-between w-100">
                                                     <span class="text-muted small">Capacity:</span>
                                                     <span class="badge bg-light text-dark border fw-normal"><?php echo htmlspecialchars($capacity); ?> Persons</span>
                                                 </div>
@@ -174,7 +186,6 @@
        </form>
     </section>
 </main>
-
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {

@@ -3,23 +3,40 @@ include 'config.php';
 
 if(isset($_POST['update_shutdown'])){
     $room_id =  $_POST['room_id'];
+
+
+    $update = "no";
+    $update_heartbeat = $conn2->prepare("UPDATE `heartbeat` SET `update` = ? WHERE `room_id` = ?");
+    $update_heartbeat->bind_param("ss",$update,$room_id);
+    $update_heartbeat->execute();
+
     $tablet_status = "Inactive";
-    $update = $conn2->prepare("UPDATE `rooms` SET `tablet_status` = ? WHERE `room_id` = ?");
-    $update->bind_param("ss", $tablet_status, $room_id);
+    $update = $conn2->prepare("UPDATE `rooms` SET `tablet_status` = ?,time_date_update= ?,user_id_update=? WHERE `room_id` = ?");
+    $update->bind_param("ssss", $tablet_status,$currentDateTime,$_SESSION['User_Id'],$room_id);
     $update->execute();
 
 
+
     $_SESSION['success'] = "Successfully Shutdown";
-    header("location:$back");
+    header("location:admin/rooms.php");
     exit();
 }
 
 if(isset($_POST['update_shutdown_superadmin'])){
     $room_id =  $_POST['room_id'];
+
+    $update = "no";
+    $update_heartbeat = $conn2->prepare("UPDATE `heartbeat` SET `update` = ? WHERE `room_id` = ?");
+    $update_heartbeat->bind_param("ss",$update,$room_id);
+    $update_heartbeat->execute();
+
+
     $tablet_status = "Inactive";
-    $update = $conn2->prepare("UPDATE `rooms` SET `tablet_status` = ? WHERE `room_id` = ?");
-    $update->bind_param("ss", $tablet_status, $room_id);
+    $update = $conn2->prepare("UPDATE `rooms` SET `tablet_status` = ?,time_date_update= ?,user_id_update=? WHERE `room_id` = ?");
+    $update->bind_param("ssss", $tablet_status,$currentDateTime,$_SESSION['User_Id'],$room_id);
     $update->execute();
+
+
 
     $_SESSION['success'] = "Successfully Shutdown";
     header("location:super_admin/rooms.php");
@@ -61,7 +78,7 @@ if (isset($_POST['assign_user'])) {
     if ($result_data2->num_rows > 0) {
 
         $update = $conn2->prepare("UPDATE `accounts` SET `user_status` = ?,`time_date_added` = ?,`user_id_added` = ? WHERE `employee_id` = ?");
-        $update->bind_param("ssss", $user_status, $currentDateTime, $_SESSION['user_id'], $employee_id);
+        $update->bind_param("ssss", $user_status, $currentDateTime, $_SESSION['User_Id'], $employee_id);
         $update->execute();
 
         $_SESSION['success'] = "Successfully Assigned";
@@ -73,7 +90,7 @@ if (isset($_POST['assign_user'])) {
         # mag laog na sa database
         $id = "assigned" . rand() . uniqid();
         $insert = $conn2->prepare("INSERT INTO `accounts` (`employee_id`,`role`,`id`,`user_status`,`time_date_added`,`user_id_added`) VALUES (?,?,?,?,?,?)");
-        $insert->bind_param("ssssss", $employee_id,$role,$id,$user_status,$currentDateTime,$_SESSION['user_id']);
+        $insert->bind_param("ssssss", $employee_id,$role,$id,$user_status,$currentDateTime,$_SESSION['User_Id']);
         $insert->execute();
 
             $_SESSION['success'] = "Successfully Assigned";
@@ -96,9 +113,6 @@ if(isset($_POST['delete_account'])){
     header("location:super_admin/accounts.php");
     exit();
 }
-
-
-
 
 
 if(isset($_POST['floors_save'])){
@@ -139,7 +153,7 @@ if(isset($_POST['floors_save'])){
     } else {
         # Insert
         $insert = $conn2->prepare("INSERT INTO floors (floor_id, floor_name, rooms_number, floor_status,user_id_added,time_date_added) VALUES (?, ?, ?, ?, ?,?)");
-        $insert->bind_param("ssssss", $floor_id, $floor_name, $number_of_rooms, $floor_status, $_SESSION['user_id'],$currentDateTime);
+        $insert->bind_param("ssssss", $floor_id, $floor_name, $number_of_rooms, $floor_status, $_SESSION['User_Id'],$currentDateTime);
         $insert->execute();
 
         unset($_SESSION['floor_name']);
@@ -150,7 +164,6 @@ if(isset($_POST['floors_save'])){
         exit();
     }
 }
-
 
 
 if(isset($_POST['delete_floor'])){
@@ -164,7 +177,7 @@ if(isset($_POST['delete_floor'])){
     }
     $floor_status = "Inactive";
     $update = $conn2->prepare("UPDATE `floors` SET `floor_status` = ?,`time_date_update` = ?,`user_id_update` = ? WHERE `floor_id` = ?");
-    $update->bind_param("ssss",$floor_status,$currentDateTime,$_SESSION['user_id'],$floor_id);
+    $update->bind_param("ssss",$floor_status,$currentDateTime,$_SESSION['User_Id'],$floor_id);
     $update->execute();
 
     /*
@@ -215,7 +228,7 @@ if(isset($_POST['floors_update'])){
         exit();
     }else{
         $update = $conn2->prepare("UPDATE `floors` SET `floor_name` = ?, `rooms_number` = ?,`time_date_update`=?,`user_id_update`=? WHERE `floor_id` = ?");
-        $update->bind_param("sssss",$floor_name,$number_of_rooms,$currentDateTime,$_SESSION['user_id'],$floor_id);
+        $update->bind_param("sssss",$floor_name,$number_of_rooms,$currentDateTime,$_SESSION['User_Id'],$floor_id);
         $update->execute();
       
         $_SESSION['success'] = "Successfully Updated";
@@ -233,13 +246,21 @@ if(isset($_POST['room_save'])){
     $description   = mysqli_real_escape_string($conn2,$_POST['description'] ?? '');
     $device_name   = mysqli_real_escape_string($conn2,$_POST['device_name'] ?? '');
     $status = "Active";
+    $tablet_status = "Active";
+
+    if(empty($serial_number)){
+        $serial_number = "custom" . "-" . $room_name .  rand();
+        $tablet_status = "Inactive";
+    }
       
+   
     if($role === "1"){
         $folder = "super_admin";
     }elseif($role === "2"){
         $folder = "admin";
+    }else{
+        $folder = "user";
     }
-
 
     $_SESSION['room_name']     = $room_name;
     $_SESSION['serial_number'] = $serial_number;
@@ -301,10 +322,10 @@ if(isset($_POST['room_save'])){
 
     if (file_exists($sourcePath)) {
         if (rename($sourcePath, $destinationPath)) {
-            $tablet_status = "Active";
+            
 
             $insert = $conn2->prepare("INSERT INTO `rooms` (`room_id`,`room_name`,`serial_number`,`floor_id`,`capacity`,`description`,`image`,`tablet_status`,`user_id_added`,`time_date_added`,`status`) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
-            $insert->bind_param("sssssssssss", $room_id, $room_name, $serial_number, $floor, $capacity, $description, $fileName,$tablet_status,$_SESSION['user_id'],$currentDateTime,$status);
+            $insert->bind_param("sssssssssss", $room_id, $room_name, $serial_number, $floor, $capacity, $description, $fileName,$tablet_status,$_SESSION['User_Id'],$currentDateTime,$status);
             
             if($insert->execute()){
             
@@ -341,6 +362,7 @@ if(isset($_POST['room_update'])){
     $trash_path = 'assets/uploads/' . $trash_filename;
     $location_back = ($role === "1") ? "super_admin" : "admin";
     $status = 'Active';
+    $tablet_status = "Active";
 
     if($extension !== "jpeg" && $extension !== "jpg"  &&  !empty($image)){
         $_SESSION['error'] = "jpeg image type only";
@@ -369,8 +391,8 @@ if(isset($_POST['room_update'])){
     }
 
     if(empty($image)){
-         $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?,`user_id_update` = ?,`time_date_update` =? WHERE `room_id` =?");
-        $update->bind_param("ssssssss",$room_name,$serial_number,$floor,$capacity,$description,$_SESSION['user_id'],$currentDateTime,$room_id);
+         $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?,`user_id_update` = ?,`time_date_update` =?,`tablet_status` = ? WHERE `room_id` =?");
+        $update->bind_param("sssssssss",$room_name,$serial_number,$floor,$capacity,$description,$_SESSION['User_Id'],$currentDateTime,$tablet_status,$room_id);
         $update->execute();
 
         $_SESSION['success'] = "Successfully Updated";
@@ -396,8 +418,8 @@ if(isset($_POST['room_update'])){
     
         }
         if(move_uploaded_file($image_tmp,$trash_path)){
-            $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?, `image` = ?,`user_id_update` = ?,`time_date_update` =? WHERE `room_id` =?");
-            $update->bind_param("sssssssss",$room_name,$serial_number,$floor,$capacity,$description,$trash_filename,$_SESSION['user_id'],$currentDateTime,$room_id);
+            $update = $conn2->prepare("UPDATE `rooms` SET `room_name` = ?,`serial_number` = ?,`floor_id`=?,`capacity` =?,`description`=?, `image` = ?,`user_id_update` = ?,`time_date_update` =?,`tablet_status` = ?  WHERE `room_id` =?");
+            $update->bind_param("ssssssssss",$room_name,$serial_number,$floor,$capacity,$description,$trash_filename,$_SESSION['User_Id'],$currentDateTime,$tablet_status,$room_id);
             $update->execute();
 
             $_SESSION['success'] = "Successfully Updated";
@@ -446,7 +468,7 @@ if(isset($_POST['delete_room'])){
 */
 
     $update = $conn2->prepare("UPDATE `rooms` SET `status` = ? , `user_id_update` = ?, `time_date_update` = ? WHERE `room_id` = ?");
-    $update->bind_param("ssss",$status,$_SESSION['user_id'],$currentDateTime,$room_id);
+    $update->bind_param("ssss",$status,$_SESSION['User_Id'],$currentDateTime,$room_id);
     $update->execute();
     
     $_SESSION['success'] = "Successfully Deleted";
@@ -461,7 +483,7 @@ if(isset($_POST['cancel_booking'])){
     $cancelled_at = htmlspecialchars($_POST['cancelled_at'] ?? '');
     $status_cancelled = "Cancelled";
     $update = $conn2->prepare("UPDATE `booking` SET `status` = ?, `cancelled_at` = ?,`user_id_cancelled` =?,`date_time_cancelled`=? WHERE `booking_id` = ?");
-    $update->bind_param("sssss",$status_cancelled,$cancelled_at,$_SESSION['user_id'],$currentDateTime,$booking_id);
+    $update->bind_param("sssss",$status_cancelled,$cancelled_at,$_SESSION['User_Id'],$currentDateTime,$booking_id);
     $update->execute();
 
     if($role === "1"){
@@ -480,43 +502,7 @@ if(isset($_POST['cancel_booking'])){
 
 
 
-
-
-
 if(isset($_POST['reservation_save'])){
-    
-    $start_date = mysqli_real_escape_string($conn2,$_POST['start_date'] ?? '');
-    $end_date = mysqli_real_escape_string($conn2,$_POST['end_date'] ?? '');
-    $start_time_data = date("H:i:s", strtotime($_POST['start_time'] ?? '00:00'));
-    $end_time_data = date("H:i:s", strtotime($_POST['end_time'] ?? '00:00'));
-    $raw_meeting = !empty($_POST['meeting_title']) ? $_POST['meeting_title'] : ($_POST['meeting_title1'] ?? '');
-    $meeting_title = mysqli_real_escape_string($conn2, $raw_meeting);
-    $raw_employee = !empty($_POST['employee_name']) ? $_POST['employee_name'] : ($_POST['employee_name1'] ?? '');
-    $employee_name = mysqli_real_escape_string($conn2, $raw_employee);
-    $custom_start = $_POST['custom_start'] ?? [];
-    $custom_end = $_POST['custom_end'] ?? [];
-    $checkbox = $_POST['checkbox'] ?? 'no';
-    $room_id = mysqli_real_escape_string($conn2,$_POST['room_id'] ?? '');
-
-    $get_serial_number = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_id` = ?");
-    $get_serial_number->bind_param("s", $room_id);
-    $get_serial_number->execute();
-    $result_serial_number = $get_serial_number->get_result();
-    if($result_serial_number->num_rows > 0){
-        $row_serial_number = $result_serial_number->fetch_assoc();
-        $final_serial = htmlspecialchars($row_serial_number['serial_number'] ?? '');
-    }
-
-    $_SESSION['room_id'] = $room_id;
-    $_SESSION['start_date_admin'] = $start_date;
-    $_SESSION['end_date_admin'] = $end_date;
-    $_SESSION['start_time_admin'] = $start_time_data;
-    $_SESSION['end_time_admin'] = $end_time_data;
-    $_SESSION['fullname_admin'] = $fullname;
-    $_SESSION['meeting_title_admin'] = $meeting_title;
-    $_SESSION['employee_name'] = $employee_name;
-    $_SESSION['checkbox_admin'] = $checkbox;
-
     
     if($role === "1"){
         $folder = "super_admin";
@@ -525,288 +511,181 @@ if(isset($_POST['reservation_save'])){
     }else{
         $folder = "user";
     }
+    // ---- Dates now come in as an array of individually-picked dates ----
+    // ---- (e.g. Aug 1, 10, 20, 25) instead of a start_date/end_date range ----
+    $selected_dates_raw = $_POST['selected_date'] ?? [];
+    $selected_dates = array_values(array_unique(array_filter(array_map(function($d) use ($conn2) {
+        $d = trim($d);
+        // basic sanity check: must look like YYYY-MM-DD
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $d)) return null;
+        return mysqli_real_escape_string($conn2, $d);
+    }, $selected_dates_raw))));
+    sort($selected_dates);
 
-    $_SESSION['booked_details_admin'] = [];
-    if (!empty($custom_start)) {
-        foreach ($custom_start as $key => $val) {
-            $temp_date = new DateTime($start_date);
-            $temp_date->modify("+$key day");
-            $_SESSION['booked_details_admin'][] = [
-                'date' => $temp_date->format('Y-m-d'),
-                'start' => $val,
-                'end' => $custom_end[$key]
-            ];
-        }
+    $start_time_data = date("H:i:s", strtotime($_POST['start_time'] ?? '00:00'));
+    $end_time_data = date("H:i:s", strtotime($_POST['end_time'] ?? '00:00'));
+    $raw_meeting = !empty($_POST['meeting_title']) ? $_POST['meeting_title'] : ($_POST['meeting_title1'] ?? '');
+    $meeting_title = mysqli_real_escape_string($conn2, $raw_meeting);
+    $raw_employee =  ($_POST['employee_name1'] ?? '');
+    $employee_name = mysqli_real_escape_string($conn2, $raw_employee);
+
+  
+    $custom_date  = $_POST['custom_date'] ?? [];
+    $custom_start = $_POST['custom_start'] ?? [];
+    $custom_end   = $_POST['custom_end'] ?? [];
+    $checkbox = $_POST['checkbox'] ?? 'no';
+    $room_id = mysqli_real_escape_string($conn2,$_POST['room_id'] ?? '');
+
+    $get_serial_number = $conn2->prepare("SELECT * FROM `rooms` WHERE `room_id` = ?");
+    $get_serial_number->bind_param("s", $room_id);
+    $get_serial_number->execute();
+    $result_serial_number = $get_serial_number->get_result();
+    $final_serial = '';
+    if($result_serial_number->num_rows > 0){
+        $row_serial_number = $result_serial_number->fetch_assoc();
+        $final_serial = htmlspecialchars($row_serial_number['serial_number'] ?? '');
     }
+
+    $_SESSION['room_id'] = $room_id;
+    $_SESSION['start_time_admin'] = $start_time_data;
+    $_SESSION['end_time_admin'] = $end_time_data;
+    $_SESSION['meeting_title_admin'] = $meeting_title;
+    $_SESSION['employee_name'] = $employee_name;
+    $_SESSION['checkbox_admin'] = $checkbox;
 
     $occupied = 'Occupied';
     $errors_found = false;
 
-    if($start_date > $end_date){
-        $_SESSION['error'] = "Start date cannot be later than the end date.";
+    if(empty($selected_dates)){
+        $_SESSION['error'] = "Please select at least one date.";
         $errors_found = true;
     }
 
-    
-    //  kung naka custom ang time 
-////////////////////////////////////////////////////////////////////////////
+    if(!$errors_found && $final_serial === ''){
+        $_SESSION['error'] = "Technical Error, Please Try again";
+        $errors_found = true;
+    }
+
+    // Build the list of [date, start, end] we'll validate/insert/save-to-session,
+    // regardless of whether it's custom-per-day or one uniform time for every date.
+    $date_time_pairs = [];
+
     if(!$errors_found && $checkbox === "yes"){
-        $date_val = new DateTime($start_date);
-        foreach ($custom_start as $key => $starttime) {
-            $endtime = $custom_end[$key];
-            $sql_s = date("H:i:s", strtotime($starttime));
-            $sql_e = date("H:i:s", strtotime($endtime));
-            $curr_d = $date_val->format('Y-m-d');
+        if(count($custom_date) !== count($custom_start) || count($custom_date) !== count($custom_end)){
+            $_SESSION['error'] = "Technical Error, Please Try again";
+            $errors_found = true;
+        } else {
+            foreach ($custom_date as $i => $d) {
+                $d = trim($d);
+                if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $d)) continue;
+                $date_time_pairs[] = [
+                    'date'  => mysqli_real_escape_string($conn2, $d),
+                    'start' => date("H:i:s", strtotime($custom_start[$i] ?? '00:00')),
+                    'end'   => date("H:i:s", strtotime($custom_end[$i] ?? '00:00')),
+                ];
+            }
+        }
+    } elseif(!$errors_found){
+        foreach ($selected_dates as $d) {
+            $date_time_pairs[] = [
+                'date'  => $d,
+                'start' => $start_time_data,
+                'end'   => $end_time_data,
+            ];
+        }
+    }
+
+    if(!$errors_found && empty($date_time_pairs)){
+        $_SESSION['error'] = "Please select at least one date.";
+        $errors_found = true;
+    }
+
+    // Save for session prefill (re-opening the form keeps the picked dates/times)
+    if(!$errors_found){
+        $_SESSION['booked_details_admin'] = array_map(function($p){
+            return [
+                'date'  => $p['date'],
+                'start' => date("g:i A", strtotime($p['start'])),
+                'end'   => date("g:i A", strtotime($p['end'])),
+            ];
+        }, $date_time_pairs);
+    }
+
+    // ---- Validate + insert inside ONE locked transaction ----
+    // Doing the conflict check and the insert together (with FOR UPDATE) means:
+    //  1) two people submitting at the same instant can't both "pass" the check
+    //     and then both insert an overlapping booking (race condition), and
+    //  2) if two of the dates picked in THIS submission overlap each other,
+    //     the second one will see the first one's row (same transaction) and
+    //     correctly flag it as a conflict too.
+    if(!$errors_found){
+        $conn2->begin_transaction();
+
+        foreach ($date_time_pairs as $pair) {
+            $curr_d = $pair['date'];
+            $sql_s  = $pair['start'];
+            $sql_e  = $pair['end'];
+            $display_date = date("M d", strtotime($curr_d));
 
             if ($sql_s >= $sql_e) {
-                $_SESSION['error'] = "Error on " . $date_val->format('M d') . ": Start time cannot be later than end time.";
-                $errors_found = true; 
+                $_SESSION['error'] = "Error on $display_date: Start time cannot be later than end time.";
+                $errors_found = true;
                 break;
             }
 
             if($sql_s <= $timetoday2 && $datetoday === $curr_d){
-                $_SESSION['error'] = "Error on " . $date_val->format('M d') . ": Time Selected Already Passed";
+                $_SESSION['error'] = "Error on $display_date: Time Selected Already Passed";
                 $errors_found = true;
                 break;
             }
-            
-            // Check conflicts sa DB
-            $check = $conn2->prepare("SELECT b.booking_id FROM `booking` b INNER JOIN rooms r ON b.room_id = r.room_id WHERE r.serial_number = ? AND b.status = ? AND b.start_date = ? AND (? < b.end_time AND ? > b.start_time)");
+
+            // Lock any matching rows (existing bookings, or ones inserted earlier
+            // in this same transaction) so nothing else can insert/overlap underneath us
+            $check = $conn2->prepare("SELECT b.booking_id FROM `booking` b INNER JOIN rooms r ON b.room_id = r.room_id WHERE r.serial_number = ? AND b.status = ? AND b.start_date = ? AND (? < b.end_time AND ? > b.start_time) FOR UPDATE");
             $check->bind_param("sssss", $final_serial, $occupied, $curr_d, $sql_s, $sql_e);
             $check->execute();
-            if($check->get_result()->num_rows > 0){
+            $has_conflict = $check->get_result()->num_rows > 0;
+            $check->close();
+
+            if($has_conflict){
                 $_SESSION['error'] = "Conflict: Room occupied on $curr_d during selected time.";
                 $errors_found = true;
                 break;
             }
-            $date_val->modify('+1 day');
-            $check->close();
-        }
-    }
 
-     //  insert ang custom time
-    if(!$errors_found && $checkbox === "yes"){
-        $date_ins = new DateTime($start_date);
-        foreach ($custom_start as $key => $starttime) {
-            $endtime = $custom_end[$key];
-            $sql_s = date("H:i:s", strtotime($starttime));
-            $sql_e = date("H:i:s", strtotime($endtime));
-            $curr_d = $date_ins->format('Y-m-d');
             $b_id = "booking" . uniqid() . rand(10, 99);
 
-            $check_diplicate = $conn2->prepare("SELECT `booking_id` FROM `booking` WHERE `booking_id` = ?");
+            $check_diplicate = $conn2->prepare("SELECT `booking_id` FROM `booking` WHERE `booking_id` = ? FOR UPDATE");
             $check_diplicate->bind_param("s", $b_id);
             $check_diplicate->execute();
-            
-            $check_diplicate->store_result(); 
-
-            if($check_diplicate->num_rows > 0){
-                $_SESSION['error'] = "Technical Error, Please Try again";
-                header("location:$folder/reservation_add.php");
-                exit();
-            }
+            $check_diplicate->store_result();
+            $is_dup = $check_diplicate->num_rows > 0;
             $check_diplicate->close();
 
-            $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`,`user_id_added`,`time_date_added`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)");
-            $insert->bind_param("sssssssssss", $b_id, $curr_d, $curr_d, $sql_s, $sql_e, $employee_name, $meeting_title, $room_id, $occupied,$_SESSION['user_id'],$currentDateTime);
+            if($is_dup){
+                $_SESSION['error'] = "Technical Error, Please Try again";
+                $errors_found = true;
+                break;
+            }
+
+            $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`,`user_id_added`,`time_date_added`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $insert->bind_param("sssssssssss", $b_id, $curr_d, $curr_d, $sql_s, $sql_e, $employee_name, $meeting_title, $room_id, $occupied, $_SESSION['User_Id'], $currentDateTime);
             $insert->execute();
-            
-            $date_ins->modify('+1 day');
+            $insert->close();
         }
 
-        // CLEAR SESSIONS
-        unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['meeting_title_admin'],$_SESSION['employee_name']);
-        $_SESSION['success'] = "All schedules saved successfully!";
-        header("location:$folder/reservations.php");
-        exit();
-    } 
-    
-////////////////////////////////////////////////////////////////////////////
+        if($errors_found){
+            $conn2->rollback();
+        } else {
+            $conn2->commit();
 
-
-
-    //check single time
- //////////////////////////////////////////////////////////////////////////
- 
-if(!$errors_found && $checkbox === "no" && $start_date === $end_date){
-    $date_val = new DateTime($start_date);
-    $curr_d = $date_val->format('Y-m-d');
-    if($start_time_data >= $end_time_data){
-        $_SESSION['error'] = "Error on " . $date_val->format('M d') . ": Start time cannot be later than end time.";
-        $errors_found = true;
-    }
-
-    if($start_time_data <= $timetoday2 && $datetoday === $curr_d){
-        $_SESSION['error'] = "Error on " . $date_val->format('M d') . ": Time Selected Already Passed";
-        $errors_found = true;
-    }
-    
-
-    // Check conflicts sa DB
-    $check2 = $conn2->prepare("SELECT b.booking_id FROM `booking` b INNER JOIN rooms r ON b.room_id = r.room_id WHERE r.serial_number = ? AND b.status = ? AND b.start_date = ? AND (? < b.end_time AND ? > b.start_time)");
-    $check2->bind_param("sssss", $final_serial, $occupied, $curr_d, $start_time_data, $end_time_data);
-    $check2->execute();
-    $result_check = $check2->get_result();
-    if($result_check->num_rows > 0){
-        $_SESSION['error'] = "Conflict: Room occupied on $curr_d during selected time.";
-        $errors_found = true; 
-      
-    }
-    $result_check->close();
-}
-
-
-//insert ang data hindi custom ang time and date
-if(!$errors_found && $checkbox === "no" && $start_date === $end_date){
-    $date_ins = new DateTime($start_date);
-    $curr_d = $date_ins->format('Y-m-d');
-    $b_id = "booking" . uniqid() . rand(10, 99);
-
-
-    $check_diplicate = $conn2->prepare("SELECT `booking_id` FROM `booking` WHERE `booking_id` = ?");
-    $check_diplicate->bind_param("s", $b_id);
-    $check_diplicate->execute();
-    
-    $check_diplicate->store_result(); 
-
-    if($check_diplicate->num_rows > 0){
-        $_SESSION['error'] = "Technical Error, Please Try again";
-        header("location:$folder/reservation_add.php");
-        exit();
-    }
-    
-    $check_diplicate->close();
-
-    $insert = $conn2->prepare("INSERT INTO `booking` (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`,`user_id_added`,`time_date_added`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)");
-    $insert->bind_param("sssssssssss", $b_id, $start_date, $end_date, $start_time_data, $end_time_data, $employee_name, $meeting_title, $room_id, $occupied,$_SESSION['user_id'],$currentDateTime);
-    
-    if($insert->execute()){
-        $insert->close();
-        unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['meeting_title_admin'],$_SESSION['employee_name']);
-        $_SESSION['success'] = "Schedules saved successfully!";
-        header("location:$folder/reservations.php");
-        exit();
-    } 
-}
-////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    // check multiple date na single time
-///////////////////////////////////////////////////////////////////////
-if(!$errors_found && $checkbox === "no" && $start_date != $end_date){
-$current_date = new DateTime($start_date);
-$last_date = new DateTime($end_date);
-$datetocheck = $current_date->format('Y-m-d');
-
-    while ($current_date <= $last_date) {
-    $date_to_check = $current_date->format('Y-m-d');
-
-    if($start_time_data >= $end_time_data){
-        $_SESSION['error'] = "Start time cannot be later than end time.";
-        $errors_found = true;
-        break;
-    }
-
-    if($start_time_data <= $timetoday2 && $datetoday === $datetocheck){
-        $_SESSION['error'] = "Error on " . $current_date->format('M d') . ": Time Selected Already Passed";
-        $errors_found = true;
-        break;
-    }
-
-    $check = $conn2->prepare("
-        SELECT b.booking_id 
-        FROM `booking` b 
-        INNER JOIN rooms r ON b.room_id = r.room_id 
-        WHERE r.serial_number = ? 
-        AND b.status = ? 
-        AND b.start_date = ? 
-        AND (? < b.end_time AND ? > b.start_time)
-    ");
-    
-    $check->bind_param("sssss", $final_serial, $occupied, $date_to_check, $start_time_data, $end_time_data);
-    $check->execute();
-    
-    if($check->get_result()->num_rows > 0){
-        $formatted_date = $current_date->format('M d, Y');
-        $_SESSION['error'] = "Conflict: Room occupied on $formatted_date during selected time.";
-        $errors_found = true; 
-        break; 
-    }
-
-    
-    $current_date->modify('+1 day');
-    $check->close();
-    
-    }
-}
-
-
-
-if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
-
-    $current_date = new DateTime($start_date);
-    $last_date = new DateTime($end_date);
-
-    
-    while ($current_date <= $last_date) {
-        
-        $date_to_save = $current_date->format('Y-m-d');
-        $b_id = "booking" . uniqid() . rand(10, 99);
-
-        
-        $check_diplicate = $conn2->prepare("SELECT `booking_id` FROM `booking` WHERE `booking_id` = ?");
-        $check_diplicate->bind_param("s", $b_id);
-        $check_diplicate->execute();
-        
-        $check_diplicate->store_result(); 
-
-        if($check_diplicate->num_rows > 0){
-            $check_diplicate->close();
-            $_SESSION['error'] = "Technical Error, Please Try again";
-            header("location:$folder/reservation_add.php");
+            // CLEAR SESSIONS
+            unset($_SESSION['room_name_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['meeting_title_admin'],$_SESSION['employee_name']);
+            $_SESSION['success'] = "All schedules saved successfully!";
+            header("location:$folder/reservations.php");
             exit();
         }
-        
-        $check_diplicate->close();
-
-
-        $insert = $conn2->prepare("
-            INSERT INTO `booking` 
-            (`booking_id`, `start_date`, `end_date`, `start_time`, `end_time`, `fullname`, `meeting_title`, `room_id`, `status`,`user_id_added`,`time_date_added`) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
-        ");
-
-        
-        $insert->bind_param("sssssssssss", 
-            $b_id, 
-            $date_to_save, 
-            $date_to_save, 
-            $start_time_data, 
-            $end_time_data, 
-            $employee_name, 
-            $meeting_title, 
-            $room_id, 
-            $occupied,
-            $_SESSION['user_id'],
-            $currentDateTime
-        );
-
-        // I-execute ang insert
-        $insert->execute();
-
-
-        $current_date->modify('+1 day');
     }
-
-  unset($_SESSION['room_name_admin'],$_SESSION['start_date_admin'],$_SESSION['end_date_admin'],$_SESSION['checkbox_admin'],$_SESSION['start_time_admin'],$_SESSION['end_time_admin'],$_SESSION['booked_details_admin'],$_SESSION['meeting_title_admin'],$_SESSION['employee_name']);
-    $_SESSION['success'] = "Booking saved for all selected dates!";
-    header("location:$folder/reservations.php");
-    exit();
-}
-///////////////////////////////////////////////////////////////////////////////////////////
-
 
     if($errors_found){
         header("location:$folder/reservation_add.php?room_id=$room_id");
@@ -815,4 +694,70 @@ if(!$errors_found && $checkbox === "no"  && $start_date != $end_date){
 
 }
 
+if(isset($_POST['reservation_update'])){
+    $date_selected = htmlspecialchars($_POST['date_selected'] ?? '');
+    $start_time = htmlspecialchars($_POST['start_time'] ?? '');
+    $end_time = htmlspecialchars($_POST['end_time'] ?? '');
+    $room_id = htmlspecialchars($_POST['room_id'] ?? ''); 
+    $booking_id = htmlspecialchars($_POST['booking_id'] ?? '');
+    $meeting_title1 = htmlspecialchars($_POST['meeting_title1'] ?? '');
+    $employee_name = htmlspecialchars($_POST['employee_name'] ?? '');
+    $location_back = htmlspecialchars($_POST['location_back'] ?? 'reservations.php');
+
+    
+    if(empty($date_selected) || empty($start_time) || empty($end_time) || empty($booking_id)){
+        $_SESSION['error'] = "Incomplete form data provided.";
+        header("location: " . $_SERVER['HTTP_REFERER']);
+        exit;
+    }
+
+    $date_val = new DateTime($date_selected);
+    $curr_d = $date_val->format('Y-m-d');
+    
+    $sql_s = date("H:i:s", strtotime($start_time));
+    $sql_e = date("H:i:s", strtotime($end_time));
+
+
+    if(isset($role)){
+        if($role === "1"){
+            $folder = "super_admin";
+        } elseif($role === "2"){
+            $folder = "admin";
+        } else {
+            $folder = "user";
+        }
+    } else {
+        $folder = "user"; 
+    }
+
+   
+    if($sql_s >= $sql_e){
+        $_SESSION['error'] = "Invalid Time Selected: Start time must be earlier than end time.";
+        header("location: {$folder}/update_reservation.php?booking_id={$booking_id}&location_back={$location_back}");
+        exit; 
+    }
+
+
+    $check_availablity = $conn2->prepare("SELECT * FROM `booking` WHERE `room_id` = ? AND `start_date` = ? AND (`start_time` < ? AND `end_time` > ?) AND `booking_id` != ?");
+    $check_availablity->bind_param("sssss", $room_id, $curr_d, $sql_e, $sql_s, $booking_id);
+    $check_availablity->execute();
+    $result_check = $check_availablity->get_result();
+
+    if($result_check->num_rows > 0){
+        $_SESSION['error'] = "Time and Date Selected Already Occupied";
+        header("location: {$folder}/update_reservation.php?booking_id={$booking_id}&location_back={$location_back}");
+        exit; 
+    }else{
+        $update = $conn2->prepare("UPDATE `booking` SET `start_date` = ?,`end_date` = ?,`start_time`=?,`end_time`=?,`fullname`=?,`meeting_title`=? WHERE `booking_id` = ?");
+        $update->bind_param("sssssss",$date_selected,$date_selected,$start_time,$end_time,$employee_name,$meeting_title1,$booking_id);
+        $update->execute();
+
+        $_SESSION['success'] = "Successfully Updated";
+         header("location: {$folder}/{$location_back}");
+        exit; 
+    }
+
+
+   
+}
 ?>
